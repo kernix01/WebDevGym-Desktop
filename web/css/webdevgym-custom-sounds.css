@@ -1,0 +1,189 @@
+/* Local custom click sounds and history. */
+
+.wdgc-panel {
+  display: grid;
+  gap: 9px;
+  padding-top: 12px;
+  border-top: 1px solid var(--wdg-line);
+}
+
+.wdgc-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.wdgc-heading > div { min-width: 0; }
+.wdgc-heading strong {
+  display: block;
+  color: var(--wdg-text);
+  font-size: 11px;
+  line-height: 1.3;
+}
+.wdgc-heading small {
+  display: block;
+  max-width: 190px;
+  margin-top: 3px;
+  color: var(--wdg-muted);
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+.wdgc-upload {
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  padding: 6px 9px;
+  border: 1px solid rgba(168, 85, 247, .45);
+  border-radius: 5px;
+  background: rgba(168, 85, 247, .12);
+  color: #d8b4fe;
+  font: 700 10px/1.2 Inter, system-ui, sans-serif;
+  cursor: pointer;
+}
+.wdgc-upload:hover { border-color: #c084fc; background: rgba(168, 85, 247, .2); }
+.wdgc-upload input { position: fixed; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+body.wdg-modern:not(.dark) .wdgc-upload { color: #7e22ce; }
+
+.wdgc-local-note {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--wdg-muted);
+  font-size: 9px;
+}
+
+.wdgc-status {
+  display: none;
+  min-height: 18px;
+  align-items: center;
+  padding: 5px 7px;
+  border: 1px solid rgba(168, 85, 247, .35);
+  border-radius: 5px;
+  background: rgba(168, 85, 247, .1);
+  color: var(--wdg-text);
+  font-size: 9px;
+  line-height: 1.35;
+}
+.wdgc-status.show { display: flex; }
+
+.wdgc-history-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--wdg-muted);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+
+.wdgc-history { display: grid; gap: 5px; }
+.wdgc-empty {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px;
+  border: 1px dashed var(--wdg-line);
+  border-radius: 6px;
+  color: var(--wdg-muted);
+  font-size: 9px;
+  text-align: center;
+}
+
+.wdgc-history-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 30px 30px;
+  gap: 4px;
+}
+
+.wdgc-history-main,
+.wdgc-icon-button {
+  border: 1px solid var(--wdg-line);
+  border-radius: 5px;
+  background: var(--wdg-panel-2);
+  color: var(--wdg-text);
+  cursor: pointer;
+}
+
+.wdgc-history-main {
+  min-width: 0;
+  min-height: 42px;
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 7px;
+  text-align: left;
+}
+.wdgc-history-main:hover,
+.wdgc-icon-button:hover { border-color: #7e5b9f; }
+.wdgc-history-main.active {
+  border-color: #a855f7;
+  background: rgba(168, 85, 247, .12);
+}
+.wdgc-history-icon {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  background: rgba(168, 85, 247, .13);
+  color: #c084fc;
+}
+.wdgc-history-copy { min-width: 0; }
+.wdgc-history-copy strong {
+  display: block;
+  overflow: hidden;
+  color: inherit;
+  font-size: 10px;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wdgc-history-copy small {
+  display: block;
+  margin-top: 2px;
+  color: var(--wdg-muted);
+  font-size: 8px;
+}
+.wdgc-selected {
+  padding: 2px 4px;
+  border-radius: 3px;
+  background: rgba(168, 85, 247, .18);
+  color: #d8b4fe;
+  font-size: 7px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+body.wdg-modern:not(.dark) .wdgc-selected { color: #7e22ce; }
+
+.wdgc-icon-button {
+  width: 30px;
+  min-height: 42px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: var(--wdg-muted);
+}
+.wdgc-icon-button:hover { color: var(--wdg-text); }
+.wdgc-icon-button.danger:hover { border-color: #fb7185; color: #fb7185; }
+
+.wdgc-upload:focus-within,
+.wdgc-history-main:focus-visible,
+.wdgc-icon-button:focus-visible {
+  outline: 2px solid #c084fc;
+  outline-offset: 2px;
+}
+
+@media (max-width: 390px) {
+  .wdgc-heading { align-items: stretch; flex-direction: column; }
+  .wdgc-heading small { max-width: none; }
+  .wdgc-upload { width: 100%; box-sizing: border-box; }
+}

@@ -1,0 +1,62 @@
+{
+  "name": "webdevgym-electron",
+  "version": "0.1.0",
+  "description": "Desktop edition of the WebDevGym learning workspace",
+  "author": "kernix01",
+  "main": "electron/main.cjs",
+  "private": true,
+  "license": "GPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kernix01/WebDevGym-Electron.git"
+  },
+  "scripts": {
+    "desktop": "electron .",
+    "desktop:dev": "electron . --dev",
+    "desktop:pack": "npm run test:desktop && electron-builder --dir",
+    "desktop:build": "npm run test:desktop && electron-builder --win nsis portable",
+    "sync:web": "node tools/sync-web.cjs",
+    "test": "npm run test:desktop",
+    "test:desktop": "node tools/test-electron-shell.cjs",
+    "test:smoke": "node tools/smoke-electron.cjs"
+  },
+  "devDependencies": {
+    "electron": "44.3.0",
+    "electron-builder": "26.15.3"
+  },
+  "build": {
+    "appId": "io.github.kernix01.webdevgym.desktop",
+    "productName": "WebDevGym",
+    "asar": true,
+    "directories": {
+      "output": "dist-electron"
+    },
+    "files": [
+      "build/icon.png",
+      "electron/**/*",
+      "web/**/*",
+      "LICENSE"
+    ],
+    "win": {
+      "icon": "build/icon.png",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "${productName}-Setup-${version}-${arch}.${ext}"
+    },
+    "portable": {
+      "artifactName": "${productName}-Portable-${version}-${arch}.${ext}"
+    }
+  }
+}

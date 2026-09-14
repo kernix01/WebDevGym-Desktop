@@ -1,0 +1,5 @@
+@media (max-width: 720px) {
+  html[lang="en"] .wdg-dock-btn.primary::before { content: "Next"; }
+  html[lang="ru"] .wdg-dock-btn.primary::before { content: "Дальше"; }
+}
+

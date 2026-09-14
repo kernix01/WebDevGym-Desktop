@@ -1,0 +1,40 @@
+.wdg-lesson-list.expanded {
+  max-height: min(68vh, 680px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #55406f #111923;
+}
+
+.wdg-context-head #wdgSeeAll {
+  color: #aeb8c5;
+  font-size: 10px;
+}
+
+.wdg-context-head #wdgSeeAll:hover { color: #d8b4fe; }
+
+.wdg-license-footer {
+  max-width: 1040px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 34px auto 0;
+  padding: 18px 2px 12px;
+  border-top: 1px solid var(--wdg-line);
+  color: #687587;
+  font-size: 10px;
+}
+
+.wdg-license-footer strong { color: #aeb8c5; font-weight: 650; }
+.wdg-license-footer a { color: #c084fc; text-decoration: none; }
+.wdg-license-footer a:hover { text-decoration: underline; }
+
+@media (max-width: 720px) {
+  .wdg-license-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    margin-top: 24px;
+    padding: 16px 4px 6px;
+  }
+}
+

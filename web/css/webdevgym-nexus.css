@@ -1,0 +1,50 @@
+.wdg-graph-node {
+  min-width: 96px;
+  height: 44px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  padding-inline: 12px;
+  border-radius: 7px;
+  text-align: left;
+}
+
+.wdg-graph-node > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wdg-graph-node > small {
+  color: rgba(255,255,255,.66);
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.wdg-graph-node.completed::after {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #071019;
+  border-radius: 50%;
+  background: #22c55e;
+  content: '';
+}
+
+body.wdg-modern:not(.dark) .wdg-graph-node > small {
+  color: #64748b;
+}
+
+@media (max-width: 720px) {
+  .wdg-graph-toolbar strong {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .wdg-graph-tool {
+    width: 32px;
+    height: 32px;
+  }
+}

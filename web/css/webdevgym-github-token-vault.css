@@ -1,0 +1,127 @@
+.wdg-gh-token-vault {
+  margin-top: 12px;
+  padding-top: 14px;
+  border-top: 1px solid #30363d;
+  color: #c9d1d9;
+}
+
+.wdg-gh-vault-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.wdg-gh-vault-heading strong,
+.wdg-gh-vault-heading span { display: block; }
+.wdg-gh-vault-heading strong { color: #f0f6fc; font-size: 13px; }
+.wdg-gh-vault-heading > div > span {
+  max-width: 620px;
+  margin-top: 4px;
+  color: #8b949e;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.wdg-gh-vault-state {
+  flex: none;
+  padding: 4px 8px;
+  border: 1px solid #3b4658;
+  border-radius: 5px;
+  color: #8b949e;
+  background: #111927;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.wdg-gh-token-vault[data-state="unlocked"] .wdg-gh-vault-state {
+  border-color: #238636;
+  color: #3fb950;
+  background: #0d2d1a;
+}
+
+.wdg-gh-token-vault[data-state="locked"] .wdg-gh-vault-state {
+  border-color: #6d28d9;
+  color: #c4b5fd;
+  background: #211136;
+}
+
+.wdg-gh-vault-controls {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) repeat(5, auto);
+  gap: 8px;
+  align-items: end;
+}
+
+.wdg-gh-vault-controls label > span {
+  display: block;
+  margin-bottom: 5px;
+  color: #8b949e;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.wdg-gh-vault-controls input,
+.wdg-gh-vault-controls button {
+  min-height: 36px;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  font: 600 11px/1.2 inherit;
+  box-sizing: border-box;
+}
+
+.wdg-gh-vault-controls input {
+  width: 100%;
+  padding: 8px 10px;
+  background: #161b22;
+  color: #e6edf3;
+  outline: none;
+}
+
+.wdg-gh-vault-controls input:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 2px rgb(139 92 246 / 18%);
+}
+
+.wdg-gh-vault-controls button {
+  padding: 8px 11px;
+  background: #161b22;
+  color: #c9d1d9;
+  cursor: pointer;
+}
+
+.wdg-gh-vault-controls button:hover:not(:disabled) {
+  border-color: #8b5cf6;
+  color: #fff;
+  background: #211136;
+}
+
+.wdg-gh-vault-controls button.danger:hover:not(:disabled) {
+  border-color: #f85149;
+  color: #f85149;
+  background: #2d0d0d;
+}
+
+.wdg-gh-vault-controls button:disabled { opacity: .38; cursor: not-allowed; }
+.wdg-gh-vault-message {
+  min-height: 16px;
+  margin: 8px 0 0;
+  color: #6e7681;
+  font-size: 10px;
+  line-height: 1.5;
+}
+.wdg-gh-vault-message[data-type="success"] { color: #3fb950; }
+.wdg-gh-vault-message[data-type="error"] { color: #f85149; }
+
+@media (max-width: 1050px) {
+  .wdg-gh-vault-controls { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .wdg-gh-vault-controls label { grid-column: 1 / -1; }
+}
+
+@media (max-width: 620px) {
+  .wdg-gh-vault-heading { display: grid; gap: 8px; }
+  .wdg-gh-vault-state { justify-self: start; }
+  .wdg-gh-vault-controls { grid-template-columns: 1fr 1fr; }
+  .wdg-gh-vault-controls button { min-height: 42px; white-space: normal; }
+}

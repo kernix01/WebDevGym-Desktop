@@ -1,0 +1,35 @@
+.wdg-symbol {
+  width: 20px;
+  height: 20px;
+  display: inline-grid;
+  place-items: center;
+  color: #d8b4fe;
+  font: 800 18px/1 Inter, sans-serif;
+}
+
+#wdgLibraryBtn .wdg-symbol {
+  color: #c084fc;
+  font-size: 19px;
+}
+
+#wdgAiBtn {
+  border-color: rgba(168, 85, 247, .32);
+  background: rgba(168, 85, 247, .12);
+}
+#wdgAiBtn:hover { border-color: #a855f7; background: rgba(168, 85, 247, .22); }
+
+body.wdg-modern .ai-fab { display: none !important; }
+
+.wdg-library-item .wdg-library-symbol {
+  width: 23px;
+  height: 23px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border: 1px solid #39475a;
+  border-radius: 5px;
+  background: #0b1119;
+  color: #d8b4fe;
+  font-size: 13px;
+}
+

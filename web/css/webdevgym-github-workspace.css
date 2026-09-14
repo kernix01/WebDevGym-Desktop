@@ -1,0 +1,1192 @@
+/* GitHub Workspace: one focused flow for files, commits and GitHub Pages. */
+
+#sec-github.wdg-gh-workspace-ready {
+  --gh-panel: var(--wdg-panel, #0e141d);
+  --gh-panel-2: var(--wdg-panel-2, #121a25);
+  --gh-panel-3: var(--wdg-panel-3, #17212e);
+  --gh-line: var(--wdg-line, #263244);
+  --gh-text: var(--wdg-text, #f4f6fa);
+  --gh-muted: var(--wdg-muted, #8d99aa);
+  --gh-accent: var(--wdg-accent, #a855f7);
+  --gh-accent-strong: var(--wdg-accent-strong, #8b5cf6);
+  --gh-success: #39c47a;
+  --gh-success-soft: rgba(57, 196, 122, .11);
+  --gh-cyan: #35c9d0;
+}
+
+body.wdg-modern:not(.dark) #sec-github.wdg-gh-workspace-ready {
+  --gh-panel: #ffffff;
+  --gh-panel-2: #f6f8fc;
+  --gh-panel-3: #edf1f7;
+  --gh-line: #d7deea;
+  --gh-text: #172033;
+  --gh-muted: #66758a;
+  --gh-success-soft: rgba(22, 163, 74, .08);
+}
+
+#sec-github.wdg-gh-workspace-ready.active {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.65fr) minmax(300px, .75fr);
+  gap: 14px;
+  align-items: start;
+  max-width: 1180px;
+}
+
+#sec-github.wdg-gh-workspace-ready > .wdg-gh-workspace-header,
+#sec-github.wdg-gh-workspace-ready > .wdg-gh-context-bar,
+#sec-github.wdg-gh-workspace-ready > .wdg-gh-flow,
+#sec-github.wdg-gh-workspace-ready > .wdg-gh-create-panel,
+#sec-github.wdg-gh-workspace-ready > .wdg-gh-history,
+#sec-github.wdg-gh-workspace-ready > .try-btn {
+  grid-column: 1 / -1;
+}
+
+#sec-github .wdg-gh-workspace-header,
+#sec-github .wdg-gh-context-bar,
+#sec-github .wdg-gh-flow,
+#sec-github .wdg-gh-upload-workspace,
+#sec-github .wdg-gh-pages-rail,
+#sec-github .wdg-gh-create-panel,
+#sec-github .wdg-gh-history {
+  min-width: 0;
+  border: 1px solid var(--gh-line);
+  border-radius: 6px;
+  background: var(--gh-panel);
+  color: var(--gh-text);
+  box-shadow: none;
+}
+
+#sec-github .wdg-gh-workspace-header {
+  position: relative;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  gap: 15px;
+  align-items: center;
+  min-height: 82px;
+  padding: 16px 18px;
+  overflow: hidden;
+}
+
+#sec-github .wdg-gh-workspace-header::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--gh-accent);
+  content: "";
+}
+
+#sec-github .wdg-gh-workspace-mark {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid color-mix(in srgb, var(--gh-accent) 50%, var(--gh-line));
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--gh-accent) 13%, var(--gh-panel-2));
+  color: var(--gh-accent);
+}
+
+#sec-github .wdg-gh-workspace-copy {
+  min-width: 0;
+}
+
+#sec-github .wdg-gh-workspace-copy > span {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--gh-accent);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+#sec-github .wdg-gh-workspace-copy h2 {
+  margin: 0;
+  color: var(--gh-text);
+  font-size: 22px;
+  letter-spacing: 0;
+}
+
+#sec-github .wdg-gh-workspace-copy p {
+  margin: 5px 0 0;
+  color: var(--gh-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+#sec-github .wdg-gh-workspace-summary {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--gh-line);
+  border-radius: 5px;
+  background: var(--gh-panel-2);
+  color: var(--gh-muted);
+  font: 600 11px/1.2 ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+#sec-github .wdg-gh-workspace-summary strong {
+  max-width: 140px;
+  overflow: hidden;
+  color: var(--gh-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#sec-github .wdg-gh-workspace-summary span {
+  margin: 0 7px;
+  color: var(--gh-muted);
+}
+
+#sec-github .wdg-gh-context-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+  padding: 12px;
+}
+
+#sec-github .wdg-gh-context-fields {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) minmax(160px, 1.25fr) minmax(100px, .55fr);
+  gap: 10px;
+  min-width: 0;
+}
+
+#sec-github .wdg-gh-context-field,
+#sec-github .wdg-gh-commit-fields > div,
+#sec-github .wdg-gh-token-field {
+  min-width: 0;
+  margin: 0 !important;
+}
+
+#sec-github .wdg-gh-context-field > label,
+#sec-github .wdg-gh-commit-fields label,
+#sec-github .wdg-gh-token-field > label,
+#sec-github .wdg-gh-create-form label {
+  display: block !important;
+  margin: 0 0 5px !important;
+  color: var(--gh-muted) !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  line-height: 1.3;
+}
+
+#sec-github .wdg-gh-context-field input,
+#sec-github .wdg-gh-commit-fields input,
+#sec-github .wdg-gh-token-field > input,
+#sec-github .wdg-gh-create-form input,
+#sec-github .wdg-gh-create-form select,
+#sec-github .wdgs-pages-controls select {
+  width: 100% !important;
+  min-height: 38px;
+  padding: 8px 10px !important;
+  border: 1px solid var(--gh-line) !important;
+  border-radius: 5px !important;
+  outline: none;
+  background: var(--gh-panel-2) !important;
+  color: var(--gh-text) !important;
+  font: 500 12px/1.2 inherit !important;
+  box-sizing: border-box;
+}
+
+#sec-github .wdg-gh-context-field input:focus,
+#sec-github .wdg-gh-commit-fields input:focus,
+#sec-github .wdg-gh-token-field > input:focus,
+#sec-github .wdg-gh-create-form input:focus,
+#sec-github .wdg-gh-create-form select:focus,
+#sec-github .wdgs-pages-controls select:focus {
+  border-color: var(--gh-accent) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--gh-accent) 18%, transparent);
+}
+
+#sec-github .wdg-gh-connection {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 0 11px;
+  border: 1px solid var(--gh-line);
+  border-radius: 5px;
+  background: var(--gh-panel-2);
+  color: var(--gh-muted);
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+#sec-github .wdg-gh-connection i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #f0ad4e;
+  box-shadow: 0 0 0 3px rgba(240, 173, 78, .12);
+}
+
+#sec-github .wdg-gh-connection.ready {
+  border-color: color-mix(in srgb, var(--gh-success) 45%, var(--gh-line));
+  color: var(--gh-success);
+  background: var(--gh-success-soft);
+}
+
+#sec-github .wdg-gh-connection.ready i {
+  background: var(--gh-success);
+  box-shadow: 0 0 0 3px rgba(57, 196, 122, .12);
+}
+
+#sec-github .wdg-gh-flow {
+  display: grid;
+  grid-template-columns: 1fr 28px 1fr 28px 1fr;
+  align-items: center;
+  padding: 10px 12px;
+}
+
+#sec-github .wdg-gh-flow > i {
+  height: 1px;
+  background: var(--gh-line);
+}
+
+#sec-github .wdg-gh-flow-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  color: var(--gh-muted);
+}
+
+#sec-github .wdg-gh-flow-step > span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border: 1px solid var(--gh-line);
+  border-radius: 5px;
+  background: var(--gh-panel-2);
+}
+
+#sec-github .wdg-gh-flow-step strong {
+  overflow: hidden;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#sec-github .wdg-gh-flow-step.active,
+#sec-github .wdg-gh-flow-step.done {
+  color: var(--gh-text);
+}
+
+#sec-github .wdg-gh-flow-step.active > span {
+  border-color: var(--gh-accent);
+  color: var(--gh-accent);
+  background: color-mix(in srgb, var(--gh-accent) 12%, var(--gh-panel-2));
+}
+
+#sec-github .wdg-gh-flow-step.done > span {
+  border-color: color-mix(in srgb, var(--gh-success) 45%, var(--gh-line));
+  color: var(--gh-success);
+  background: var(--gh-success-soft);
+}
+
+#sec-github .wdg-gh-upload-workspace {
+  grid-column: 1;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden;
+  border-left: 1px solid var(--gh-line) !important;
+}
+
+#sec-github .wdg-gh-pages-rail {
+  grid-column: 2;
+  position: static;
+  margin: 0 !important;
+}
+
+#sec-github .wdg-gh-upload-workspace > .block-title,
+#sec-github .wdg-gh-upload-workspace > .tip,
+#sec-github .wdg-gh-create-panel > .block-title,
+#sec-github .wdg-gh-create-panel > .tip {
+  display: none !important;
+}
+
+#sec-github .wdg-gh-upload-form {
+  display: grid !important;
+  gap: 14px;
+  margin: 0 !important;
+  padding: 0 18px 18px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+#sec-github .wdg-gh-panel-heading {
+  margin: 0 -18px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--gh-line);
+  background: var(--gh-panel-2);
+}
+
+#sec-github .wdg-gh-panel-heading > div {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+#sec-github .wdg-gh-panel-heading > div > span {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border: 1px solid color-mix(in srgb, var(--gh-accent) 42%, var(--gh-line));
+  border-radius: 5px;
+  color: var(--gh-accent);
+  background: color-mix(in srgb, var(--gh-accent) 10%, var(--gh-panel));
+}
+
+#sec-github .wdg-gh-panel-heading h3 {
+  margin: 0;
+  color: var(--gh-text);
+  font-size: 14px;
+  letter-spacing: 0;
+}
+
+#sec-github .wdg-gh-panel-heading p {
+  margin: 4px 0 0;
+  color: var(--gh-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+#sec-github .wdg-gh-dropzone {
+  display: grid;
+  place-items: center;
+  gap: 5px;
+  width: 100%;
+  min-height: 132px;
+  padding: 18px;
+  border: 1px dashed color-mix(in srgb, var(--gh-accent) 55%, var(--gh-line));
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--gh-accent) 5%, var(--gh-panel-2));
+  color: var(--gh-text);
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 160ms ease, background-color 160ms ease, transform 160ms ease;
+}
+
+#sec-github .wdg-gh-dropzone:hover,
+#sec-github .wdg-gh-dropzone.dragging {
+  border-color: var(--gh-accent);
+  background: color-mix(in srgb, var(--gh-accent) 10%, var(--gh-panel-2));
+}
+
+#sec-github .wdg-gh-dropzone.dragging {
+  transform: translateY(-1px);
+}
+
+#sec-github .wdg-gh-dropzone-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid color-mix(in srgb, var(--gh-accent) 45%, var(--gh-line));
+  border-radius: 6px;
+  color: var(--gh-accent);
+  background: var(--gh-panel);
+}
+
+#sec-github .wdg-gh-dropzone strong {
+  font-size: 13px;
+}
+
+#sec-github .wdg-gh-dropzone [data-gh-drop-hint] {
+  color: var(--gh-muted);
+  font-size: 10px;
+}
+
+#sec-github .wdg-gh-mode {
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin: 0 !important;
+  padding: 3px;
+  border-color: var(--gh-line);
+  border-radius: 5px;
+  background: var(--gh-panel-2);
+}
+
+#sec-github .wdg-gh-mode button {
+  min-height: 34px;
+  border-radius: 4px;
+  color: var(--gh-muted);
+}
+
+#sec-github .wdg-gh-mode button:hover {
+  color: var(--gh-text);
+  background: var(--gh-panel-3);
+}
+
+#sec-github .wdg-gh-mode button.active {
+  color: #fff;
+  background: var(--gh-accent-strong);
+  box-shadow: none;
+}
+
+#sec-github [data-gh-single-file] {
+  position: relative;
+  margin: 0 !important;
+}
+
+#sec-github [data-gh-single-file] > label,
+#sec-github [data-gh-single-file] > input[type="file"],
+#sec-github .wdg-gh-folder-label,
+#sec-github .wdg-gh-folder-input {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+#sec-github .wdg-gh-folder-panel {
+  margin: 0;
+}
+
+#sec-github .wdg-gh-folder-options {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+  margin-top: 0;
+}
+
+#sec-github .wdg-gh-folder-options label > span {
+  color: var(--gh-muted);
+}
+
+#sec-github .wdg-gh-folder-base {
+  min-height: 38px;
+  border-color: var(--gh-line);
+  border-radius: 5px;
+  background: var(--gh-panel-2);
+  color: var(--gh-text);
+}
+
+#sec-github .wdg-gh-folder-summary {
+  min-height: 38px;
+  margin: 0;
+  padding: 10px 11px;
+  border-color: var(--gh-line);
+  border-radius: 5px;
+  background: var(--gh-panel-2);
+  color: var(--gh-muted);
+}
+
+#sec-github .wdg-gh-folder-summary strong,
+#sec-github .wdg-gh-folder-row strong {
+  color: var(--gh-text);
+}
+
+#sec-github .wdg-gh-folder-row {
+  border-color: var(--gh-line);
+  background: var(--gh-panel);
+}
+
+#sec-github .wdg-gh-folder-row button {
+  border-color: var(--gh-line);
+  color: var(--gh-muted);
+}
+
+#sec-github .wdg-gh-commit-fields {
+  display: grid;
+  grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+  gap: 10px;
+}
+
+#sec-github .wdg-gh-security {
+  border: 1px solid var(--gh-line);
+  border-radius: 5px;
+  background: var(--gh-panel-2);
+}
+
+#sec-github .wdg-gh-security > summary {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  gap: 9px;
+  align-items: center;
+  min-height: 52px;
+  padding: 8px 10px;
+  list-style: none;
+  color: var(--gh-text);
+  cursor: pointer;
+}
+
+#sec-github .wdg-gh-security > summary::-webkit-details-marker {
+  display: none;
+}
+
+#sec-github .wdg-gh-security > summary > span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--gh-line);
+  border-radius: 5px;
+  color: var(--gh-success);
+  background: var(--gh-success-soft);
+}
+
+#sec-github .wdg-gh-security > summary strong,
+#sec-github .wdg-gh-security > summary small {
+  display: block;
+}
+
+#sec-github .wdg-gh-security > summary strong {
+  font-size: 11px;
+}
+
+#sec-github .wdg-gh-security > summary small {
+  margin-top: 2px;
+  color: var(--gh-muted);
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+#sec-github .wdg-gh-security[open] > summary {
+  border-bottom: 1px solid var(--gh-line);
+}
+
+#sec-github .wdg-gh-token-field {
+  padding: 12px;
+}
+
+#sec-github .wdg-gh-token-field > div:not(.wdg-gh-token-vault) {
+  color: var(--gh-muted) !important;
+}
+
+#sec-github .wdg-gh-token-vault {
+  border-color: var(--gh-line);
+  color: var(--gh-text);
+}
+
+#sec-github .wdg-gh-vault-controls input,
+#sec-github .wdg-gh-vault-controls button {
+  border-color: var(--gh-line);
+  border-radius: 5px;
+  background: var(--gh-panel);
+  color: var(--gh-text);
+}
+
+#sec-github .wdg-gh-vault-heading strong {
+  color: var(--gh-text);
+}
+
+#sec-github .wdg-gh-vault-heading > div > span,
+#sec-github .wdg-gh-vault-message {
+  color: var(--gh-muted);
+}
+
+#sec-github .wdg-gh-commit-actions {
+  display: grid;
+  grid-template-columns: minmax(130px, .72fr) minmax(180px, 1.28fr);
+  gap: 9px;
+}
+
+#sec-github .wdg-gh-commit-actions button,
+#sec-github .wdg-gh-pages-hero button,
+#sec-github .wdg-gh-create-summary button,
+#sec-github .wdgs-pages-controls button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 0 13px !important;
+  border: 1px solid var(--gh-line) !important;
+  border-radius: 5px !important;
+  background: var(--gh-panel-2) !important;
+  color: var(--gh-text) !important;
+  font: 700 11px/1.2 inherit !important;
+  cursor: pointer;
+  transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+}
+
+#sec-github .wdg-gh-commit-actions button:hover,
+#sec-github .wdg-gh-pages-hero button:hover,
+#sec-github .wdg-gh-create-summary button:hover,
+#sec-github .wdgs-pages-controls button:hover {
+  border-color: var(--gh-accent) !important;
+  color: #fff !important;
+  background: color-mix(in srgb, var(--gh-accent) 18%, var(--gh-panel-2)) !important;
+}
+
+#sec-github .wdg-gh-commit-actions .wdg-gh-push-button,
+#sec-github .wdgs-pages-controls [data-pages-publish] {
+  border-color: var(--gh-accent-strong) !important;
+  background: var(--gh-accent-strong) !important;
+  color: #fff !important;
+}
+
+#sec-github #gh-status {
+  margin: 0 !important;
+  padding: 10px 11px !important;
+  border: 1px solid var(--gh-line);
+  border-radius: 5px !important;
+  background: var(--gh-panel-2);
+}
+
+#sec-github .wdg-gh-upload-workspace > .items {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+  margin: 0 !important;
+  padding: 12px 18px 16px;
+  border-top: 1px solid var(--gh-line);
+}
+
+#sec-github .wdg-gh-upload-workspace > .items .item {
+  margin: 0;
+  padding: 6px 8px;
+  border-radius: 4px;
+  background: var(--gh-panel-2);
+  color: var(--gh-muted);
+  font-size: 10px;
+}
+
+#sec-github .wdg-gh-pages-rail {
+  padding: 0;
+  overflow: hidden;
+}
+
+#sec-github .wdg-gh-pages-hero {
+  display: grid;
+  justify-items: center;
+  padding: 20px 16px 16px;
+  text-align: center;
+}
+
+#sec-github .wdg-gh-pages-check {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  margin-bottom: 12px;
+  border: 1px solid color-mix(in srgb, var(--gh-accent) 50%, var(--gh-line));
+  border-radius: 50%;
+  color: var(--gh-accent);
+  background: color-mix(in srgb, var(--gh-accent) 10%, var(--gh-panel-2));
+}
+
+#sec-github .wdg-gh-pages-hero.published .wdg-gh-pages-check {
+  border-color: color-mix(in srgb, var(--gh-success) 55%, var(--gh-line));
+  color: var(--gh-success);
+  background: var(--gh-success-soft);
+}
+
+#sec-github .wdg-gh-pages-hero h3 {
+  margin: 0;
+  color: var(--gh-text);
+  font-size: 15px;
+  letter-spacing: 0;
+}
+
+#sec-github .wdg-gh-pages-hero > p {
+  margin: 6px 0 11px;
+  color: var(--gh-muted);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+#sec-github .wdg-gh-pages-hero > a {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--gh-cyan);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#sec-github .wdg-gh-pages-hero > a[aria-disabled="true"] {
+  color: var(--gh-muted);
+  pointer-events: none;
+}
+
+#sec-github .wdg-gh-pages-hero dl {
+  display: grid;
+  width: 100%;
+  gap: 7px;
+  margin: 14px 0;
+}
+
+#sec-github .wdg-gh-pages-hero dl > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  min-height: 34px;
+  padding: 7px 9px;
+  border: 1px solid var(--gh-line);
+  border-radius: 5px;
+  background: var(--gh-panel-2);
+  text-align: left;
+}
+
+#sec-github .wdg-gh-pages-hero dt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--gh-muted);
+  font-size: 9px;
+}
+
+#sec-github .wdg-gh-pages-hero dd {
+  margin: 0;
+  color: var(--gh-text);
+  font: 600 9px/1.2 ui-monospace, SFMono-Regular, Consolas, monospace;
+  text-align: right;
+}
+
+#sec-github .wdg-gh-pages-hero > button {
+  width: 100%;
+}
+
+#sec-github .wdg-gh-pages-timeline {
+  position: relative;
+  display: grid;
+  width: 100%;
+  gap: 0;
+  margin-top: 15px;
+  padding-top: 3px;
+  text-align: left;
+}
+
+#sec-github .wdg-gh-pages-timeline::before {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 5px;
+  width: 1px;
+  background: var(--gh-line);
+  content: "";
+}
+
+#sec-github .wdg-gh-pages-timeline > div {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 27px;
+  color: var(--gh-muted);
+  font-size: 9px;
+}
+
+#sec-github .wdg-gh-pages-timeline i {
+  z-index: 1;
+  width: 9px;
+  height: 9px;
+  flex: none;
+  border: 2px solid var(--gh-panel);
+  border-radius: 50%;
+  background: var(--gh-line);
+}
+
+#sec-github .wdg-gh-pages-timeline .done {
+  color: var(--gh-text);
+}
+
+#sec-github .wdg-gh-pages-timeline .done i {
+  background: var(--gh-success);
+}
+
+#sec-github .wdg-gh-pages-rail > .wdgs-pages-copy {
+  display: none;
+}
+
+#sec-github .wdg-gh-pages-rail > .wdgs-pages-controls {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 9px;
+  padding: 14px 16px;
+  border-top: 1px solid var(--gh-line);
+  background: var(--gh-panel-2);
+}
+
+#sec-github .wdg-gh-pages-rail .wdgs-pages-controls label {
+  min-width: 0;
+  color: var(--gh-muted);
+  font-size: 10px;
+}
+
+#sec-github .wdg-gh-pages-rail > .wdgs-pages-status {
+  padding: 0 16px 14px;
+  background: var(--gh-panel-2);
+  font-size: 10px;
+}
+
+#sec-github .wdg-gh-create-panel {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden;
+  border-left: 1px solid var(--gh-line) !important;
+}
+
+#sec-github .wdg-gh-create-summary {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  gap: 11px;
+  align-items: center;
+  min-height: 64px;
+  padding: 12px 14px;
+}
+
+#sec-github .wdg-gh-create-summary > span {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--gh-line);
+  border-radius: 5px;
+  color: var(--gh-accent);
+  background: var(--gh-panel-2);
+}
+
+#sec-github .wdg-gh-create-summary strong,
+#sec-github .wdg-gh-create-summary small {
+  display: block;
+}
+
+#sec-github .wdg-gh-create-summary strong {
+  color: var(--gh-text);
+  font-size: 12px;
+}
+
+#sec-github .wdg-gh-create-summary small {
+  margin-top: 3px;
+  color: var(--gh-muted);
+  font-size: 10px;
+}
+
+#sec-github .wdg-gh-create-form,
+#sec-github .wdg-gh-create-panel > .items {
+  display: none !important;
+}
+
+#sec-github .wdg-gh-create-panel.open .wdg-gh-create-form {
+  display: block !important;
+  margin: 0 !important;
+  padding: 16px !important;
+  border: 0 !important;
+  border-top: 1px solid var(--gh-line) !important;
+  border-radius: 0 !important;
+  background: var(--gh-panel-2) !important;
+}
+
+#sec-github .wdg-gh-create-panel.open > .items {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0 !important;
+  padding: 12px 16px 16px;
+  border-top: 1px solid var(--gh-line);
+}
+
+#sec-github .wdg-gh-create-form button[onclick="githubCreateRepo()"] {
+  min-height: 40px;
+  border: 1px solid var(--gh-accent-strong) !important;
+  border-radius: 5px !important;
+  background: var(--gh-accent-strong) !important;
+  box-shadow: none !important;
+}
+
+#sec-github .wdg-gh-history {
+  overflow: hidden;
+}
+
+#sec-github .wdg-gh-history > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 15px;
+  border-bottom: 1px solid var(--gh-line);
+  background: var(--gh-panel-2);
+}
+
+#sec-github .wdg-gh-history h3 {
+  margin: 0;
+  color: var(--gh-text);
+  font-size: 13px;
+}
+
+#sec-github .wdg-gh-history p {
+  margin: 3px 0 0;
+  color: var(--gh-muted);
+  font-size: 9px;
+}
+
+#sec-github .wdg-gh-history > header > iconify-icon {
+  color: var(--gh-accent);
+}
+
+#sec-github [data-gh-history-list] {
+  display: grid;
+}
+
+#sec-github .wdg-gh-history-row {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto auto;
+  gap: 10px;
+  align-items: center;
+  min-height: 56px;
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--gh-line);
+}
+
+#sec-github .wdg-gh-history-row:last-child {
+  border-bottom: 0;
+}
+
+#sec-github .wdg-gh-history-icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--gh-line);
+  border-radius: 5px;
+  color: var(--gh-accent);
+  background: var(--gh-panel-2);
+}
+
+#sec-github .wdg-gh-history-row > div {
+  min-width: 0;
+}
+
+#sec-github .wdg-gh-history-row strong,
+#sec-github .wdg-gh-history-row > div > span {
+  display: block;
+}
+
+#sec-github .wdg-gh-history-row strong {
+  overflow: hidden;
+  color: var(--gh-text);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#sec-github .wdg-gh-history-row > div > span {
+  margin-top: 3px;
+  overflow: hidden;
+  color: var(--gh-muted);
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#sec-github .wdg-gh-history-row time {
+  color: var(--gh-muted);
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+#sec-github .wdg-gh-history-badge {
+  padding: 4px 7px;
+  border: 1px solid color-mix(in srgb, var(--gh-success) 40%, var(--gh-line));
+  border-radius: 4px;
+  color: var(--gh-success);
+  background: var(--gh-success-soft);
+  font-size: 8px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+#sec-github .wdg-gh-history-badge.saved {
+  border-color: color-mix(in srgb, var(--gh-accent) 45%, var(--gh-line));
+  color: var(--gh-accent);
+  background: color-mix(in srgb, var(--gh-accent) 9%, var(--gh-panel-2));
+}
+
+#sec-github .wdg-gh-history-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 76px;
+  padding: 14px;
+  color: var(--gh-muted);
+  font-size: 10px;
+  text-align: center;
+}
+
+@media (max-width: 980px) {
+  #sec-github.wdg-gh-workspace-ready.active {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #sec-github.wdg-gh-workspace-ready > .wdg-gh-upload-workspace,
+  #sec-github.wdg-gh-workspace-ready > .wdg-gh-pages-rail {
+    grid-column: 1;
+  }
+
+  #sec-github .wdg-gh-pages-rail {
+    position: static;
+  }
+
+  #sec-github .wdg-gh-workspace-header {
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+
+  #sec-github .wdg-gh-workspace-summary {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 720px) {
+  #sec-github.wdg-gh-workspace-ready.active {
+    gap: 10px;
+    width: 100%;
+    overflow: visible;
+  }
+
+  #sec-github .wdg-gh-workspace-header {
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 11px;
+    padding: 13px;
+  }
+
+  #sec-github .wdg-gh-workspace-mark {
+    width: 38px;
+    height: 38px;
+  }
+
+  #sec-github .wdg-gh-workspace-copy h2 {
+    font-size: 18px;
+  }
+
+  #sec-github .wdg-gh-workspace-copy p {
+    font-size: 10px;
+  }
+
+  #sec-github .wdg-gh-workspace-summary {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    overflow-x: auto;
+  }
+
+  #sec-github .wdg-gh-workspace-summary strong {
+    max-width: 110px;
+  }
+
+  #sec-github .wdg-gh-context-bar {
+    grid-template-columns: 1fr;
+  }
+
+  #sec-github .wdg-gh-context-fields {
+    grid-template-columns: 1fr;
+  }
+
+  #sec-github .wdg-gh-connection {
+    justify-content: center;
+    white-space: normal;
+  }
+
+  #sec-github .wdg-gh-flow {
+    grid-template-columns: 1fr 12px 1fr 12px 1fr;
+    padding: 9px;
+  }
+
+  #sec-github .wdg-gh-flow-step {
+    justify-content: center;
+  }
+
+  #sec-github .wdg-gh-flow-step strong {
+    display: none;
+  }
+
+  #sec-github .wdg-gh-flow-step > span {
+    width: 34px;
+    height: 34px;
+  }
+
+  #sec-github .wdg-gh-upload-form {
+    padding: 0 12px 14px !important;
+  }
+
+  #sec-github .wdg-gh-panel-heading {
+    margin: 0 -12px;
+    padding: 13px 12px;
+  }
+
+  #sec-github .wdg-gh-dropzone {
+    min-height: 118px;
+  }
+
+  #sec-github .wdg-gh-mode button,
+  #sec-github .wdg-gh-context-field input,
+  #sec-github .wdg-gh-commit-fields input,
+  #sec-github .wdg-gh-folder-base,
+  #sec-github .wdg-gh-commit-actions button,
+  #sec-github .wdg-gh-pages-hero button,
+  #sec-github .wdgs-pages-controls button,
+  #sec-github .wdg-gh-create-summary button {
+    min-height: 44px;
+  }
+
+  #sec-github .wdg-gh-folder-options,
+  #sec-github .wdg-gh-commit-fields,
+  #sec-github .wdg-gh-commit-actions {
+    grid-template-columns: 1fr;
+  }
+
+  #sec-github .wdg-gh-upload-workspace > .items,
+  #sec-github .wdg-gh-create-panel.open > .items {
+    grid-template-columns: 1fr;
+  }
+
+  #sec-github .wdg-gh-create-summary {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+
+  #sec-github .wdg-gh-create-summary button {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  #sec-github .wdg-gh-history-row {
+    grid-template-columns: 32px minmax(0, 1fr) auto;
+  }
+
+  #sec-github .wdg-gh-history-row time {
+    display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  #sec-github .wdg-gh-history-row {
+    grid-template-columns: 30px minmax(0, 1fr);
+  }
+
+  #sec-github .wdg-gh-history-badge {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  #sec-github .wdg-gh-pages-hero dl > div {
+    grid-template-columns: 1fr;
+  }
+
+  #sec-github .wdg-gh-pages-hero dd {
+    text-align: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #sec-github .wdg-gh-dropzone,
+  #sec-github .wdg-gh-commit-actions button,
+  #sec-github .wdg-gh-pages-hero button,
+  #sec-github .wdg-gh-create-summary button {
+    transition: none;
+  }
+}

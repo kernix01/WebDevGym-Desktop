@@ -1,0 +1,5 @@
+node_modules/
+dist-electron*/
+.web-sync-temp/
+npm-debug.log*
+electron-debug.log*

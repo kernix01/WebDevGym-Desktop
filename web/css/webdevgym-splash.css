@@ -1,0 +1,157 @@
+#splash-screen,
+body.dark #splash-screen,
+body.wdg-modern #splash-screen,
+body.wdg-modern:not(.dark) #splash-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #080d14 !important;
+  color: #f8fafc !important;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 420ms ease, visibility 420ms ease;
+}
+
+#splash-screen.splash-hidden,
+body.dark #splash-screen.splash-hidden,
+body.wdg-modern #splash-screen.splash-hidden,
+body.wdg-modern:not(.dark) #splash-screen.splash-hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none;
+}
+
+#splash-screen .splash-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(360px, calc(100vw - 40px));
+  animation: wdgSplashEnter 520ms cubic-bezier(.2, .8, .2, 1) both;
+}
+
+#splash-screen .splash-icon {
+  width: 76px;
+  height: 76px;
+  margin-bottom: 22px;
+  filter: drop-shadow(0 0 22px rgba(124, 58, 237, .28));
+}
+
+#splash-screen .splash-logo {
+  display: block;
+  width: 72px;
+  height: 72px;
+}
+
+#splash-screen .splash-title {
+  display: flex;
+  margin: 0;
+  color: #f8fafc;
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+#splash-screen .splash-title strong {
+  color: #a855f7;
+  font: inherit;
+}
+
+#splash-screen .splash-sub {
+  margin: 9px 0 0;
+  color: #7f8da3;
+  font-size: 0;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+}
+
+#splash-screen .splash-sub::after {
+  content: "Frontend roadmap";
+  font-size: 11px;
+}
+
+#splash-screen .splash-progress {
+  display: grid;
+  grid-template-columns: repeat(3, 48px);
+  gap: 8px;
+  margin-top: 32px;
+}
+
+#splash-screen .splash-progress span {
+  display: block;
+  width: 48px;
+  height: 3px;
+  border-radius: 3px;
+  background: #1b2635;
+  overflow: hidden;
+}
+
+#splash-screen .splash-progress span::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #7c3aed, #a855f7);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: wdgSplashSegment 1.05s ease-in-out infinite;
+}
+
+#splash-screen .splash-progress span:nth-child(2)::after { animation-delay: 180ms; }
+#splash-screen .splash-progress span:nth-child(3)::after { animation-delay: 360ms; }
+
+#splash-screen .splash-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes wdgSplashEnter {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes wdgSplashSegment {
+  0%, 16% { opacity: .3; transform: scaleX(0); }
+  52% { opacity: 1; transform: scaleX(1); }
+  84%, 100% { opacity: .32; transform: scaleX(1); }
+}
+
+@media (max-width: 480px) {
+  #splash-screen .splash-icon,
+  #splash-screen .splash-logo {
+    width: 64px;
+    height: 64px;
+  }
+
+  #splash-screen .splash-icon { margin-bottom: 18px; }
+  #splash-screen .splash-title { font-size: 27px; }
+  #splash-screen .splash-progress { grid-template-columns: repeat(3, 40px); }
+  #splash-screen .splash-progress span { width: 40px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #splash-screen,
+  #splash-screen .splash-inner,
+  #splash-screen .splash-progress span::after {
+    animation: none;
+    transition-duration: 1ms;
+  }
+
+  #splash-screen .splash-progress span:first-child::after { transform: scaleX(1); }
+}

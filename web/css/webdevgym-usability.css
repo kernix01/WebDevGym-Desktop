@@ -1,0 +1,159 @@
+:root {
+  --wdgr-interface-font: Inter, system-ui, sans-serif;
+  --wdgr-code-font: "JetBrains Mono", Consolas, monospace;
+}
+
+body.wdg-modern { font-family: var(--wdgr-interface-font) !important; }
+body.wdg-modern :is(code, pre, kbd, samp, textarea[class*="editor"], .CodeMirror, .monaco-editor) { font-family: var(--wdgr-code-font) !important; }
+
+body.wdg-modern .wdga-dialog[open] {
+  position: fixed !important;
+  inset: 0 !important;
+  margin: auto !important;
+  transform: none !important;
+}
+
+body.wdg-modern .wdgr-settings-view.wdgr-settings-v2-ready .wdgr-settings-header-actions {
+  grid-template-columns: auto;
+}
+
+body.wdg-modern .wdgr-settings-view.wdgr-settings-v2-ready .wdgr-settings-footer { display: none !important; }
+
+.wdgu-timer-launcher {
+  position: relative;
+}
+.wdgu-timer-launcher.running { border-color: rgba(66, 215, 178, .5) !important; color: #61e7c4 !important; }
+.wdgu-timer-launcher.running::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #42d7b2;
+  box-shadow: 0 0 0 3px rgba(66, 215, 178, .12);
+}
+
+/* The new timer replaces the legacy fixed Pomodoro widget. */
+body.wdg-modern .pomo-btn,
+body.wdg-modern .pomo-wrap { display: none !important; }
+
+.wdgu-timer {
+  position: fixed;
+  z-index: 9450;
+  right: 18px;
+  bottom: 138px;
+  width: 350px;
+  min-width: 300px;
+  max-width: calc(100vw - 20px);
+  height: 360px;
+  min-height: 330px;
+  max-height: calc(100dvh - 70px);
+  overflow: auto;
+  resize: both;
+  border: 1px solid #334158;
+  border-radius: 7px;
+  background: #0b121d;
+  color: #edf4ff;
+  box-shadow: 0 28px 80px rgba(0,0,0,.52);
+  font-family: var(--wdgr-interface-font);
+}
+.wdgu-timer[hidden] { display: none !important; }
+.wdgu-timer-head { height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; border-bottom: 1px solid #26354a; cursor: grab; user-select: none; }
+.wdgu-timer-head > div { display: grid; grid-template-columns: 22px auto; align-items: center; gap: 1px 7px; }
+.wdgu-timer-head strong { font-size: 13px; }
+.wdgu-timer-head small { grid-column: 2; color: #85a0c4; font-size: 9px; }
+.wdgu-timer-head button, .wdgu-timer-actions button, .wdgu-timer-modes button, .wdgu-asset-row button, .wdgu-asset-row select { border: 1px solid #334158; border-radius: 5px; background: #111b29; color: #edf4ff; cursor: pointer; font: 700 10px/1.2 var(--wdgr-interface-font); }
+.wdgu-timer-head button { width: 32px; height: 32px; display: grid; place-items: center; }
+.wdgu-timer-body { padding: 14px; }
+.wdgu-timer-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+.wdgu-timer-modes button { height: 34px; }
+.wdgu-timer-modes button.active { border-color: #a855f7; background: #2b1642; color: #d8a8ff; }
+.wdgu-timer-display { padding: 20px 0 16px; text-align: center; font: 700 clamp(36px, 8cqi, 58px)/1 var(--wdgr-code-font); letter-spacing: 0; }
+.wdgu-timer-config { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.wdgu-config-pomodoro { grid-template-columns: 1fr 1fr; }
+.wdgu-timer[data-mode="timer"] .wdgu-config-pomodoro, .wdgu-timer[data-mode="pomodoro"] .wdgu-config-timer { display: none; }
+.wdgu-timer-config label { display: grid; gap: 6px; color: #8da4c4; font-size: 9px; }
+.wdgu-timer-config input { min-width: 0; height: 36px; border: 1px solid #334158; border-radius: 5px; background: #080e17; color: #fff; padding: 0 8px; font: 700 12px var(--wdgr-code-font); }
+.wdgu-timer-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 14px; }
+.wdgu-timer-actions button { min-width: 0; height: 38px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.wdgu-timer-actions button.primary { border-color: #9b47e7; background: #8b3be0; }
+
+.wdgu-settings-assets { display: grid; gap: 8px; }
+.wdgu-settings-assets .wdgr-section-title p { margin: 4px 0 0; color: var(--wdgr-muted); font-size: 10px; }
+.wdgu-asset-row { display: grid; grid-template-columns: minmax(150px,1fr) 120px auto auto 34px; align-items: center; gap: 8px; padding: 11px; border: 1px solid var(--wdgr-line); border-radius: 6px; background: color-mix(in srgb,var(--wdgr-surface-2) 74%,transparent); }
+.wdgu-asset-row > div { min-width: 0; }
+.wdgu-asset-row strong, .wdgu-asset-row small { display: block; }
+.wdgu-asset-row strong { font-size: 11px; }
+.wdgu-asset-row small { margin-top: 3px; color: var(--wdgr-muted); font-size: 9px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wdgu-asset-row button, .wdgu-asset-row select { min-height: 32px; padding: 0 10px; }
+.wdgu-asset-row button { display: flex; align-items: center; justify-content: center; gap: 5px; }
+.wdgu-asset-row button.danger { padding: 0; color: #fb7185; }
+
+body.wdg-modern .ai-chat-win.wdgr-ai { container-type: inline-size; }
+.wdgr-ai .wdgr-ai-history-toggle { display: grid !important; }
+.wdgr-ai .wdgr-ai-shell {
+  grid-template-columns: 0 minmax(0,1fr) !important;
+  overflow: hidden !important;
+}
+.wdgr-ai .wdgr-ai-history {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  opacity: 0;
+  transform: translateX(-16px);
+  pointer-events: none;
+  transition: opacity .16s ease, transform .16s ease;
+}
+.wdgr-ai.wdgr-history-open .wdgr-ai-shell { grid-template-columns: minmax(170px, 31%) minmax(0,1fr) !important; }
+.wdgr-ai.wdgr-history-open .wdgr-ai-history {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  overflow: auto !important;
+}
+@container (max-width: 660px) {
+  .wdgr-ai-shell { grid-template-columns: minmax(0,1fr) !important; }
+  .wdgr-ai-history { position: absolute !important; z-index: 18; inset: 0 auto 0 0; width: min(280px,88%); transform: translateX(-102%); transition: transform .18s ease; }
+  .wdgr-ai.wdgr-history-open .wdgr-ai-history { transform: translateX(0); }
+  .wdgr-ai-history-toggle, .wdgr-ai-history-head button { display: grid !important; }
+  .wdgr-ai-top-actions .wdgr-icon-text, .wdgr-ai-status { display: none !important; }
+  .wdgr-ai-model-slot { max-width: 150px !important; }
+}
+@container (max-width: 460px) {
+  .wdgr-ai-title strong, .wdgr-ai-model-slot { display: none !important; }
+  .wdgr-ai-topbar { gap: 4px !important; }
+  .wdgr-ai-composer-actions span { display: none; }
+}
+
+body.has-custom-bg #customBgLayer {
+  display: block !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  opacity: var(--custom-bg-opacity, 1) !important;
+  filter: none !important;
+}
+/* Keep the main shells above the wallpaper without changing the positioning
+   mode of floating widgets, dialogs, backdrops, or mobile navigation. */
+body.has-custom-bg > :is(
+  .top-bar,
+  .wrap,
+  .wdg-commandbar,
+  .wdg-rightbar
+) { position: relative; z-index: 1; }
+body.has-custom-bg .wrap { background: rgba(7, 11, 18, .48) !important; backdrop-filter: none !important; }
+body.has-custom-bg .wdgf-feature-page { backdrop-filter: none !important; }
+body.wdgf-page-open .section.active { visibility: hidden !important; }
+body.wdgf-page-open.has-custom-bg .wrap { visibility: hidden !important; }
+body.wdgf-page-open .wdgf-feature-page:not(.open) { display: none !important; }
+
+@media (max-width: 760px) {
+  .wdgu-timer { inset: auto 8px calc(var(--wdg-mobile-dock-height, 58px) + 62px) 8px !important; width: auto !important; height: min(390px, calc(100dvh - 140px)) !important; min-width: 0; resize: none; }
+  .wdgu-asset-row { grid-template-columns: 1fr auto auto; }
+  .wdgu-asset-row > div, .wdgu-asset-row select { grid-column: 1 / -1; width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wdgr-ai-history { transition: none !important; }
+}

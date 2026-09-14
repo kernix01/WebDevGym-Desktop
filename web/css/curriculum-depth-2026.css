@@ -1,0 +1,34 @@
+/* Detailed lessons added by curriculum-depth-2026.js */
+.wdg-depth-lesson .wdg-depth-practice,
+.wdg-depth-lesson .wdg-depth-docs {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--modern-border, #293548);
+  border-radius: 6px;
+  background: var(--modern-panel-soft, #111a27);
+  color: var(--modern-muted, #a8b7ca);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.wdg-depth-lesson .wdg-depth-practice {
+  border-left: 3px solid #a855f7;
+  color: var(--modern-text, #e7edf6);
+}
+
+.wdg-depth-lesson .wdg-depth-docs a {
+  color: #b98cff;
+  text-underline-offset: 3px;
+}
+
+.wdg-depth-lesson .wdg-depth-docs a:hover {
+  color: #d8b4fe;
+}
+
+@media (max-width: 640px) {
+  .wdg-depth-lesson .wdg-depth-practice,
+  .wdg-depth-lesson .wdg-depth-docs {
+    padding: 10px 11px;
+    overflow-wrap: anywhere;
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "WebDevGym",
+  "short_name": "WebDevGym",
+  "description": "Interactive frontend roadmap, practice lab and project forge.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#090d14",
+  "theme_color": "#090d14",
+  "orientation": "any",
+  "lang": "ru",
+  "categories": ["education", "developer tools", "productivity"],
+  "icons": [
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

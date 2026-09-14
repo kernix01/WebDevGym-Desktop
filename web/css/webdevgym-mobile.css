@@ -1,0 +1,340 @@
+/* Mobile workspace: full navigation drawer and persistent quick actions. */
+
+.wdg-mobile-dock,
+.wdg-mobile-backdrop,
+.wdg-mobile-tools {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  :root {
+    --wdg-mobile-dock-height: 58px;
+    --wdg-mobile-safe-bottom: max(8px, env(safe-area-inset-bottom));
+  }
+
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  body.wdg-modern {
+    padding-bottom: calc(var(--wdg-mobile-dock-height) + var(--wdg-mobile-safe-bottom));
+  }
+
+  body.wdg-modern.wdgf-page-open,
+  body.wdg-modern.wdg-mobile-nav-open {
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  body.wdg-modern .wdg-commandbar {
+    z-index: 4700;
+  }
+
+  body.wdg-modern .wdg-sidebar {
+    inset: var(--wdg-top) auto calc(var(--wdg-mobile-dock-height) + var(--wdg-mobile-safe-bottom)) 0;
+    z-index: 4690;
+    width: min(310px, 88vw);
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px 12px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border: 0;
+    border-right: 1px solid var(--wdg-line);
+    border-top: 1px solid var(--wdg-line);
+    background: #0b1119;
+    box-shadow: 18px 0 44px rgba(0, 0, 0, .36);
+    overscroll-behavior: contain;
+    transform: translateX(-105%);
+    transition: transform .22s ease;
+  }
+
+  body.wdg-modern .wdg-sidebar.peek {
+    transform: translateX(0);
+  }
+
+  body.wdg-modern .wdg-sidebar .wdg-brand {
+    display: flex;
+    min-height: 38px;
+  }
+
+  body.wdg-modern .wdg-sidebar .wdg-progress-card,
+  body.wdg-modern .wdg-sidebar .wdg-sidebar-foot {
+    display: none;
+  }
+
+  body.wdg-modern .wdg-side-nav {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    grid-template-columns: none;
+    gap: 5px;
+  }
+
+  body.wdg-modern .wdg-sidebar .wdg-nav-btn {
+    min-height: 44px;
+    height: auto;
+    flex: 0 0 auto;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 6px;
+  }
+
+  body.wdg-modern .wdg-sidebar .wdg-nav-btn span {
+    display: inline;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  body.wdg-modern .wdg-commandbar .wdg-icon-btn,
+  body.wdg-modern .wdg-commandbar .wdg-lang,
+  body.wdg-modern .wdg-commandbar .wdg-top-action {
+    display: none !important;
+  }
+
+  body.wdg-modern .wdg-commandbar .wdg-crumb {
+    min-width: 0;
+  }
+
+  .wdg-mobile-tools {
+    display: grid;
+    gap: 7px;
+    padding-top: 10px;
+    border-top: 1px solid var(--wdg-line);
+  }
+
+  .wdg-mobile-tools > strong {
+    padding-inline: 8px;
+    color: var(--wdg-muted);
+    font-size: 10px;
+    text-transform: uppercase;
+  }
+
+  .wdg-mobile-tools > div {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+  }
+
+  .wdg-mobile-tools button {
+    min-width: 0;
+    min-height: 52px;
+    display: grid;
+    place-items: center;
+    gap: 3px;
+    padding: 6px 3px;
+    border: 1px solid var(--wdg-line);
+    border-radius: 5px;
+    background: var(--wdg-panel);
+    color: var(--wdg-muted);
+    font: 700 9px/1.1 Inter, system-ui, sans-serif;
+  }
+
+  .wdg-mobile-tools button iconify-icon {
+    color: #c084fc;
+  }
+
+  body.wdg-modern .wdg-sidebar .wdg-nav-btn.active {
+    box-shadow: inset 3px 0 0 var(--wdg-accent);
+  }
+
+  .wdg-mobile-backdrop {
+    position: fixed;
+    inset: var(--wdg-top) 0 calc(var(--wdg-mobile-dock-height) + var(--wdg-mobile-safe-bottom));
+    z-index: 4680;
+    border: 0;
+    background: rgba(2, 6, 12, .64);
+    backdrop-filter: blur(2px);
+  }
+
+  .wdg-mobile-backdrop.open {
+    display: block;
+  }
+
+  .wdg-mobile-dock {
+    position: fixed;
+    right: 8px;
+    bottom: var(--wdg-mobile-safe-bottom);
+    left: 8px;
+    z-index: 4800;
+    height: var(--wdg-mobile-dock-height);
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+    padding: 5px;
+    border: 1px solid var(--wdg-line);
+    border-radius: 8px;
+    background: rgba(9, 14, 22, .96);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, .4);
+    backdrop-filter: blur(16px);
+  }
+
+  body.wdg-modern:not(.dark) .wdg-mobile-dock {
+    background: rgba(255, 255, 255, .96);
+  }
+
+  .wdg-mobile-action {
+    min-width: 0;
+    display: grid;
+    grid-template-rows: 20px 12px;
+    place-items: center;
+    gap: 2px;
+    padding: 4px 2px;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--wdg-muted);
+    cursor: pointer;
+    font: 700 9px/1 Inter, system-ui, sans-serif;
+    letter-spacing: 0;
+  }
+
+  .wdg-mobile-action iconify-icon {
+    color: #c084fc;
+  }
+
+  .wdg-mobile-action:hover,
+  .wdg-mobile-action:focus-visible,
+  .wdg-mobile-action.active {
+    background: rgba(168, 85, 247, .15);
+    color: var(--wdg-text);
+    outline: none;
+  }
+
+  body.wdg-modern .search-fab,
+  body.wdg-modern .settings-btn,
+  body.wdg-modern .pomo-btn {
+    display: none !important;
+  }
+
+  body.wdg-modern .wdg-bottom-dock {
+    right: 8px;
+    bottom: calc(var(--wdg-mobile-dock-height) + var(--wdg-mobile-safe-bottom) + 7px);
+    left: 8px;
+    z-index: 2150;
+    width: auto;
+    height: 50px;
+    grid-template-columns: 42px minmax(80px, 1fr) 92px;
+    padding: 0 8px;
+    border: 1px solid var(--wdg-line);
+    border-radius: 7px;
+  }
+
+  body.wdg-modern .wdg-bottom-dock .wdg-dock-btn iconify-icon {
+    display: none;
+  }
+  body.wdg-modern .wrap {
+    padding-bottom: 142px !important;
+  }
+
+  body.wdg-modern .wdgf-feature-page {
+    bottom: calc(var(--wdg-mobile-dock-height) + var(--wdg-mobile-safe-bottom)) !important;
+  }
+
+  body.wdg-modern.wdgf-page-open .wdgf-feature-page {
+    bottom: calc(var(--wdg-mobile-dock-height) + var(--wdg-mobile-safe-bottom)) !important;
+  }
+
+  body.wdg-modern .settings-mini,
+  body.wdg-modern .settings-mini.wdgf-settings-top {
+    top: auto !important;
+    right: 8px !important;
+    bottom: calc(var(--wdg-mobile-dock-height) + var(--wdg-mobile-safe-bottom) + 8px) !important;
+    left: 8px !important;
+    z-index: 5300 !important;
+    width: auto !important;
+    max-height: calc(100dvh - var(--wdg-top) - var(--wdg-mobile-dock-height) - 30px) !important;
+  }
+
+  body.wdg-modern .pomo-widget {
+    right: 8px;
+    bottom: calc(var(--wdg-mobile-dock-height) + var(--wdg-mobile-safe-bottom) + 8px);
+    left: 8px;
+    z-index: 5300;
+    width: auto;
+    max-width: none;
+    max-height: calc(100dvh - var(--wdg-top) - var(--wdg-mobile-dock-height) - 30px);
+    overflow-y: auto;
+  }
+
+  body.wdg-modern .wdg-library-panel {
+    top: calc(var(--wdg-top) + 8px);
+    bottom: calc(var(--wdg-mobile-dock-height) + var(--wdg-mobile-safe-bottom) + 8px);
+    left: 8px;
+    width: calc(100vw - 16px);
+    max-height: none;
+  }
+
+  body.wdg-modern .wdg-library-grid {
+    grid-template-columns: 1fr;
+  }
+
+  body.wdg-modern .search-modal {
+    width: calc(100vw - 20px);
+    max-height: calc(100dvh - 90px);
+  }
+
+  body.wdg-modern .wdgforge-modebar {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+
+  body.wdg-modern .wdgforge-modebar::-webkit-scrollbar {
+    display: none;
+  }
+
+  body.wdg-modern .wdgforge-mode {
+    flex: 0 0 auto;
+  }
+
+  body.wdg-modern .wdgforge-toolbar,
+  body.wdg-modern .wdgforge-actions {
+    width: 100%;
+  }
+
+  body.wdg-modern .wdgforge-actions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  body.wdg-modern .wdgforge-actions .wdgforge-save {
+    grid-column: 1 / -1;
+  }
+
+  body.wdg-modern .wdgforge-actions .wdgf-btn {
+    min-width: 0;
+    justify-content: center;
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 390px) {
+  .wdg-mobile-action span {
+    font-size: 8px;
+  }
+
+  body.wdg-modern .wdg-crumb span:first-child,
+  body.wdg-modern .wdg-lang span {
+    display: none;
+  }
+
+  body.wdg-modern .wdg-crumb strong {
+    max-width: 118px;
+  }
+
+  body.wdg-modern .wdgforge-actions {
+    grid-template-columns: 1fr;
+  }
+
+  body.wdg-modern .wdgforge-actions .wdgforge-save {
+    grid-column: auto;
+  }
+}

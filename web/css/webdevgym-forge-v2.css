@@ -1,0 +1,829 @@
+/* Forge Studio v2: an IDE workspace layered over the original Forge logic. */
+body:has(#wdgforgeView .wdgforge-v2-studio) {
+  --forge-v2-bg: #070a0f;
+  --forge-v2-panel: #0b1119;
+  --forge-v2-panel-2: #0e1621;
+  --forge-v2-panel-3: #121c29;
+  --forge-v2-line: #233043;
+  --forge-v2-line-strong: #35445b;
+  --forge-v2-text: #edf4ff;
+  --forge-v2-muted: #8293aa;
+  --forge-v2-purple: #a855f7;
+  --forge-v2-purple-2: #7c3aed;
+  --forge-v2-mint: #34d399;
+}
+
+body:has(#wdgforgeView .wdgforge-v2-studio) .modern-workspace-main {
+  overflow: hidden;
+}
+
+body:has(#wdgforgeView .wdgforge-v2-studio) .modern-page-content {
+  width: 100%;
+  max-width: none;
+  padding: 12px 14px 14px;
+}
+
+.wdgforge-shell:has(.wdgforge-v2) {
+  min-height: calc(100vh - 112px);
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 8px;
+  margin-top: 0;
+}
+
+.wdgforge-v2-rail {
+  position: relative;
+  top: auto;
+  z-index: 8;
+  min-height: calc(100vh - 126px);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 7px;
+  overflow: hidden;
+  border-color: var(--forge-v2-line);
+  border-radius: 6px;
+  background: var(--forge-v2-panel);
+}
+
+.wdgforge-v2-rail .wdgforge-mode,
+.wdgforge-v2-rail-toggle {
+  width: 100%;
+  min-width: 0;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--forge-v2-muted);
+  cursor: pointer;
+  font: 700 11px/1 Inter, system-ui, sans-serif;
+  transition: color .16s ease, background .16s ease, border-color .16s ease;
+}
+
+.wdgforge-v2-rail svg,
+.wdgforge-v2 button svg {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.wdgforge-v2-rail .wdgforge-mode span,
+.wdgforge-v2-rail-toggle span {
+  display: none;
+}
+
+.wdgforge-v2-rail .wdgforge-mode:hover,
+.wdgforge-v2-rail-toggle:hover {
+  color: var(--forge-v2-text);
+  background: var(--forge-v2-panel-3);
+}
+
+.wdgforge-v2-rail .wdgforge-mode.active {
+  border-color: #704097;
+  background: #251337;
+  color: #e6c7ff;
+}
+
+.wdgforge-v2-rail-toggle {
+  margin-bottom: 5px;
+  border-color: var(--forge-v2-line);
+  color: #b7c4d6;
+}
+
+.wdgforge-v2-rail.is-collapsed {
+  opacity: .76;
+}
+
+.wdgforge-view.wdgforge-v2 {
+  min-width: 0;
+  min-height: calc(100vh - 126px);
+  color: var(--forge-v2-text);
+}
+
+.wdgforge-v2 .wdgforge-projectbar {
+  min-height: 48px;
+  padding: 7px 10px;
+  border-color: var(--forge-v2-line);
+  border-radius: 6px 6px 0 0;
+  background: var(--forge-v2-panel);
+}
+
+.wdgforge-v2 .wdgforge-projectbar label > span {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #66778d;
+}
+
+.wdgforge-v2 .wdgforge-select {
+  width: min(440px, 52vw);
+  min-height: 32px;
+  border-color: var(--forge-v2-line);
+  border-radius: 4px;
+  background: #0a1018;
+  color: var(--forge-v2-text);
+}
+
+.wdgforge-v2 .wdgforge-status {
+  border-color: #68408a;
+  border-radius: 4px;
+  background: #211132;
+  color: #dec0ff;
+}
+
+.wdgforge-v2-stage-track {
+  min-height: 50px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: 0 18px;
+  border: 1px solid var(--forge-v2-line);
+  border-top: 0;
+  border-radius: 0 0 6px 6px;
+  background: #080d14;
+}
+
+.wdgforge-v2-stage-step {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #607086;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.wdgforge-v2-stage-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: 28px;
+  right: 8px;
+  height: 1px;
+  background: var(--forge-v2-line);
+}
+
+.wdgforge-v2-stage-step span,
+.wdgforge-v2-stage-step b {
+  position: relative;
+  z-index: 1;
+}
+
+.wdgforge-v2-stage-step span {
+  width: 21px;
+  height: 21px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #39485d;
+  border-radius: 50%;
+  background: #0a1018;
+  color: #8293a9;
+  font-size: 9px;
+}
+
+.wdgforge-v2-stage-step b {
+  padding-right: 10px;
+  background: #080d14;
+  white-space: nowrap;
+}
+
+.wdgforge-v2-stage-step.active {
+  color: #e6c7ff;
+}
+
+.wdgforge-v2-stage-step.active span {
+  border-color: var(--forge-v2-purple);
+  box-shadow: 0 0 0 4px rgba(168, 85, 247, .11);
+  color: #fff;
+}
+
+.wdgforge-v2-stage-step.done {
+  color: #91e9c2;
+}
+
+.wdgforge-v2-stage-step.done span {
+  border-color: #298765;
+  background: #12382b;
+  color: #a5f3cf;
+}
+
+.wdgforge-v2 .wdgforge-v2-workspace {
+  display: block;
+  margin-top: 8px;
+}
+
+.wdgforge-v2 .wdgforge-v2-studio {
+  --forge-editor-share: 58%;
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(300px, 1fr) var(--forge-bottom-height, 250px);
+  min-height: calc(100vh - 240px);
+  overflow: hidden;
+  border-color: var(--forge-v2-line);
+  border-radius: 6px;
+  background: var(--forge-v2-bg);
+}
+
+.wdgforge-v2 .wdgforge-toolbar {
+  min-width: 0;
+  min-height: 48px;
+  padding: 6px 9px;
+  border-bottom: 1px solid var(--forge-v2-line);
+  background: var(--forge-v2-panel);
+}
+
+.wdgforge-v2 .wdgforge-code-tabs {
+  display: flex;
+  align-items: stretch;
+  align-self: stretch;
+  overflow-x: auto;
+}
+
+.wdgforge-v2 .wdgforge-code-tabs button {
+  min-width: 78px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: #76879d;
+}
+
+.wdgforge-v2 .wdgforge-code-tabs button.active {
+  border-bottom-color: var(--forge-v2-purple);
+  background: rgba(168, 85, 247, .08);
+  color: #ead5ff;
+}
+
+.wdgforge-v2 .wdgforge-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  overflow-x: auto;
+}
+
+.wdgforge-v2 .wdgf-btn,
+.wdgforge-v2 .wdgforge-icon,
+.wdgforge-v2-device,
+.wdgforge-v2-output-tab,
+.wdgforge-v2-drawer-toggle {
+  min-height: 31px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 5px 9px;
+  border: 1px solid var(--forge-v2-line);
+  border-radius: 4px;
+  background: #101824;
+  color: #bdc9d8;
+  font: 750 10px/1 Inter, system-ui, sans-serif;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.wdgforge-v2 .wdgf-btn:hover,
+.wdgforge-v2 .wdgforge-icon:hover,
+.wdgforge-v2-device:hover,
+.wdgforge-v2-output-tab:hover,
+.wdgforge-v2-drawer-toggle:hover {
+  border-color: var(--forge-v2-line-strong);
+  color: #fff;
+  background: #152030;
+}
+
+.wdgforge-v2 .wdgf-btn.primary {
+  border-color: #8b43c8;
+  background: linear-gradient(180deg, #9b4de0, #7831b9);
+  color: #fff;
+}
+
+.wdgforge-v2 .wdgforge-save {
+  color: var(--forge-v2-mint);
+  font-size: 10px;
+}
+
+.wdgforge-v2 .wdgforge-stage {
+  position: relative;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(260px, var(--forge-editor-share)) 7px minmax(260px, 1fr);
+  gap: 0;
+  overflow: hidden;
+}
+
+.wdgforge-v2 .wdgforge-editor,
+.wdgforge-v2 .wdgforge-preview {
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  background: #070b11;
+}
+
+.wdgforge-v2 .wdgforge-editor > header,
+.wdgforge-v2 .wdgforge-preview > header {
+  min-height: 40px;
+  padding: 5px 9px;
+  border-bottom: 1px solid var(--forge-v2-line);
+  background: #0c131d;
+}
+
+.wdgforge-v2 .wdgforge-editor > header h3,
+.wdgforge-v2 .wdgforge-preview > header h3 {
+  margin: 0;
+  color: #93a3b8;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.wdgforge-v2 .wdgforge-editor textarea {
+  height: calc(100% - 40px);
+  min-height: 260px;
+  padding: 16px 18px;
+  border: 0;
+  border-radius: 0;
+  background: #060a10;
+  color: #dceaff;
+  font: 500 13px/1.65 'Cascadia Code', 'JetBrains Mono', Consolas, monospace;
+  tab-size: 2;
+  resize: none;
+}
+
+.wdgforge-v2 .wdgforge-preview {
+  display: flex;
+  flex-direction: column;
+  background: #0a0f18;
+}
+
+.wdgforge-v2 .wdgforge-preview > header {
+  justify-content: flex-start;
+}
+
+.wdgforge-v2 .wdgforge-preview > header [data-forge-run] {
+  margin-left: auto;
+}
+
+.wdgforge-v2 .wdgforge-preview iframe {
+  width: 100%;
+  max-width: none;
+  height: calc(100% - 40px);
+  min-height: 260px;
+  align-self: center;
+  border: 0;
+  border-radius: 0;
+  background: #fff;
+  transition: width .2s ease, border-radius .2s ease, margin .2s ease;
+}
+
+.wdgforge-v2[data-preview-device='mobile'] .wdgforge-preview iframe {
+  width: min(390px, calc(100% - 28px));
+  height: calc(100% - 58px);
+  margin: 9px 0;
+  border: 5px solid #202938;
+  border-radius: 18px;
+}
+
+.wdgforge-v2-devices {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--forge-v2-line);
+  border-radius: 4px;
+  background: #070b11;
+}
+
+.wdgforge-v2-device {
+  min-height: 26px;
+  padding: 4px 7px;
+  border: 0;
+  background: transparent;
+}
+
+.wdgforge-v2-device.active {
+  background: #271438;
+  color: #e8ceff;
+}
+
+.wdgforge-v2-splitter-x {
+  position: relative;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  border-left: 1px solid #1e2a3a;
+  border-right: 1px solid #1e2a3a;
+  background: #0d141f;
+  color: #46566c;
+  cursor: col-resize;
+  touch-action: none;
+}
+
+.wdgforge-v2-splitter-x:hover,
+.wdgforge-v2-splitter-x:active {
+  background: #2c1540;
+  color: #c084fc;
+}
+
+.wdgforge-v2-splitter-x svg {
+  width: 15px;
+  transform: rotate(90deg);
+}
+
+.wdgforge-v2-bottom {
+  position: relative;
+  min-height: 0;
+  border-top: 1px solid var(--forge-v2-line);
+  background: var(--forge-v2-panel);
+}
+
+.wdgforge-v2-splitter-y {
+  position: absolute;
+  z-index: 6;
+  top: -5px;
+  left: 0;
+  right: 0;
+  height: 9px;
+  display: grid;
+  place-items: center;
+  color: #4a5b72;
+  cursor: row-resize;
+  touch-action: none;
+}
+
+.wdgforge-v2-splitter-y::before {
+  content: '';
+  width: 54px;
+  height: 3px;
+  border-radius: 2px;
+  background: #39485d;
+}
+
+.wdgforge-v2-splitter-y svg {
+  display: none;
+}
+
+.wdgforge-v2-drawers {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(260px, .86fr) minmax(320px, 1.14fr);
+  overflow: hidden;
+}
+
+.wdgforge-v2-drawer {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: 39px minmax(0, 1fr);
+  border-right: 1px solid var(--forge-v2-line);
+}
+
+.wdgforge-v2-drawer:last-child {
+  border-right: 0;
+}
+
+.wdgforge-v2-drawer > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--forge-v2-line);
+  background: #0b121c;
+}
+
+.wdgforge-v2-drawer-toggle,
+.wdgforge-v2-output-tab {
+  border-color: transparent;
+  background: transparent;
+}
+
+.wdgforge-v2-drawer-toggle.icon-only span {
+  display: none;
+}
+
+.wdgforge-v2-output-tabs {
+  display: flex;
+  gap: 3px;
+}
+
+.wdgforge-v2-output-tab.active {
+  color: #e8ceff;
+  background: #28163a;
+}
+
+.wdgforge-v2-drawer-meta {
+  margin-left: auto;
+  color: #5f7188;
+  font-size: 9px;
+  text-transform: uppercase;
+}
+
+.wdgforge-v2-drawer-body {
+  min-height: 0;
+  overflow: auto;
+}
+
+.wdgforge-v2 .wdgforge-brief {
+  width: 100%;
+  min-height: 100%;
+  padding: 14px 16px;
+  border: 0;
+  border-radius: 0;
+  background: #090f17;
+}
+
+.wdgforge-v2 .wdgforge-brief h2 {
+  margin: 8px 0 5px;
+  font-size: 16px;
+}
+
+.wdgforge-v2 .wdgforge-brief h3 {
+  margin: 12px 0 7px;
+}
+
+.wdgforge-v2 .wdgforge-hints {
+  margin-top: 12px;
+  padding-top: 10px;
+}
+
+.wdgforge-v2-console,
+.wdgforge-v2-checks {
+  min-height: 100%;
+  padding: 10px 12px;
+  background: #060a10;
+}
+
+.wdgforge-v2[data-output-tab='console'] .wdgforge-v2-checks,
+.wdgforge-v2[data-output-tab='checks'] .wdgforge-v2-console {
+  display: none;
+}
+
+.wdgforge-v2-log {
+  display: grid;
+  grid-template-columns: 72px 54px minmax(0, 1fr);
+  gap: 8px;
+  padding: 4px 0;
+  color: #b6c4d7;
+  font: 500 11px/1.45 'Cascadia Code', Consolas, monospace;
+}
+
+.wdgforge-v2-log time {
+  color: #56677d;
+}
+
+.wdgforge-v2-log > span {
+  color: #38bdf8;
+}
+
+.wdgforge-v2-log.warn > span {
+  color: #fbbf24;
+}
+
+.wdgforge-v2-log.error > span {
+  color: #fb7185;
+}
+
+.wdgforge-v2-log.muted code,
+.wdgforge-v2-log.muted > span {
+  color: #67788e;
+}
+
+.wdgforge-v2 .wdgforge-results {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.wdgforge-v2.task-collapsed .task-drawer,
+.wdgforge-v2.output-collapsed .output-drawer {
+  grid-template-rows: 39px 0;
+}
+
+.wdgforge-v2.task-collapsed .task-drawer .wdgforge-v2-drawer-body,
+.wdgforge-v2.output-collapsed .output-drawer .wdgforge-v2-drawer-body {
+  display: none;
+}
+
+.wdgforge-v2.task-collapsed.output-collapsed .wdgforge-v2-studio {
+  grid-template-rows: auto minmax(420px, 1fr) 40px;
+}
+
+.wdgforge-v2 .wdgforge-history {
+  position: fixed;
+  z-index: 10020;
+  inset: 72px 18px 18px auto;
+  width: min(420px, calc(100vw - 36px));
+  padding: 0;
+  overflow: auto;
+  border: 1px solid var(--forge-v2-line-strong);
+  border-radius: 7px;
+  background: #0a111b;
+  box-shadow: 0 26px 80px rgba(0, 0, 0, .5);
+}
+
+.wdgforge-v2 .wdgforge-history > header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 12px;
+  border-bottom: 1px solid var(--forge-v2-line);
+  background: #0b121c;
+}
+
+body.wdgforge-v2-resizing {
+  cursor: col-resize;
+  user-select: none;
+}
+
+body.wdgforge-v2-resizing iframe {
+  pointer-events: none;
+}
+
+@media (max-width: 1050px) {
+  .wdgforge-shell:has(.wdgforge-v2) {
+    grid-template-columns: 1fr;
+  }
+
+  .wdgforge-v2-rail {
+    min-height: 0;
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  .wdgforge-v2-rail .wdgforge-mode,
+  .wdgforge-v2-rail-toggle {
+    width: auto;
+    min-width: 40px;
+  }
+
+  .wdgforge-v2-rail-toggle {
+    margin: 0 5px 0 0;
+  }
+
+  .wdgforge-v2 .wdgforge-save {
+    display: none;
+  }
+
+  .wdgforge-v2-drawers {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  body:has(#wdgforgeView .wdgforge-v2-studio) .modern-page-content {
+    padding: 7px;
+  }
+
+  .wdgforge-shell:has(.wdgforge-v2),
+  .wdgforge-view.wdgforge-v2 {
+    min-height: calc(100dvh - 98px);
+  }
+
+  .wdgforge-v2-rail .wdgforge-mode span {
+    display: inline;
+  }
+
+  .wdgforge-v2 .wdgforge-projectbar {
+    align-items: stretch;
+  }
+
+  .wdgforge-v2 .wdgforge-projectbar label {
+    flex: 1;
+  }
+
+  .wdgforge-v2 .wdgforge-projectbar label > span {
+    display: none;
+  }
+
+  .wdgforge-v2 .wdgforge-select {
+    width: 100%;
+  }
+
+  .wdgforge-v2-stage-track {
+    padding: 0 8px;
+  }
+
+  .wdgforge-v2-stage-step {
+    justify-content: center;
+  }
+
+  .wdgforge-v2-stage-step b,
+  .wdgforge-v2-stage-step::after {
+    display: none;
+  }
+
+  .wdgforge-v2 .wdgforge-v2-studio {
+    min-height: 900px;
+    grid-template-rows: auto 610px var(--forge-bottom-height, 290px);
+  }
+
+  .wdgforge-v2 .wdgforge-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .wdgforge-v2 .wdgforge-actions {
+    width: 100%;
+  }
+
+  .wdgforge-v2 .wdgforge-stage {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(260px, 1fr) 7px minmax(260px, 1fr);
+  }
+
+  .wdgforge-v2-splitter-x {
+    cursor: row-resize;
+  }
+
+  .wdgforge-v2-splitter-x svg {
+    transform: none;
+  }
+
+  .wdgforge-v2-drawers {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+
+  .wdgforge-v2-drawer {
+    border-right: 0;
+    border-bottom: 1px solid var(--forge-v2-line);
+  }
+
+  .wdgforge-v2-device span,
+  .wdgforge-v2 .wdgforge-actions .wdgf-btn:not(.primary) span {
+    display: none;
+  }
+
+  .wdgforge-v2-log {
+    grid-template-columns: 58px 44px minmax(0, 1fr);
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .wdgforge-v2 .wdgforge-code-tabs button {
+    min-width: 64px;
+  }
+
+  .wdgforge-v2 .wdgforge-actions .wdgforge-save {
+    display: none;
+  }
+
+  .wdgforge-v2 .wdgforge-editor textarea {
+    padding: 12px;
+    font-size: 12px;
+  }
+}
+
+/* Forge Studio v2 polish 2026-08-03 */
+.wdgforge-v2.task-collapsed .wdgforge-v2-drawers {
+  grid-template-columns: 180px minmax(0, 1fr);
+}
+
+.wdgforge-v2.output-collapsed .wdgforge-v2-drawers {
+  grid-template-columns: minmax(0, 1fr) 180px;
+}
+
+.wdgforge-v2.task-collapsed.output-collapsed .wdgforge-v2-drawers {
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 760px) {
+  .wdgforge-v2 .wdgforge-actions {
+    width: 100%;
+    display: flex !important;
+    align-items: center !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+  }
+
+  .wdgforge-v2 .wdgforge-actions .wdgf-btn {
+    width: auto !important;
+    min-width: 34px;
+    flex: 0 0 auto;
+  }
+
+  .wdgforge-v2 .wdgforge-actions .wdgf-btn:not(.primary) {
+    font-size: 0;
+  }
+
+  .wdgforge-v2 .wdgforge-actions .wdgf-btn iconify-icon {
+    font-size: 15px;
+  }
+
+  .wdgforge-v2.task-collapsed .wdgforge-v2-drawers,
+  .wdgforge-v2.output-collapsed .wdgforge-v2-drawers,
+  .wdgforge-v2.task-collapsed.output-collapsed .wdgforge-v2-drawers {
+    grid-template-columns: 1fr;
+  }
+}

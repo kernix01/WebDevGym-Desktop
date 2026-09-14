@@ -1,0 +1,91 @@
+/* Final layout refinements after real-browser visual QA. */
+.wdg-lesson-row > span:nth-child(2) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.wdg-modern:has(#sec-nexus.active) .wrap {
+  margin-right: 0 !important;
+}
+
+body.wdg-modern:has(#sec-nexus.active) .wdg-rightbar {
+  display: none;
+}
+
+body.wdg-modern:has(#sec-nexus.active) .wdg-bottom-dock {
+  right: 0;
+}
+
+.wdg-modern #sec-nexus .nexus-shell > main.nexus-panel {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(330px, .82fr) minmax(430px, 1.18fr);
+  grid-template-rows: auto auto minmax(0, 1fr);
+  grid-template-areas:
+    "actions actions"
+    "title graph"
+    "editor graph";
+  gap: 10px;
+  align-items: stretch;
+}
+
+.wdg-modern #sec-nexus .nexus-shell > main.nexus-panel > .nexus-actions {
+  grid-area: actions;
+  margin: 0;
+}
+
+.wdg-modern #sec-nexus .nexus-shell > main.nexus-panel > .nexus-title-input {
+  grid-area: title;
+}
+
+.wdg-modern #sec-nexus .nexus-shell > main.nexus-panel > .nexus-editor-grid {
+  grid-area: editor;
+  min-height: 0;
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  grid-template-rows: minmax(210px, 1fr) minmax(180px, .82fr);
+  margin: 0 !important;
+}
+
+.wdg-modern #sec-nexus .nexus-shell > main.nexus-panel > .nexus-editor-grid .nexus-textarea,
+.wdg-modern #sec-nexus .nexus-shell > main.nexus-panel > .nexus-editor-grid .nexus-preview {
+  min-height: 0 !important;
+  height: 100%;
+}
+
+.wdg-modern #sec-nexus .nexus-shell > main.nexus-panel > .wdg-graph-host {
+  grid-area: graph;
+  min-width: 0;
+  margin: 0 !important;
+}
+
+.wdg-modern #sec-nexus .wdg-graph-shell {
+  height: 100%;
+  display: grid;
+  grid-template-rows: 42px minmax(0, 1fr);
+}
+
+.wdg-modern #sec-nexus .wdg-graph-viewport {
+  height: auto;
+  min-height: 560px;
+}
+
+@media (max-width: 1120px) {
+  .wdg-modern #sec-nexus .nexus-shell > main.nexus-panel {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+    grid-template-areas: "actions" "title" "editor" "graph";
+  }
+  .wdg-modern #sec-nexus .wdg-graph-viewport { min-height: 470px; }
+}
+
+@media (max-width: 720px) {
+  body.wdg-modern:has(#sec-nexus.active) .wrap { margin: 0 !important; }
+  .wdg-modern #sec-nexus .nexus-shell > main.nexus-panel > .nexus-editor-grid {
+    grid-template-rows: 240px 220px;
+  }
+  .wdg-modern #sec-nexus .wdg-graph-viewport { min-height: 410px; }
+}
+

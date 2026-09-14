@@ -8,7 +8,7 @@
   "license": "GPL-3.0-only",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kernix01/WebDevGym-Electron.git"
+    "url": "https://github.com/kernix01/WebDevGym-Desktop.git"
   },
   "scripts": {
     "desktop": "electron .",

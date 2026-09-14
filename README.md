@@ -1,4 +1,4 @@
-# WebDevGym Electron
+# WebDevGym Desktop
 
 Отдельная desktop-версия WebDevGym для Windows. Приложение упаковывает локальную копию веб-проекта и работает без обязательного подключения к интернету.
 

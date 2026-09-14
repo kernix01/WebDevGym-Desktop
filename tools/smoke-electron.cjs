@@ -125,8 +125,6 @@ async function main() {
         const testToken = 'github_pat_' + 'a'.repeat(32);
         await window.webdevgymDesktop.githubToken.save(testToken);
         const tokenRoundTrip = await window.webdevgymDesktop.githubToken.load() === testToken;
-        await window.webdevgymDesktop.githubToken.remove();
-        const tokenRemoved = await window.webdevgymDesktop.githubToken.load() === '';
         return {
           title: document.title,
           language: document.documentElement.lang,
@@ -140,8 +138,7 @@ async function main() {
           firstRouteMs,
           repeatedRouteMs,
           tokenBridge: Boolean(window.webdevgymDesktop?.githubToken?.load),
-          tokenRoundTrip,
-          tokenRemoved
+          tokenRoundTrip
         };
       })()`
     });
@@ -152,7 +149,6 @@ async function main() {
     assert.equal(result.desktop?.isDesktop, true);
     assert.equal(result.tokenBridge, true);
     assert.equal(result.tokenRoundTrip, true);
-    assert.equal(result.tokenRemoved, true);
     assert.equal(result.routesFound, true);
     assert.equal(result.overviewFound, true);
     assert.equal(result.pathOpen, true);
@@ -161,7 +157,33 @@ async function main() {
     assert.ok(result.stylesheets >= 10, 'Expected WebDevGym stylesheets to load');
     assert.ok(result.firstRouteMs < 250, `First route render took ${result.firstRouteMs.toFixed(1)} ms`);
     assert.ok(result.repeatedRouteMs < 100, `Repeated route render took ${result.repeatedRouteMs.toFixed(1)} ms`);
-    console.log(JSON.stringify(result, null, 2));
+    await cdp.send('Page.enable');
+    await cdp.send('Page.reload');
+    await delay(1600);
+    const restoreEvaluation = await cdp.send('Runtime.evaluate', {
+      awaitPromise: true,
+      returnByValue: true,
+      expression: `(async () => {
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = '<input id="gh-token" type="password"><span></span>';
+        document.body.appendChild(wrapper);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        const input = document.getElementById('gh-token');
+        const restored = input.value === 'github_pat_' + 'a'.repeat(32);
+        input.value = '';
+        const restoredToken = await window.WebDevGymGitHubTokenVault.restore();
+        const restoredByVault = input.value === restoredToken && restoredToken.length >= 20;
+        await window.webdevgymDesktop.githubToken.remove();
+        const tokenRemoved = await window.webdevgymDesktop.githubToken.load() === '';
+        wrapper.remove();
+        return { restored, restoredByVault, tokenRemoved };
+      })()`
+    });
+    const restoreResult = restoreEvaluation.result.value;
+    assert.equal(restoreResult.restored, true);
+    assert.equal(restoreResult.restoredByVault, true);
+    assert.equal(restoreResult.tokenRemoved, true);
+    console.log(JSON.stringify({ ...result, ...restoreResult }, null, 2));
     await cdp.send('Browser.close');
   } finally {
     cdp?.close();

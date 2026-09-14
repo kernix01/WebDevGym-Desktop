@@ -1,6 +1,6 @@
 {
   "name": "webdevgym-electron",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Desktop edition of the WebDevGym learning workspace",
   "author": "kernix01",
   "main": "electron/main.cjs",

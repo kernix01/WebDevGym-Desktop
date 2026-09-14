@@ -88,7 +88,11 @@ async function main() {
 
   const child = spawn(electronPath, launchArguments, {
     cwd: projectRoot,
-    env: { ...process.env, ELECTRON_ENABLE_SECURITY_WARNINGS: 'true' },
+    env: {
+      ...process.env,
+      ELECTRON_ENABLE_SECURITY_WARNINGS: 'true',
+      WEBDEVGYM_TEST_USER_DATA: profileDirectory
+    },
     stdio: ['ignore', 'pipe', 'pipe'],
     windowsHide: false
   });
@@ -118,6 +122,11 @@ async function main() {
         const repeatStart = performance.now();
         routes?.click();
         const repeatedRouteMs = performance.now() - repeatStart;
+        const testToken = 'github_pat_' + 'a'.repeat(32);
+        await window.webdevgymDesktop.githubToken.save(testToken);
+        const tokenRoundTrip = await window.webdevgymDesktop.githubToken.load() === testToken;
+        await window.webdevgymDesktop.githubToken.remove();
+        const tokenRemoved = await window.webdevgymDesktop.githubToken.load() === '';
         return {
           title: document.title,
           language: document.documentElement.lang,
@@ -129,7 +138,10 @@ async function main() {
           pathPageCount: document.querySelectorAll('[data-feature-page="paths"]').length,
           cachedAfterOverview,
           firstRouteMs,
-          repeatedRouteMs
+          repeatedRouteMs,
+          tokenBridge: Boolean(window.webdevgymDesktop?.githubToken?.load),
+          tokenRoundTrip,
+          tokenRemoved
         };
       })()`
     });
@@ -138,6 +150,9 @@ async function main() {
     assert.equal(result.title, 'WebDevGym');
     assert.equal(result.language, 'ru');
     assert.equal(result.desktop?.isDesktop, true);
+    assert.equal(result.tokenBridge, true);
+    assert.equal(result.tokenRoundTrip, true);
+    assert.equal(result.tokenRemoved, true);
     assert.equal(result.routesFound, true);
     assert.equal(result.overviewFound, true);
     assert.equal(result.pathOpen, true);

@@ -1,18 +1,23 @@
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
-const { app, BrowserWindow, Menu, net, protocol, session, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, net, protocol, safeStorage, session, shell } = require('electron');
 const {
   APP_SCHEME,
   bundledPageForUrl,
   isSafeExternalUrl,
   resolveAppRequest
 } = require('./app-path.cjs');
+const { createGithubTokenStore } = require('./github-token-store.cjs');
 
 const APP_ID = 'io.github.kernix01.webdevgym.desktop';
 const WEB_ROOT = path.resolve(__dirname, '..', 'web');
 const APP_URL = 'webdevgym://app/index.html';
 const isDevelopment = process.argv.includes('--dev');
 const isSmokeTest = process.argv.includes('--smoke');
+
+if (isSmokeTest && process.env.WEBDEVGYM_TEST_USER_DATA) {
+  app.setPath('userData', path.resolve(process.env.WEBDEVGYM_TEST_USER_DATA));
+}
 
 protocol.registerSchemesAsPrivileged([{
   scheme: APP_SCHEME.slice(0, -1),
@@ -119,6 +124,29 @@ function registerLocalProtocol() {
   });
 }
 
+function registerGithubTokenStore() {
+  const store = createGithubTokenStore({
+    directory: path.join(app.getPath('userData'), 'secure-storage'),
+    safeStorage
+  });
+  const trustedSender = event => (event.senderFrame?.url || event.sender.getURL()).startsWith('webdevgym://app/');
+
+  ipcMain.handle('webdevgym:github-token:load', event => {
+    if (!trustedSender(event)) throw new Error('Untrusted token request');
+    return store.load();
+  });
+  ipcMain.handle('webdevgym:github-token:save', (event, token) => {
+    if (!trustedSender(event)) throw new Error('Untrusted token request');
+    store.save(token);
+    return true;
+  });
+  ipcMain.handle('webdevgym:github-token:remove', event => {
+    if (!trustedSender(event)) throw new Error('Untrusted token request');
+    store.remove();
+    return true;
+  });
+}
+
 const hasSingleInstanceLock = app.requestSingleInstanceLock();
 
 if (!hasSingleInstanceLock) {
@@ -134,6 +162,7 @@ if (!hasSingleInstanceLock) {
   app.whenReady().then(() => {
     Menu.setApplicationMenu(null);
     registerLocalProtocol();
+    registerGithubTokenStore();
     session.defaultSession.setPermissionRequestHandler((_webContents, _permission, callback) => callback(false));
     session.defaultSession.setPermissionCheckHandler(() => false);
     mainWindow = createWindow();

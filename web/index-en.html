@@ -62,6 +62,7 @@ try {
   <link rel="stylesheet" href="css/webdevgym-comfort.css?v=20260913-5">
   <link rel="stylesheet" href="css/webdevgym-scrollbars.css?v=20260928-1">
   <link rel="stylesheet" href="css/webdevgym-device-sync.css?v=20261001-2">
+  <link rel="stylesheet" href="css/webdevgym-cloud-sync.css?v=20261111-1">
   <link rel="stylesheet" href="css/webdevgym-local-first.css?v=20260906-1">
 <link rel="stylesheet" href="css/webdevgym-desktop.css?v=20261003-4">
 <link rel="stylesheet" href="css/webdevgym-completions.css?v=20261105-1">
@@ -122,8 +123,8 @@ try {
   <button class="top-btn" onclick="exportProgressJson()" title="Download progress as JSON" data-i18n="top.export">⬇ Export</button>
   <button class="top-btn" onclick="importProgressJson()" title="Import progress from JSON" data-i18n="top.import">⬆ Import</button>
   <div class="lang-switch" title="Main interface language">
-    <button class="lang-main-btn" id="langRuBtn" type="button" onclick="location.href='https://kernix01.github.io/WebDevGym/'">RU</button>
-    <button class="lang-main-btn active" id="langEnBtn" type="button" onclick="location.href='https://kernix01.github.io/WebDevGym-EN/'">EN</button>
+    <button class="lang-main-btn" id="langRuBtn" type="button" onclick="location.href='https://webdevgym.vercel.app/'">RU</button>
+    <button class="lang-main-btn active" id="langEnBtn" type="button" onclick="location.href='https://webdevgym-en.vercel.app/'">EN</button>
   </div>
   <button class="top-btn" onclick="resetProgress()" title="Reset all progress" data-i18n="top.reset">↺ Reset</button>
 </div>
@@ -2825,7 +2826,10 @@ try {
 <script src="js/webdevgym-optimizer.js?v=20260906-1"></script>
 <script src="js/webdevgym-transitions.js?v=20260913-5"></script>
 <script src="js/webdevgym-local-first.js?v=20260906-1"></script>
-<script src="js/webdevgym-device-sync.js?v=20261001-6"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
+<script src="js/webdevgym-supabase-config.js?v=20261027-1"></script>
+<script src="js/webdevgym-cloud-sync.js?v=20261111-1"></script>
+<script src="js/webdevgym-device-sync.js?v=20261111-1"></script>
 <script src="js/webdevgym-electron-token.js?v=20260914-1"></script>
 <script src="js/webdevgym-offline-docs-data.js?v=20260930-1"></script>
 <script src="js/webdevgym-monaco.js?v=20261003-4"></script>

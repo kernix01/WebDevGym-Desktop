@@ -1,0 +1,30 @@
+name: Build Linux desktop packages
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install Linux packaging tools
+        run: sudo apt-get update && sudo apt-get install -y libarchive-tools zstd
+      - run: npm ci
+      - run: npm run desktop:build:linux
+      - name: Upload Linux packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: webdevgym-linux-x64
+          path: dist-electron-v*/linux/*
+          if-no-files-found: error

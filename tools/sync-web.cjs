@@ -3,16 +3,20 @@ const path = require('node:path');
 
 const projectRoot = path.resolve(__dirname, '..');
 const sourceRoot = path.resolve(process.env.WEBDEVGYM_SOURCE || path.join(projectRoot, '..', 'WebDevGym'));
+const englishSourceRoot = path.resolve(process.env.WEBDEVGYM_EN_SOURCE || path.join(projectRoot, '..', 'WebDevGym-EN'));
 const stagingRoot = path.join(projectRoot, '.web-sync-temp');
 const targetRoot = path.join(projectRoot, 'web');
 const overridesRoot = path.join(projectRoot, 'electron', 'web-overrides');
 const directories = ['css', 'data', 'js'];
 const files = ['index.html', 'index-en.html', 'favicon.svg', 'manifest.webmanifest', 'sw.js'];
 
-for (const entry of [...directories, ...files]) {
+for (const entry of [...directories, ...files.filter(file => file !== 'index-en.html')]) {
   if (!fs.existsSync(path.join(sourceRoot, entry))) {
     throw new Error(`WebDevGym source is missing: ${path.join(sourceRoot, entry)}`);
   }
+}
+if (!fs.existsSync(path.join(englishSourceRoot, 'index-en.html'))) {
+  throw new Error(`English WebDevGym source is missing: ${path.join(englishSourceRoot, 'index-en.html')}`);
 }
 
 fs.rmSync(stagingRoot, { recursive: true, force: true });
@@ -23,7 +27,8 @@ for (const directory of directories) {
 }
 
 for (const file of files) {
-  fs.copyFileSync(path.join(sourceRoot, file), path.join(stagingRoot, file));
+  const fileRoot = file === 'index-en.html' ? englishSourceRoot : sourceRoot;
+  fs.copyFileSync(path.join(fileRoot, file), path.join(stagingRoot, file));
 }
 
 for (const directory of ['css', 'js']) {

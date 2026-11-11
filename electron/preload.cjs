@@ -1,4 +1,13 @@
 const { contextBridge, ipcRenderer } = require('electron');
+let pendingAuthCallback = '';
+const authCallbackListeners = new Set();
+
+ipcRenderer.on('webdevgym:auth:callback', (_event, callbackUrl) => {
+  pendingAuthCallback = String(callbackUrl || '');
+  if (!authCallbackListeners.size) return;
+  for (const listener of authCallbackListeners) listener(pendingAuthCallback);
+  pendingAuthCallback = '';
+});
 
 const githubToken = Object.freeze({
   load: () => ipcRenderer.invoke('webdevgym:github-token:load'),
@@ -81,6 +90,15 @@ const desktop = Object.freeze({
     const listener = (_event, payload) => callback(payload);
     ipcRenderer.on('webdevgym:sync:changed', listener);
     return () => ipcRenderer.removeListener('webdevgym:sync:changed', listener);
+  },
+  onAuthCallback: callback => {
+    authCallbackListeners.add(callback);
+    if (pendingAuthCallback) {
+      const callbackUrl = pendingAuthCallback;
+      pendingAuthCallback = '';
+      queueMicrotask(() => callback(callbackUrl));
+    }
+    return () => authCallbackListeners.delete(callback);
   },
   openExternal: url => ipcRenderer.invoke('webdevgym:desktop:open-external', url),
   openProject: root => ipcRenderer.invoke('webdevgym:desktop:open-project', root),

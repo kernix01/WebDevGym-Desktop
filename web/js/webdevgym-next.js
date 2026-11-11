@@ -418,7 +418,7 @@ function continueLearning() {
     top.className = 'wdgn-top';
     top.innerHTML = `<button class="wdgn-search" type="button" data-command>${icon('tabler:search',17)}<span>${copy.search}</span><kbd>Ctrl K</kbd></button>
       <div class="wdgn-top-actions">
-        <div class="wdgn-lang"><a class="${isEnglish ? '' : 'active'}" href="https://kernix01.github.io/WebDevGym/">RU</a><a class="${isEnglish ? 'active' : ''}" href="https://kernix01.github.io/WebDevGym-EN/">EN</a></div>
+        <div class="wdgn-lang"><a class="${isEnglish ? '' : 'active'}" href="https://webdevgym.vercel.app/">RU</a><a class="${isEnglish ? 'active' : ''}" href="https://webdevgym-en.vercel.app/">EN</a></div>
         <button class="wdgn-text-btn" type="button" data-import>${icon('tabler:upload',16)}<span>${copy.import}</span></button>
         <button class="wdgn-text-btn" type="button" data-export>${icon('tabler:download',16)}<span>${copy.export}</span></button>
         <button class="wdgn-icon-btn" type="button" data-theme title="${isEnglish ? 'Theme' : 'Тема'}">${icon('tabler:sun-moon',18)}</button>

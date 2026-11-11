@@ -60,6 +60,7 @@ let desktopServices = null;
 let deviceSyncService = null;
 let isQuitting = false;
 let pendingOpenRequest = openRequestFromArguments(process.argv);
+let pendingAuthCallback = process.argv.find(argument => /^webdevgym:\/\/app\/auth\/callback(?:[?#]|$)/i.test(argument)) || '';
 
 function bundledUrl(page) {
   return `webdevgym://app/${page}`;
@@ -118,6 +119,22 @@ function dispatchPendingOpenRequest() {
   const request = pendingOpenRequest;
   pendingOpenRequest = null;
   mainWindow.webContents.send('webdevgym:desktop:open-path', request);
+  return true;
+}
+
+function dispatchPendingAuthCallback() {
+  if (!pendingAuthCallback || !mainWindow || mainWindow.isDestroyed() || mainWindow.webContents.isLoadingMainFrame()) return false;
+  const callbackUrl = pendingAuthCallback;
+  pendingAuthCallback = '';
+  mainWindow.webContents.send('webdevgym:auth:callback', callbackUrl);
+  return true;
+}
+
+function handleAuthCallback(url) {
+  if (!/^webdevgym:\/\/app\/auth\/callback(?:[?#]|$)/i.test(String(url || ''))) return false;
+  pendingAuthCallback = String(url);
+  showMainWindow();
+  dispatchPendingAuthCallback();
   return true;
 }
 
@@ -267,7 +284,10 @@ function createWindow() {
   window.on('unmaximize', sendWindowState);
   window.on('enter-full-screen', sendWindowState);
   window.on('leave-full-screen', sendWindowState);
-  window.webContents.on('did-finish-load', dispatchPendingOpenRequest);
+  window.webContents.on('did-finish-load', () => {
+    dispatchPendingOpenRequest();
+    dispatchPendingAuthCallback();
+  });
   void window.loadURL(APP_URL);
 
   if (isDevelopment) window.webContents.openDevTools({ mode: 'detach' });
@@ -321,7 +341,14 @@ const hasSingleInstanceLock = app.requestSingleInstanceLock({
 if (!hasSingleInstanceLock) {
   app.quit();
 } else {
+  app.on('open-url', (event, url) => {
+    event.preventDefault();
+    handleAuthCallback(url);
+  });
+
   app.on('second-instance', (_event, commandLine, _workingDirectory, additionalData = {}) => {
+    const authCallback = commandLine.find(argument => /^webdevgym:\/\/app\/auth\/callback(?:[?#]|$)/i.test(argument));
+    if (authCallback && handleAuthCallback(authCallback)) return;
     const request = openRequestFromSecondInstance(commandLine, additionalData);
     if (!request) {
       showMainWindow();
@@ -335,6 +362,7 @@ if (!hasSingleInstanceLock) {
   app.whenReady().then(async () => {
     Menu.setApplicationMenu(null);
     registerLocalProtocol();
+    app.setAsDefaultProtocolClient(APP_SCHEME.slice(0, -1));
     registerGithubTokenStore();
     registerDesktopAppControls();
     session.defaultSession.setPermissionRequestHandler((_webContents, _permission, callback) => callback(false));

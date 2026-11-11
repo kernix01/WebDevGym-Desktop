@@ -75,8 +75,8 @@
     const local = location.hostname === '127.0.0.1' || location.hostname === 'localhost' || location.protocol === 'file:';
     const ru = document.querySelector('.wdg-lang a:first-of-type');
     const en = document.querySelector('.wdg-lang a:last-of-type');
-    if (ru) ru.href = local ? 'index.html' : 'https://kernix01.github.io/WebDevGym/';
-    if (en) en.href = local ? 'index-en.html' : 'https://kernix01.github.io/WebDevGym-EN/';
+    if (ru) ru.href = local ? 'index.html' : 'https://webdevgym.vercel.app/';
+    if (en) en.href = local ? 'index-en.html' : 'https://webdevgym-en.vercel.app/';
   }
 
   function buildFooter() {
@@ -85,7 +85,7 @@
     const footer = document.createElement('footer');
     footer.className = 'wdg-license-footer';
     footer.innerHTML = '<span><strong>WebDevGym</strong> © ' + new Date().getFullYear() + ' · ' + ui.license + '</span>' +
-      '<span><a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL v3</a></span>';
+      '<span><a href="privacy.html">' + (isEnglish ? 'Privacy' : 'Конфиденциальность') + '</a> · <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL v3</a></span>';
     wrap.appendChild(footer);
   }
 

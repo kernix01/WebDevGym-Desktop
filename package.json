@@ -1,8 +1,9 @@
 {
   "name": "webdevgym-electron",
-  "version": "0.17.12",
+  "version": "0.17.15",
   "description": "Desktop edition of the WebDevGym learning workspace",
   "author": "kernix01",
+  "desktopName": "WebDevGym",
   "main": "electron/main.cjs",
   "private": true,
   "license": "GPL-3.0-only",
@@ -16,6 +17,9 @@
     "desktop:dev": "npm run prepare:editor && electron . --dev",
     "desktop:pack": "npm run prepare:editor && npm run test:desktop && node tools/build-desktop.cjs --dir",
     "desktop:build": "npm run prepare:editor && npm run test:desktop && node tools/build-desktop.cjs",
+    "desktop:build:windows": "npm run prepare:editor && npm run test:desktop && node tools/build-desktop.cjs --win",
+    "desktop:build:linux": "npm run prepare:editor && node tools/build-desktop.cjs --linux",
+    "desktop:build:arch": "npm run prepare:editor && node tools/build-desktop.cjs --pacman-only",
     "sync:web": "node tools/sync-web.cjs",
     "test": "npm run test:desktop",
     "test:desktop": "node tools/test-code-editor.cjs && node tools/test-diagnostics.cjs && node tools/test-device-sync.cjs && node tools/test-electron-shell.cjs && node tools/test-desktop-services.cjs && node tools/test-vsix-extensions.cjs",
@@ -63,6 +67,45 @@
     },
     "portable": {
       "artifactName": "${productName}-Portable-${version}-${arch}.${ext}"
+    },
+    "linux": {
+      "category": "Development",
+      "maintainer": "kernix01",
+      "syncDesktopName": true,
+      "synopsis": "WebDevGym learning workspace",
+      "target": [
+        "AppImage",
+        "deb",
+        "pacman"
+      ],
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
+    },
+    "deb": {
+      "compression": "gz",
+      "depends": [
+        "libgtk-3-0",
+        "libnotify4",
+        "libnss3",
+        "libxss1",
+        "libxtst6",
+        "xdg-utils",
+        "libatspi2.0-0",
+        "libsecret-1-0"
+      ]
+    },
+    "pacman": {
+      "artifactName": "${productName}-${version}-${arch}.pkg.tar.zst",
+      "compression": "zstd",
+      "depends": [
+        "gtk3",
+        "libnotify",
+        "nss",
+        "libxss",
+        "libxtst",
+        "xdg-utils",
+        "at-spi2-core",
+        "libsecret"
+      ]
     }
   },
   "dependencies": {

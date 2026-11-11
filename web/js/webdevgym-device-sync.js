@@ -12,6 +12,7 @@
   const MAX_VALUE_LENGTH = 1024 * 1024;
   const desktopApi = window.webdevgymDesktop?.desktop || null;
   const isDesktop = Boolean(window.webdevgymDesktop?.isDesktop && desktopApi?.syncExchange);
+  const cloudSync = window.WebDevGymCloudSync || null;
   const isEnglish = document.documentElement.lang === 'en' || /index-en\.html$/i.test(location.pathname);
 
   const copy = isEnglish ? {
@@ -647,6 +648,10 @@
   }
 
   async function openModal() {
+    if (cloudSync) {
+      cloudSync.open();
+      return;
+    }
     ensureUi();
     state.modalOpen = true;
     document.getElementById('wdgDeviceSyncModal')?.classList.add('open');
@@ -662,6 +667,10 @@
   }
 
   function render() {
+    if (cloudSync) {
+      cloudSync.attach();
+      return;
+    }
     const buttons = [document.getElementById('wdgDeviceSyncButton'), document.getElementById('wdgDeviceSyncMobileButton')].filter(Boolean);
     buttons.forEach(button => {
       button.dataset.syncStatus = state.status;
@@ -750,6 +759,10 @@
       await exchange();
       connectWebSocket();
     }
+    if (cloudSync) {
+      await cloudSync.start();
+      cloudSync.attach();
+    }
     window.setInterval(() => {
       if (document.hidden) return;
       if (isDesktop || state.connection?.token) void exchange();
@@ -763,7 +776,10 @@
 
   window.WebDevGymDeviceSync = Object.freeze({
     open: openModal,
-    sync: exchange,
+    sync: async () => {
+      await exchange();
+      await cloudSync?.sync();
+    },
     isSyncableKey
   });
 

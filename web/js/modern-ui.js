@@ -88,7 +88,7 @@
       '<button class="wdg-icon-btn" id="wdgSearchBtn" type="button" title="' + copy.search + '">' + icon('tabler:search') + '</button>' +
       '<button class="wdg-icon-btn desktop-only" id="wdgBookmarkBtn" type="button" title="Bookmarks">' + icon('tabler:bookmark') + '</button>' +
       '<button class="wdg-icon-btn desktop-only" id="wdgThemeBtn" type="button" title="Theme">' + icon('tabler:moon-stars') + '</button>' +
-      '<div class="wdg-lang"><a class="' + (!isEnglish ? 'active' : '') + '" href="https://kernix01.github.io/WebDevGym/">RU</a><span>|</span><a class="' + (isEnglish ? 'active' : '') + '" href="https://kernix01.github.io/WebDevGym-EN/">EN</a></div>' +
+      '<div class="wdg-lang"><a class="' + (!isEnglish ? 'active' : '') + '" href="https://webdevgym.vercel.app/">RU</a><span>|</span><a class="' + (isEnglish ? 'active' : '') + '" href="https://webdevgym-en.vercel.app/">EN</a></div>' +
       '<button class="wdg-top-action desktop-only" id="wdgExportBtn" type="button">' + icon('tabler:download', 15) + '<span>Export</span></button>';
     document.body.appendChild(bar);
     bar.querySelector('#wdgSearchBtn').addEventListener('click', function () {

@@ -1,0 +1,369 @@
+.wdg-cloud-sync-hint {
+  color: #9aabc0;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.wdg-cloud-onboarding-intro {
+  display: grid;
+  gap: 13px;
+  padding: 15px;
+  border: 1px solid #2d3c52;
+  border-radius: 7px;
+  background: #0f1825;
+}
+
+.wdg-cloud-onboarding-intro > p {
+  color: #c7d1df;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.wdg-cloud-onboarding-intro ul {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wdg-cloud-onboarding-intro li {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 9px;
+  align-items: center;
+  color: #9fb0c4;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.wdg-cloud-onboarding-intro li svg {
+  color: #c084fc;
+}
+
+.wdg-cloud-provider-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.wdg-cloud-provider {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 13px;
+  border: 1px solid #35455d;
+  border-radius: 6px;
+  background: #121c29;
+  color: #edf2f8;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease, color 120ms ease;
+}
+
+.wdg-cloud-provider:hover {
+  border-color: #8d4dcc;
+  background: #182334;
+  color: #fff;
+}
+
+.wdg-cloud-provider.github svg {
+  color: #fff;
+}
+
+.wdg-cloud-provider.google svg {
+  color: #8ab4f8;
+}
+
+.wdg-cloud-auth-divider {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 10px;
+  align-items: center;
+  color: #718198;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.wdg-cloud-auth-divider::before,
+.wdg-cloud-auth-divider::after {
+  height: 1px;
+  background: #263449;
+  content: '';
+}
+
+.wdg-cloud-auth-form {
+  display: grid;
+  gap: 12px;
+}
+
+.wdg-cloud-auth-form label {
+  display: grid;
+  gap: 7px;
+  color: #a8b4c5;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.wdg-cloud-auth-form input {
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+  padding: 0 13px;
+  border: 1px solid #35455d;
+  border-radius: 6px;
+  outline: 0;
+  background: #101925;
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+}
+
+.wdg-cloud-auth-form input:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, .16);
+}
+
+.wdg-cloud-auth-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.wdg-cloud-auth-actions button,
+.wdg-cloud-account-card button {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 14px;
+  border: 1px solid #7e3caf;
+  border-radius: 6px;
+  background: #8d36ca;
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.wdg-cloud-auth-actions button.secondary,
+.wdg-cloud-account-card button.secondary {
+  border-color: #314158;
+  background: #121c29;
+}
+
+.wdg-cloud-account-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+  border: 1px solid #263449;
+  border-radius: 7px;
+  background: #0f1723;
+}
+
+.wdg-cloud-account-card > div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.wdg-cloud-account-card span {
+  overflow: hidden;
+  color: #9aabc0;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wdg-cloud-account-card small {
+  grid-column: 1 / -1;
+  color: #74859b;
+  font-size: 11px;
+}
+
+.wdg-cloud-sync-notice {
+  padding: 10px 12px;
+  border: 1px solid #245c51;
+  border-radius: 6px;
+  background: #0d211e;
+  color: #74e6c3;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.wdg-cloud-backups {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #263449;
+}
+
+.wdg-cloud-backups-heading,
+.wdg-cloud-backup-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.wdg-cloud-backups-heading > strong {
+  color: #dbe6f4;
+  font-size: 13px;
+}
+
+.wdg-cloud-backup-create,
+.wdg-cloud-backup-restore,
+.wdg-cloud-backup-delete {
+  display: inline-flex;
+  min-height: 34px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 11px;
+  border: 1px solid #35465f;
+  border-radius: 6px;
+  background: #121c29;
+  color: #cbd5e1;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.wdg-cloud-backup-create {
+  border-color: #8b3dcb;
+  background: #8434c5;
+  color: #fff;
+}
+
+.wdg-cloud-backup-create:hover {
+  border-color: #b16be8;
+  background: #963fe0;
+}
+
+.wdg-cloud-backup-restore:hover {
+  border-color: #8b3dcb;
+  background: #1a2637;
+  color: #fff;
+}
+
+.wdg-cloud-backup-actions {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+}
+
+.wdg-cloud-backup-delete {
+  width: 34px;
+  padding: 0;
+  border-color: #60333c;
+  background: #24171d;
+  color: #f2a0aa;
+}
+
+.wdg-cloud-backup-delete:hover {
+  border-color: #bd5262;
+  background: #3a1d25;
+  color: #ffdce0;
+}
+
+.wdg-cloud-backup-row {
+  min-width: 0;
+  padding: 9px 10px;
+  border: 1px solid #263449;
+  border-radius: 6px;
+  background: #0f1723;
+}
+
+.wdg-cloud-backup-row > span {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.wdg-cloud-backup-row strong,
+.wdg-cloud-backup-row small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wdg-cloud-backup-row strong {
+  color: #dbe6f4;
+  font-size: 12px;
+}
+
+.wdg-cloud-backup-row small,
+.wdg-cloud-backups > p {
+  color: #8292a8;
+  font-size: 11px;
+}
+
+.wdg-cloud-backups button:disabled {
+  cursor: wait;
+  opacity: .6;
+}
+
+.wdg-cloud-later {
+  min-height: 39px;
+  border: 1px solid #314158;
+  border-radius: 6px;
+  background: transparent;
+  color: #b7c3d3;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.wdg-cloud-later:hover {
+  border-color: #536781;
+  color: #fff;
+}
+
+.wdg-cloud-later-hint {
+  color: #718198;
+  font-size: 11px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+@media (max-width: 680px) {
+  .wdg-cloud-provider-grid,
+  .wdg-cloud-auth-actions,
+  .wdg-cloud-account-card {
+    grid-template-columns: 1fr;
+  }
+
+  .wdg-cloud-account-card span {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .wdg-cloud-backups-heading,
+  .wdg-cloud-backup-row {
+    gap: 8px;
+  }
+
+  .wdg-cloud-backup-create,
+  .wdg-cloud-backup-restore,
+  .wdg-cloud-backup-delete {
+    min-height: 36px;
+    padding-inline: 9px;
+    font-size: 11px;
+  }
+}

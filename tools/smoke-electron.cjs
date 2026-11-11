@@ -760,10 +760,14 @@ else cover.addEventListener('load', report, { once: true });
         deviceSyncButton?.click();
         await new Promise(resolve => setTimeout(resolve, 120));
         const deviceSyncModal = document.getElementById('wdgDeviceSyncModal');
+        const cloudSyncModal = document.getElementById('wdgCloudSyncModal');
         const deviceSyncIconRect = deviceSyncButton?.querySelector('.wdg-device-sync-icon')?.getBoundingClientRect();
         const deviceSyncIconVisible = Boolean(deviceSyncIconRect?.width && deviceSyncIconRect?.height);
         const deviceSyncModalVisible = Boolean(deviceSyncModal?.classList.contains('open'));
         const deviceSyncCodeVisible = Boolean(deviceSyncModal?.textContent.includes(syncInfo.code));
+        const cloudSyncModalVisible = Boolean(cloudSyncModal?.classList.contains('open'));
+        const cloudAuthFormVisible = Boolean(cloudSyncModal?.querySelector('[data-cloud-auth-form]'));
+        const cloudBackupControlsVisible = Boolean(cloudSyncModal?.querySelector('[data-cloud-backup-create]'));
         desktopLauncher?.click();
         await new Promise(resolve => requestAnimationFrame(resolve));
         document.querySelector('[data-desktop-tab="terminal"]')?.click();
@@ -937,6 +941,9 @@ else cover.addEventListener('load', report, { once: true });
           deviceSyncIconVisible,
           deviceSyncModalVisible,
           deviceSyncCodeVisible,
+          cloudSyncModalVisible,
+          cloudAuthFormVisible,
+          cloudBackupControlsVisible,
           deviceSyncInfo: syncInfo,
           deviceSyncRoundTrip: syncRoundTrip,
           electronTitlebarRect: electronTitlebarRect ? {
@@ -965,11 +972,11 @@ else cover.addEventListener('load', report, { once: true });
     const screenshotDirectory = packagedBinary ? path.dirname(packagedBinary) : path.join(projectRoot, 'output');
     fs.mkdirSync(screenshotDirectory, { recursive: true });
     const result = evaluation.result.value;
-    if (result.deviceSyncModalVisible) {
+    if (result.deviceSyncModalVisible || result.cloudSyncModalVisible) {
       const syncScreenshot = await cdp.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
       fs.writeFileSync(path.join(screenshotDirectory, 'smoke-device-sync.png'), syncScreenshot.data, 'base64');
       await cdp.send('Runtime.evaluate', {
-        expression: `document.querySelector('#wdgDeviceSyncModal [data-sync-close]')?.click()`
+        expression: `document.querySelector('#wdgCloudSyncModal [data-cloud-close], #wdgDeviceSyncModal [data-sync-close]')?.click()`
       });
     }
     await cdp.send('Page.enable');
@@ -1130,10 +1137,14 @@ else cover.addEventListener('load', report, { once: true });
     assert.equal(result.electronMaximizeControlWorks, true);
     assert.equal(result.deviceSyncButton, true);
     assert.equal(result.deviceSyncIconVisible, true);
-    assert.equal(result.deviceSyncModalVisible, true);
-    assert.equal(result.deviceSyncCodeVisible, true);
-    assert.equal(result.deviceSyncInfo.available, true);
-    assert.match(result.deviceSyncInfo.code, /^\d{6}$/);
+    if (result.cloudSyncModalVisible) {
+      assert.equal(result.cloudAuthFormVisible || result.cloudBackupControlsVisible, true);
+    } else {
+      assert.equal(result.deviceSyncModalVisible, true);
+      assert.equal(result.deviceSyncCodeVisible, true);
+      assert.equal(result.deviceSyncInfo.available, true);
+      assert.match(result.deviceSyncInfo.code, /^\d{6}$/);
+    }
     assert.equal(result.deviceSyncRoundTrip, true);
     assert.equal(result.electronTitlebarRect.top, 0);
     assert.equal(result.electronTitlebarRect.height, 40);

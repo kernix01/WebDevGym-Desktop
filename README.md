@@ -1,6 +1,6 @@
 # WebDevGym Desktop
 
-Отдельная desktop-версия WebDevGym для Windows. Приложение упаковывает локальную копию веб-проекта и работает без обязательного подключения к интернету.
+Отдельная desktop-версия WebDevGym для Windows и Linux. Приложение упаковывает локальную копию веб-проекта и работает без обязательного подключения к интернету.
 
 ## Desktop Center
 
@@ -12,6 +12,46 @@
 - До десяти локальных снимков проекта с восстановлением файлов.
 - Системные уведомления таймера, сворачивание WebDevGym в трей и `Ctrl+Shift+G` для возврата окна.
 - Автоматическая проверка новых релизов на GitHub.
+
+## Скачать для Linux
+
+Актуальные файлы версии **0.17.15** доступны на [странице релизов GitHub](https://github.com/kernix01/WebDevGym-Desktop/releases/latest). Сборки рассчитаны на Linux x86_64 (amd64).
+
+### AppImage — большинство дистрибутивов
+
+Подходит для Fedora, openSUSE, Linux Mint и других x86_64-дистрибутивов. AppImage не нужно устанавливать в систему:
+
+1. [Скачать WebDevGym для Linux (.AppImage)](https://github.com/kernix01/WebDevGym-Desktop/releases/download/v0.17.15/WebDevGym-Linux-0.17.15-x86_64.AppImage).
+2. Разрешить запуск и открыть файл:
+
+```bash
+chmod +x WebDevGym-Linux-0.17.15-x86_64.AppImage
+./WebDevGym-Linux-0.17.15-x86_64.AppImage
+```
+
+### Debian, Ubuntu и производные
+
+Скачайте [пакет .deb](https://github.com/kernix01/WebDevGym-Desktop/releases/download/v0.17.15/WebDevGym-Linux-0.17.15-amd64.deb), затем в каталоге загрузок выполните:
+
+```bash
+sudo apt install ./WebDevGym-Linux-0.17.15-amd64.deb
+```
+
+### Arch Linux, CachyOS и производные
+
+Установить пакет напрямую из GitHub Release можно через `paru`:
+
+```bash
+paru -U "https://github.com/kernix01/WebDevGym-Desktop/releases/download/v0.17.15/WebDevGym-Linux-0.17.15-x64.pkg.tar.zst"
+```
+
+Либо через pacman:
+
+```bash
+sudo pacman -U "https://github.com/kernix01/WebDevGym-Desktop/releases/download/v0.17.15/WebDevGym-Linux-0.17.15-x64.pkg.tar.zst"
+```
+
+`yay` и `paru` устанавливают этот файл напрямую, но для автоматического поиска обновлений через AUR потребуется отдельный AUR-пакет. Для ARM64 сейчас Linux-сборок нет.
 
 ## Запуск
 

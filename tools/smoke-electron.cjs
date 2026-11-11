@@ -671,6 +671,15 @@ else cover.addEventListener('load', report, { once: true });
           document.querySelector('[data-desktop-open-file="index.html"] .wdgd-file-kind.kind-html') &&
           document.querySelector('[data-desktop-open-file="src/app.js"] .wdgd-file-kind.kind-js')
         );
+        const desktopApplicationSettingsVisible = Boolean(
+          document.querySelector('[data-settings-category="application"]') &&
+          document.querySelector('[data-settings-page="application"] #wdgrDesktopUpdate') &&
+          document.querySelector('[data-settings-page="application"] #wdgrDesktopNotify') &&
+          document.querySelector('[data-settings-page="application"] #wdgrDesktopTray') &&
+          document.querySelector('[data-settings-page="application"] #wdgrDesktopQuit')
+        );
+        const desktopApplicationTabRemoved = !document.querySelector('[data-desktop-tab="app"]') &&
+          !document.querySelector('[data-desktop-view="app"]');
         const desktopWorkspaceLayout = desktopWorkspace ? {
           display: getComputedStyle(desktopWorkspace).display,
           top: desktopWorkspaceRect.top,
@@ -787,6 +796,8 @@ else cover.addEventListener('load', report, { once: true });
           desktopCenterClosed,
           desktopCloseRestoresFocus,
           desktopFileTypeIconsVisible,
+          desktopApplicationSettingsVisible,
+          desktopApplicationTabRemoved,
           desktopViews: document.querySelectorAll('[data-desktop-view]').length,
           searchViewOpenedByShortcut,
           projectSearchFound,
@@ -1136,7 +1147,9 @@ else cover.addEventListener('load', report, { once: true });
     assert.equal(result.desktopCenterClosed, true);
     assert.equal(result.desktopCloseRestoresFocus, true);
     assert.equal(result.desktopFileTypeIconsVisible, true);
-    assert.equal(result.desktopViews, 8);
+    assert.equal(result.desktopViews, 7);
+    assert.equal(result.desktopApplicationSettingsVisible, true);
+    assert.equal(result.desktopApplicationTabRemoved, true);
     assert.equal(result.searchViewOpenedByShortcut, true);
     assert.equal(result.projectSearchFound, true);
     assert.equal(result.projectSearchCaseSensitive, true);

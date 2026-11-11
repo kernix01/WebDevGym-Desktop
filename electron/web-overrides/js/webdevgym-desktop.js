@@ -9,7 +9,7 @@
   const isEnglish = document.documentElement.lang === 'en' || location.pathname.endsWith('index-en.html');
   const copy = isEnglish ? {
     title: 'Desktop Center', subtitle: 'Local workspace', open: 'Open folder', projects: 'Files', search: 'Search', terminal: 'Runner',
-    git: 'Git', docs: 'Docs', backups: 'Backups', app: 'App', recents: 'Recent projects', noProject: 'Choose a project folder',
+    git: 'Git', docs: 'Docs', backups: 'Backups', sidebarToggle: 'Toggle Desktop Center sidebar', recents: 'Recent projects', noProject: 'Choose a project folder',
     noProjectShort: 'No project selected', save: 'Save', saved: 'Saved', saving: 'Saving...', reveal: 'Show in Explorer',
     preview: 'Preview', refresh: 'Refresh', run: 'Run', stop: 'Stop', command: 'Command', clear: 'Clear',
     status: 'Status', history: 'History', commit: 'Commit', push: 'Push', commitMessage: 'Commit message',
@@ -69,7 +69,7 @@
     viewportTablet: 'Tablet', viewportMobile: 'Mobile', reopenClosedTab: 'Reopen closed tab'
   } : {
     title: 'Desktop Center', subtitle: 'Локальное рабочее пространство', open: 'Открыть папку', projects: 'Файлы', search: 'Поиск',
-    terminal: 'Runner', git: 'Git', docs: 'Документация', backups: 'Снимки', app: 'Приложение', recents: 'Недавние проекты',
+    terminal: 'Runner', git: 'Git', docs: 'Документация', backups: 'Снимки', sidebarToggle: 'Свернуть или развернуть боковую панель', recents: 'Недавние проекты',
     noProject: 'Выбери папку проекта', noProjectShort: 'Проект не выбран', save: 'Сохранить', saved: 'Сохранено',
     saving: 'Сохранение...', reveal: 'Показать в проводнике', preview: 'Предпросмотр', refresh: 'Обновить',
     run: 'Запустить', stop: 'Остановить', command: 'Команда', clear: 'Очистить', status: 'Статус',
@@ -241,7 +241,7 @@
         <header class="wdgd-titlebar">
           ${icon('device-desktop-code', 20)}
           <div class="wdgd-titlebar-copy"><strong>${copy.title}</strong><small data-desktop-project-name>${copy.noProjectShort}</small></div>
-          <button class="wdgd-icon-button" type="button" data-desktop-sidebar-toggle title="${copy.app}" aria-label="${copy.app}">${icon('layout-sidebar-left-collapse', 18)}</button>
+          <button class="wdgd-icon-button" type="button" data-desktop-sidebar-toggle title="${copy.sidebarToggle}" aria-label="${copy.sidebarToggle}">${icon('layout-sidebar-left-collapse', 18)}</button>
           <button class="wdgd-icon-button" type="button" data-desktop-explorer-toggle title="${copy.projects}" aria-label="${copy.projects}">${icon('files', 18)}</button>
           <button class="wdgd-icon-button" type="button" data-desktop-preview-toggle title="${copy.preview}" aria-label="${copy.preview}">${icon('layout-sidebar-right-collapse', 18)}</button>
           <button class="wdgd-icon-button" type="button" data-desktop-layout-reset title="${copy.resetLayout}" aria-label="${copy.resetLayout}">${icon('layout-dashboard', 18)}</button>
@@ -259,7 +259,6 @@
               ${tabButton('git', 'brand-git', copy.git)}
               ${tabButton('docs', 'books', copy.docs)}
               ${tabButton('backups', 'history', copy.backups)}
-              ${tabButton('app', 'settings', copy.app)}
             </nav>
             <div class="wdgd-recents"><span class="wdgd-section-label">${copy.recents}</span><div data-desktop-recents></div></div>
           </aside>
@@ -391,9 +390,6 @@
             </section>
             <section class="wdgd-view" data-desktop-view="backups" hidden>
               <div class="wdgd-backup-view"><div class="wdgd-toolbar"><button class="wdgd-button primary" type="button" data-backup-create>${icon('device-floppy', 15)} ${copy.createBackup}</button><button class="wdgd-button" type="button" data-backup-refresh>${icon('refresh', 15)} ${copy.refresh}</button></div><div class="wdgd-backup-list" data-backup-list></div></div>
-            </section>
-            <section class="wdgd-view" data-desktop-view="app" hidden>
-              <div class="wdgd-app-view"><div class="wdgd-grid"><section class="wdgd-section"><h3>${copy.app}</h3><p class="wdgd-muted" data-app-version>${copy.version}</p><div class="wdgd-toolbar"><button class="wdgd-button primary" type="button" data-app-update>${icon('refresh', 15)} ${copy.checkUpdate}</button><button class="wdgd-button" type="button" data-app-notify>${icon('bell', 15)} ${copy.notify}</button></div></section><section class="wdgd-section"><h3>WebDevGym</h3><div class="wdgd-toolbar"><button class="wdgd-button" type="button" data-desktop-tray>${icon('minus', 15)} ${copy.tray}</button><button class="wdgd-button danger" type="button" data-app-quit>${icon('power', 15)} ${copy.quit}</button></div></section></div></div>
             </section>
           </main>
         </div>
@@ -2642,22 +2638,6 @@
     if (result) await renderBackups();
   }
 
-  async function checkUpdate() {
-    const update = await withStatus(() => api.checkUpdate());
-    if (!update) return;
-    if (!update.hasUpdate) return setStatus(copy.upToDate, 'ok');
-
-    setStatus(`${copy.downloadingUpdate}: 0%`, 'ok');
-    const downloaded = await withStatus(() => api.downloadUpdate(), copy.updateDownloaded);
-    if (!downloaded) return;
-
-    const message = `${copy.updateDownloaded}: ${downloaded.latest}`;
-    setStatus(message, 'ok');
-    if (window.confirm(`${message}. ${copy.installUpdate}`)) {
-      await withStatus(() => api.installUpdate(downloaded.path), copy.installingUpdate);
-    }
-  }
-
   function monitorTimer() {
     let previous = null;
     window.setInterval(() => {
@@ -2870,9 +2850,6 @@
   });
   shell.querySelector('[data-backup-create]').addEventListener('click', createBackup);
   shell.querySelector('[data-backup-refresh]').addEventListener('click', renderBackups);
-  shell.querySelector('[data-app-update]').addEventListener('click', checkUpdate);
-  shell.querySelector('[data-app-notify]').addEventListener('click', () => api.notify('WebDevGym', copy.ready));
-  shell.querySelector('[data-app-quit]').addEventListener('click', () => api.quit());
   api.onProcessOutput(payload => {
     if (!state.processId && state.processStatus === 'starting') state.processId = payload.id;
     if (payload.id !== state.processId) return;
@@ -2970,11 +2947,9 @@
   });
   monitorTimer();
 
-  Promise.all([api.recentProjects(), api.appInfo()]).then(([recents, appInfo]) => {
+  api.recentProjects().then(recents => {
     state.recents = Array.isArray(recents) ? recents : [];
-    state.appInfo = appInfo;
     renderRecents();
-    shell.querySelector('[data-app-version]').textContent = `${copy.version} ${appInfo.version} · ${appInfo.platform} · ${appInfo.shortcut}`;
   }).catch(error => setStatus(errorMessage(error), 'error'));
   api.consumeOpenRequest()
     .then(request => openLaunchRequest(request))

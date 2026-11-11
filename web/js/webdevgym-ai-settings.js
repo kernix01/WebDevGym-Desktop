@@ -12,7 +12,7 @@
     filesLocal: 'Files and chats are stored locally in this browser', ask: 'Ask about code or attach a file...', noFiles: 'No files attached', untitled: 'New chat', deleteChat: 'Delete chat',
     settings: 'Settings', settingsCopy: 'Adjust the interface and learning experience', reset: 'Reset', save: 'Save',
     appearance: 'Appearance', learning: 'Learning', sounds: 'Sounds', ai: 'AI assistant', data: 'Data and PWA',
-    accessibility: 'Accessibility', interfaceTheme: 'Interface theme', dark: 'Dark', light: 'Light', system: 'System',
+    accessibility: 'Accessibility', application: 'Application', appVersion: 'Version', checkAppUpdate: 'Check for updates', testAppNotification: 'Test notification', minimizeToTray: 'Minimize to tray', quitApp: 'Quit WebDevGym', appReady: 'Ready', appChecking: 'Checking for updates...', appUpToDate: 'You have the latest version.', appUpdateFound: 'Update found. Downloading...', appUpdateDownloaded: 'Update downloaded.', appUpdateError: 'Could not check for updates.', confirmAppUpdate: 'Install the downloaded update now?', appNotificationSent: 'Test notification sent.', interfaceTheme: 'Interface theme', dark: 'Dark', light: 'Light', system: 'System',
     accent: 'Accent color', interfaceFont: 'Interface font', density: 'Interface density', compact: 'Compact',
     comfortable: 'Comfortable', codeFont: 'Code font', reduceMotion: 'Reduce animations', background: 'Background',
     currentBackground: 'Custom background', noBackground: 'No custom background', upload: 'Upload', remove: 'Remove',
@@ -38,7 +38,7 @@
     filesLocal: 'Файлы и чаты хранятся локально в этом браузере', ask: 'Спроси о коде или прикрепи файл...', noFiles: 'Файлы не прикреплены', untitled: 'Новый чат', deleteChat: 'Удалить чат',
     settings: 'Настройки', settingsCopy: 'Настрой интерфейс и обучение под себя', reset: 'Сбросить', save: 'Сохранить',
     appearance: 'Внешний вид', learning: 'Обучение', sounds: 'Звуки', ai: 'ИИ-помощник', data: 'Данные и PWA',
-    accessibility: 'Доступность', interfaceTheme: 'Тема интерфейса', dark: 'Тёмная', light: 'Светлая', system: 'Системная',
+    accessibility: 'Доступность', application: 'Приложение', appVersion: 'Версия', checkAppUpdate: 'Проверить обновления', testAppNotification: 'Тест уведомления', minimizeToTray: 'Свернуть WebDevGym в трей', quitApp: 'Выйти из WebDevGym', appReady: 'Готово', appChecking: 'Проверяем обновления...', appUpToDate: 'Установлена последняя версия.', appUpdateFound: 'Найдено обновление. Скачиваем...', appUpdateDownloaded: 'Обновление скачано.', appUpdateError: 'Не удалось проверить обновления.', confirmAppUpdate: 'Установить скачанное обновление сейчас?', appNotificationSent: 'Тестовое уведомление отправлено.', interfaceTheme: 'Тема интерфейса', dark: 'Тёмная', light: 'Светлая', system: 'Системная',
     accent: 'Цветовой акцент', interfaceFont: 'Шрифт интерфейса', density: 'Плотность интерфейса', compact: 'Компактно',
     comfortable: 'Удобно', codeFont: 'Моношрифт кода', reduceMotion: 'Уменьшить анимации', background: 'Фон',
     currentBackground: 'Пользовательский фон', noBackground: 'Свой фон не выбран', upload: 'Загрузить', remove: 'Удалить',
@@ -621,6 +621,7 @@
           ${settingsCategoryButton('ai', copy.ai, 'tabler:robot')}
           ${settingsCategoryButton('data', copy.data, 'tabler:database')}
           ${settingsCategoryButton('accessibility', copy.accessibility, 'tabler:accessibility')}
+          ${window.webdevgymDesktop?.desktop ? settingsCategoryButton('application', copy.application, 'tabler:device-desktop-cog') : ''}
         </nav>
         <div class="wdgr-settings-content">
           <div class="wdgr-settings-page active" data-settings-page="appearance">
@@ -678,6 +679,15 @@
               <div class="wdgr-shortcuts"><div><span>${copy.shortcutSearch}</span><kbd>Ctrl</kbd><kbd>K</kbd></div><div><span>${copy.shortcutSettings}</span><kbd>Ctrl</kbd><kbd>,</kbd></div><div><span>${copy.shortcutClose}</span><kbd>Esc</kbd></div></div>
             </section>
           </div>
+          ${window.webdevgymDesktop?.desktop ? `<div class="wdgr-settings-page" data-settings-page="application">
+            <div class="wdgr-page-heading"><h3>${copy.application}</h3><p>${isEnglish ? 'Desktop app controls and updates.' : 'Управление Electron-версией и её обновлениями.'}</p></div>
+            <section class="wdgr-settings-section">
+              ${settingRow(copy.appVersion, '', `<strong id="wdgrDesktopVersion">...</strong>`)}
+              <div class="wdgr-data-actions"><button type="button" class="wdgr-button primary" id="wdgrDesktopUpdate">${icon('tabler:refresh', 17)}${copy.checkAppUpdate}</button><button type="button" class="wdgr-button secondary" id="wdgrDesktopNotify">${icon('tabler:bell', 17)}${copy.testAppNotification}</button></div>
+              <p class="wdgr-muted" id="wdgrDesktopStatus" role="status">${copy.appReady}</p>
+            </section>
+            <section class="wdgr-settings-section"><div class="wdgr-section-title"><h4>WebDevGym</h4></div><div class="wdgr-data-actions"><button type="button" class="wdgr-button secondary" id="wdgrDesktopTray">${icon('tabler:minus', 17)}${copy.minimizeToTray}</button><button type="button" class="wdgr-button secondary" id="wdgrDesktopQuit">${icon('tabler:power', 17)}${copy.quitApp}</button></div></section>
+          </div>` : ''}
         </div>
         <aside class="wdgr-settings-preview">
           <section><h3>${copy.preview}</h3><div class="wdgr-preview-window"><div class="wdgr-preview-top"><i></i><i></i><i></i><span>WebDevGym</span></div><div class="wdgr-preview-body"><small>HTML / CSS</small><strong>Flexbox: ${isEnglish ? 'basics' : 'основы'}</strong><p>${isEnglish ? 'Build a flexible layout and check it in practice.' : 'Собери гибкий макет и проверь его на практике.'}</p><div><span></span><span></span><span></span></div></div></div></section>
@@ -743,6 +753,47 @@
     view.querySelector('#wdgrExportProgress').addEventListener('click', () => window.exportProgressJson?.());
     view.querySelector('#wdgrExportSettingsSide').addEventListener('click', () => window.exportProgressJson?.());
     view.querySelector('#wdgrImportProgress').addEventListener('click', () => window.importProgressJson?.());
+
+    const desktopApi = window.webdevgymDesktop?.desktop;
+    if (desktopApi) {
+      const appVersion = view.querySelector('#wdgrDesktopVersion');
+      const appStatus = view.querySelector('#wdgrDesktopStatus');
+      desktopApi.appInfo().then(info => {
+        appVersion.textContent = `${info.version} · ${info.platform}`;
+      }).catch(() => { appVersion.textContent = '—'; });
+      view.querySelector('#wdgrDesktopUpdate').addEventListener('click', async event => {
+        const button = event.currentTarget;
+        button.disabled = true;
+        appStatus.textContent = copy.appChecking;
+        try {
+          const update = await desktopApi.checkUpdate();
+          if (!update?.hasUpdate) {
+            appStatus.textContent = copy.appUpToDate;
+            return;
+          }
+          appStatus.textContent = copy.appUpdateFound;
+          const downloaded = await desktopApi.downloadUpdate();
+          appStatus.textContent = `${copy.appUpdateDownloaded} ${downloaded.latest}`;
+          if (window.confirm(copy.confirmAppUpdate)) await desktopApi.installUpdate(downloaded.path);
+        } catch (error) {
+          appStatus.textContent = error?.message || copy.appUpdateError;
+        } finally {
+          button.disabled = false;
+        }
+      });
+      desktopApi.onUpdateProgress?.(progress => {
+        if (view.querySelector('#wdgrDesktopUpdate')?.disabled) {
+          const percent = Number.isFinite(progress?.percent) ? progress.percent : 0;
+          appStatus.textContent = `${copy.appUpdateFound} ${percent}%`;
+        }
+      });
+      view.querySelector('#wdgrDesktopNotify').addEventListener('click', async () => {
+        await desktopApi.notify('WebDevGym', copy.appNotificationSent);
+        appStatus.textContent = copy.appNotificationSent;
+      });
+      view.querySelector('#wdgrDesktopTray').addEventListener('click', () => desktopApi.hideToTray());
+      view.querySelector('#wdgrDesktopQuit').addEventListener('click', () => desktopApi.quit());
+    }
 
     const closeButtons = ['#wdgrSettingsClose', '#wdgrSettingsSave', '#wdgrSettingsCancel', '#wdgrSettingsSaveBottom'];
     closeButtons.forEach(selector => view.querySelector(selector).addEventListener('click', () => setSettingsOpen(false)));

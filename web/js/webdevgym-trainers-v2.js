@@ -6,6 +6,7 @@
     (document.documentElement.lang.toLowerCase().startsWith('en') || /index-en\.html$/i.test(location.pathname));
   const L = runtime?.L || ((en, ru) => isEnglish ? en : ru);
   const STORAGE_KEY = isEnglish ? 'wdg_trainers_v2_en' : 'wdg_trainers_v2';
+  const GIT_STORAGE_KEY = 'wdg_git_trainer_v1';
   const CHANNEL = 'wdg-trainers-preview';
   const icon = runtime?.icon || ((name, size = 17) =>
     '<iconify-icon icon="' + name + '" width="' + size + '" height="' + size + '"></iconify-icon>');
@@ -310,7 +311,7 @@ reset.addEventListener("click", () => {
   ].map(([id, category, question, answer]) => ({ id, category, question, answer }));
 
   const state = readState();
-  const trainerModes = ['tasks', 'debug', 'projects', 'interview', 'api'];
+  const trainerModes = ['tasks', 'debug', 'projects', 'interview', 'api', 'git'];
   let api = null;
   let page = null;
   let previewFrame = null;
@@ -367,7 +368,7 @@ reset.addEventListener("click", () => {
   }
 
   function modeLabel(mode) {
-    return mode === 'api' ? copy.apiLab : mode === 'interview' ? copy.interview : mode === 'debug' ? copy.debug : mode === 'projects' ? copy.projects : copy.tasks;
+    return mode === 'git' ? 'Git Lab' : mode === 'api' ? copy.apiLab : mode === 'interview' ? copy.interview : mode === 'debug' ? copy.debug : mode === 'projects' ? copy.projects : copy.tasks;
   }
 
   function categoryLabel(category) {
@@ -393,6 +394,10 @@ reset.addEventListener("click", () => {
     root.classList.toggle('api-mode', state.mode === 'api');
     if (state.mode === 'api') {
       renderApiLab(root);
+      return;
+    }
+    if (state.mode === 'git') {
+      renderGitLab(root);
       return;
     }
     if (state.mode === 'interview') {
@@ -515,7 +520,7 @@ reset.addEventListener("click", () => {
 
   function setMode(mode) {
     state.mode = mode;
-    if (!['interview', 'api'].includes(mode)) {
+    if (!['interview', 'api', 'git'].includes(mode)) {
       state.exerciseId = exercises.find(item => item.mode === mode)?.id || exercises[0].id;
       state.category = 'all';
       state.search = '';
@@ -524,6 +529,60 @@ reset.addEventListener("click", () => {
     }
     saveState();
     renderApp();
+  }
+
+  function readGitState() {
+    const fallback = { initialized:false, branch:'main', branches:['main'], staged:false, changed:true, commits:[], merged:false, output:[L('Repository simulator is ready. Start with git init.','Симулятор репозитория готов. Начни с git init.')] };
+    try {
+      const saved = JSON.parse(localStorage.getItem(GIT_STORAGE_KEY) || 'null');
+      return saved && typeof saved === 'object' ? { ...fallback, ...saved, branches:Array.isArray(saved.branches) ? saved.branches : ['main'], commits:Array.isArray(saved.commits) ? saved.commits : [], output:Array.isArray(saved.output) ? saved.output : fallback.output } : fallback;
+    } catch { return fallback; }
+  }
+
+  function renderGitLab(root) {
+    const git = readGitState();
+    root.innerHTML = `
+      <header class="wdgt-toolbar"><div class="wdgt-modes" role="tablist" aria-label="${escapeHtml(copy.title)}">${trainerModes.map(mode => `<button type="button" data-wdgt-mode="${mode}" class="${state.mode === mode ? 'active' : ''}">${escapeHtml(modeLabel(mode))}</button>`).join('')}</div></header>
+      <section class="wdgt-git-lab"><header><div><span>GIT WORKFLOW</span><h2>${escapeHtml(L('Ship a feature through a branch','Проведи функцию через отдельную ветку'))}</h2><p>${escapeHtml(L('Practice real Git commands in a safe local simulator.','Тренируй настоящие Git-команды в безопасном симуляторе.'))}</p></div><div><button type="button" data-git-edit>${icon('tabler:file-pencil',16)} ${escapeHtml(L('Modify app.js','Изменить app.js'))}</button><button type="button" data-git-reset>${icon('tabler:restore',16)} ${escapeHtml(L('Reset','Сбросить'))}</button></div></header>
+      <div class="wdgt-git-layout"><aside><span>${escapeHtml(L('Learning steps','Этапы практики'))}</span><ol>${[
+        ['git init',git.initialized],['git add .',git.staged],['git commit -m "first commit"',git.commits.some(item=>item.branch==='main'&&!item.merge)],['git branch feature',git.branches.includes('feature')],['git switch feature',git.branch==='feature'],['git merge feature',git.merged]
+      ].map(([label,done])=>`<li class="${done?'done':''}">${icon(done?'tabler:circle-check-filled':'tabler:circle',15)} ${label}</li>`).join('')}</ol></aside>
+      <main><div class="wdgt-git-status"><span>${icon('tabler:git-branch',15)} ${escapeHtml(git.branch)}</span><span>${git.commits.length} ${escapeHtml(L('commits','коммитов'))}</span><span class="${git.changed?'changed':''}">app.js · ${escapeHtml(git.changed?L('modified','изменён'):L('clean','чисто'))}</span></div><div class="wdgt-git-branches">${git.branches.map(branch=>`<span class="${branch===git.branch?'active':''}">${escapeHtml(branch)}${git.commits.filter(item=>item.branch===branch).length?` · ${git.commits.filter(item=>item.branch===branch).length}`:''}</span>`).join('')}</div><div class="wdgt-git-output" data-git-output>${git.output.slice(-14).map(line=>`<p>${escapeHtml(line)}</p>`).join('')}</div><form data-git-form><span>$</span><input name="command" autocomplete="off" spellcheck="false" placeholder="git status" aria-label="Git command"><button type="submit" aria-label="${escapeHtml(L('Run command','Выполнить команду'))}">${icon('tabler:corner-down-left',17)}</button></form></main></div></section>`;
+    root.querySelectorAll('[data-wdgt-mode]').forEach(button => button.addEventListener('click', () => setMode(button.dataset.wdgtMode)));
+    root.querySelector('[data-git-edit]')?.addEventListener('click', () => { git.changed=true; git.staged=false; git.output.push(L('app.js changed in the working tree.','app.js изменён в рабочей папке.')); try { localStorage.setItem(GIT_STORAGE_KEY,JSON.stringify(git)); } catch {} renderGitLab(root); });
+    root.querySelector('[data-git-form]')?.addEventListener('submit', event => {
+      event.preventDefault();
+      const input = event.currentTarget.elements.command;
+      const command = input.value.trim();
+      if (!command) return;
+      git.output.push('$ ' + command);
+      const log = message => git.output.push(message);
+      if (command === 'git init') { git.initialized=true; log(L('Initialized empty Git repository.','Создан пустой Git-репозиторий.')); }
+      else if (!git.initialized) log(L('Not a Git repository. Run git init first.','Сначала выполни git init.'));
+      else if (command === 'git status') log(`${L('On branch','Ветка')}: ${git.branch} · ${git.changed?L('changes present','есть изменения'):L('working tree clean','рабочая папка чистая')}`);
+      else if (/^git add(?: \.| app\.js)$/.test(command)) { git.staged=git.changed; log(git.staged?L('app.js added to the staging area.','app.js добавлен в индекс.'):L('Nothing to add.','Добавлять нечего.')); }
+      else if (/^git commit -m ["'].+["']$/.test(command)) {
+        const message=command.match(/^git commit -m ["'](.+)["']$/)[1];
+        if (!git.staged) log(L('Nothing staged. Use git add first.','Сначала добавь изменения: git add .'));
+        else { const id=Math.random().toString(16).slice(2,8); git.commits.push({id,branch:git.branch,message}); git.changed=false; git.staged=false; log(`[${git.branch} ${id}] ${message}`); }
+      } else if (/^git branch [a-z0-9._-]+$/i.test(command)) {
+        const name=command.slice('git branch '.length);
+        if(git.branches.includes(name)) log(L('Branch already exists.','Такая ветка уже есть.')); else {git.branches.push(name);log(`${L('Created branch','Создана ветка')} ${name}`);}
+      } else if (/^git (?:switch|checkout) [a-z0-9._-]+$/i.test(command)) {
+        const name=command.split(' ').at(-1);
+        if(!git.branches.includes(name)) log(`${L('Unknown branch','Неизвестная ветка')}: ${name}`); else if(git.changed||git.staged) log(L('Commit or discard changes before switching.','Перед переключением закоммить или отмени изменения.')); else {git.branch=name;log(`${L('Switched to branch','Переключено на ветку')} ${name}`);}
+      } else if (/^git merge [a-z0-9._-]+$/i.test(command)) {
+        const name=command.slice('git merge '.length);
+        if(git.branch!=='main') log(L('Return to main before merging.','Перед слиянием вернись в main.'));
+        else if(!git.commits.some(item=>item.branch===name)) log(L('That branch has no commits to merge.','В этой ветке пока нет коммитов.'));
+        else {git.commits.push({id:Math.random().toString(16).slice(2,8),branch:'main',message:`Merge branch ${name}`,merge:true});git.merged=true;log(L('Merge completed successfully.','Слияние выполнено.'));}
+      } else if (command === 'git log' || command === 'git log --oneline') git.commits.slice().reverse().forEach(item=>log(`${item.id} ${item.message}`));
+      else log(L('Command not recognized. Try git status.','Команда не распознана. Попробуй git status.'));
+      try { localStorage.setItem(GIT_STORAGE_KEY,JSON.stringify(git)); } catch {}
+      renderGitLab(root);
+      const nextInput=root.querySelector('[data-git-form] input'); nextInput?.focus();
+    });
+    root.querySelector('[data-git-reset]')?.addEventListener('click', () => { localStorage.removeItem(GIT_STORAGE_KEY); renderGitLab(root); });
   }
 
   function renderApiLab(root) {

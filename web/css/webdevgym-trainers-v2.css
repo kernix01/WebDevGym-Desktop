@@ -222,3 +222,24 @@ body:not(.dark) .wdgt-reference p { color: #315f55; }
   .wdgt-console-output p { grid-template-columns: 52px minmax(0, 1fr); }
   .wdgt-console-output p code { grid-column: 1 / -1; }
 }
+.wdgt-git-lab { display:grid; gap:16px; padding:18px; }
+.wdgt-git-lab > header { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px; border:1px solid var(--wdgt-line); border-radius:6px; background:var(--wdgt-panel); }
+.wdgt-git-lab > header h2 { margin:6px 0; font-size:20px; }
+.wdgt-git-lab > header p { margin:0; color:var(--wdgt-muted); }
+.wdgt-git-lab > header > div > span { color:var(--wdgt-muted); font-size:10px; font-weight:700; }
+.wdgt-git-lab > header button,.wdgt-git-layout form button { display:inline-flex; align-items:center; justify-content:center; gap:7px; min-height:36px; padding:0 11px; border:1px solid var(--wdgt-line); border-radius:5px; color:var(--wdgt-text); background:var(--wdgt-panel); cursor:pointer; }
+.wdgt-git-layout { display:grid; grid-template-columns:minmax(220px, .34fr) minmax(0, 1fr); min-height:420px; overflow:hidden; border:1px solid var(--wdgt-line); border-radius:6px; background:#0b1119; }
+.wdgt-git-layout > aside { padding:18px; border-right:1px solid var(--wdgt-line); }
+.wdgt-git-layout > aside ol { display:grid; gap:14px; margin:16px 0 0; padding:0; list-style:none; }
+.wdgt-git-layout > aside li { display:flex; align-items:center; gap:9px; color:var(--wdgt-muted); font-size:13px; }
+.wdgt-git-layout > aside li.done { color:#34d399; }
+.wdgt-git-layout > main { display:grid; grid-template-rows:auto auto 1fr auto; min-width:0; }
+.wdgt-git-status,.wdgt-git-branches { display:flex; flex-wrap:wrap; align-items:center; gap:14px; padding:12px 15px; border-bottom:1px solid var(--wdgt-line); color:var(--wdgt-muted); font:12px ui-monospace,monospace; }
+.wdgt-git-status .changed { color:#fbbf24; }
+.wdgt-git-branches span { padding:5px 9px; border:1px solid var(--wdgt-line); border-radius:5px; }
+.wdgt-git-branches span.active { border-color:#a855f7; color:#d8b4fe; }
+.wdgt-git-output { display:flex; flex-direction:column; gap:8px; min-height:230px; padding:15px; overflow:auto; color:#cbd5e1; font:13px/1.55 ui-monospace,monospace; }
+.wdgt-git-output p { margin:0; white-space:pre-wrap; overflow-wrap:anywhere; }
+.wdgt-git-layout form { display:flex; align-items:center; gap:9px; padding:10px 12px; border-top:1px solid var(--wdgt-line); color:#34d399; font:14px ui-monospace,monospace; }
+.wdgt-git-layout form input { flex:1; min-width:0; height:38px; border:0; outline:0; color:var(--wdgt-text); background:transparent; font:inherit; }
+@media (max-width:700px) { .wdgt-git-layout { grid-template-columns:1fr; } .wdgt-git-layout > aside { border-right:0; border-bottom:1px solid var(--wdgt-line); } .wdgt-git-lab > header { align-items:flex-start; flex-direction:column; } }

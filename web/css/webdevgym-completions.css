@@ -1,0 +1,81 @@
+.wdg-code-completions {
+  position: absolute;
+  z-index: 50;
+  width: min(520px, calc(100% - 24px));
+  max-height: min(360px, 52vh);
+  overflow: auto;
+  padding: 5px;
+  border: 1px solid #343746;
+  border-radius: 8px;
+  background: #171922;
+  box-shadow: 0 16px 42px #0009, 0 2px 8px #0005;
+  color: #e6e8f0;
+  scrollbar-color: #414252 transparent;
+  scrollbar-width: thin;
+}
+
+.wdg-code-completions[hidden] { display: none; }
+.wdg-code-completions button {
+  width: 100%;
+  min-height: 36px;
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) minmax(90px, auto);
+  align-items: center;
+  gap: 9px;
+  padding: 5px 8px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: #e4e6ef;
+  font: 12px "JetBrains Mono", Consolas, monospace;
+  text-align: left;
+  cursor: pointer;
+}
+.wdg-code-completions button.active,
+.wdg-code-completions button:hover { background: #30263d; }
+.wdg-completion-icon {
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #49355c;
+  border-radius: 4px;
+  background: #241d30;
+  color: #d0a4ff;
+  font: 11px "JetBrains Mono", Consolas, monospace;
+  text-align: center;
+}
+.wdg-completion-icon.is-tag { color: #f08ab5; border-color: #63384f; background: #30202b; }
+.wdg-completion-icon.is-attribute,
+.wdg-completion-icon.is-property { color: #efc27b; border-color: #5c4a2e; background: #2a251c; }
+.wdg-completion-icon.is-value,
+.wdg-completion-icon.is-variable { color: #9bd7b2; border-color: #335544; background: #1c2923; }
+.wdg-completion-icon.is-method,
+.wdg-completion-icon.is-function { color: #91c9ff; border-color: #304e69; background: #1c2733; }
+.wdg-completion-main { min-width: 0; display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.wdg-completion-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wdg-completion-main small { flex: 0 1 auto; overflow: hidden; color: #8e94a8; font: 10px Inter, system-ui, sans-serif; text-overflow: ellipsis; white-space: nowrap; }
+.wdg-completion-description { overflow: hidden; color: #81879b; font: 10px Inter, system-ui, sans-serif; text-align: right; text-overflow: ellipsis; white-space: nowrap; }
+
+.monaco-editor .suggest-widget {
+  overflow: hidden !important;
+  border: 1px solid #343746 !important;
+  border-radius: 8px !important;
+  background: #171922 !important;
+  box-shadow: 0 16px 42px #0009, 0 2px 8px #0005 !important;
+}
+.monaco-editor .suggest-widget .monaco-list-row { border-radius: 4px; }
+.monaco-editor .suggest-widget .monaco-list-row.focused { background: #30263d !important; }
+.monaco-editor .suggest-widget .monaco-list-row .label-name { color: #e6e8f0; }
+.monaco-editor .suggest-widget .monaco-list-row .details,
+.monaco-editor .suggest-widget .monaco-list-row .monaco-highlighted-label .highlight { color: #bda0df; }
+.monaco-editor .suggest-details { border: 1px solid #343746 !important; border-radius: 7px !important; background: #171922 !important; }
+.monaco-editor .suggest-widget .monaco-list-row .codicon[class*="symbol"] { color: #c7a3ff; }
+
+@media (max-width: 600px) {
+  .wdg-code-completions { width: min(440px, calc(100% - 16px)); max-height: 38vh; padding: 4px; border-radius: 7px; }
+  .wdg-code-completions button { min-height: 40px; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; padding: 6px 7px; }
+  .wdg-completion-description { display: none; }
+  .wdg-completion-main { display: grid; gap: 2px; }
+  .wdg-completion-main small { font-size: 10px; }
+}

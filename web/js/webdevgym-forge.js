@@ -1173,13 +1173,12 @@
       window.addEventListener('message', handleStorageMessage);
       storageBridgeReady = true;
     }
-    api.register('forge', forgePage, { title:copy.title, icon:'tabler:hammer', group:L('Practice', 'Практика') });
-    addNavigation();
+    // Forge is no longer a standalone destination. Git Lab now lives in Trainers.
     window.WebDevGymForge = {
       open(id) {
         if (id) forgeState.activeProject = projectById(id).id;
         saveForge();
-        api.open('forge');
+        api.open('lab');
       },
       current() {
         const project = projectById(forgeState.activeProject);

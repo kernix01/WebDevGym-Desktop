@@ -2524,7 +2524,8 @@
 
   function openLesson(sectionName, target = {}) {
     const id = String(sectionName || '').replace(/^sec-/, '');
-    if (!id) return false;
+    if (!LEARNING_IDS.has(id)) return false;
+    try { localStorage.setItem('wdg_last_learning_section_v1', id); } catch {}
     if (typeof window.WebDevGymNext?.open === 'function') window.WebDevGymNext.open(id);
     else if (typeof window.switchTabByName === 'function') window.switchTabByName(id);
 
@@ -2582,6 +2583,7 @@
       return;
     }
     document.body.classList.add('wdgl-learning-open');
+    try { localStorage.setItem('wdg_last_learning_section_v1', sectionId(section)); } catch {}
     const blockCount = learningBlocks(section).length;
     const chromeReady = Boolean(section.querySelector(':scope > .wdgl-header'));
     if (!force && activeSection === section && activeBlockCount === blockCount && chromeReady) return;
@@ -2610,7 +2612,6 @@
   function init() {
     cleanupUniversalActions();
     watchSectionActivation();
-    document.addEventListener('click', () => scheduleSync(), true);
     document.addEventListener('webdevgym:curriculum-rendered', event => {
       watchSectionActivation(event.target instanceof Element ? event.target : document);
       scheduleSync(true);

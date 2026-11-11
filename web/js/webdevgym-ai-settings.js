@@ -5,7 +5,10 @@
   const copy = isEnglish ? {
     assistant: 'AI assistant', chats: 'Chats', chatSearch: 'Search chats...', newChat: 'New chat',
     today: 'Today', earlier: 'Earlier', connected: 'Connected', history: 'History', clear: 'Clear chat',
-    context: 'Lesson context', currentTopic: 'Current topic', selectedFiles: 'Selected files',
+    context: 'Context', currentTopic: 'Current topic', selectedFiles: 'Attached files', projectContext: 'Project context',
+    noProjectContext: 'Open a project in Desktop Center', currentProjectFile: 'Current file', attachCurrentFile: 'Attach current',
+    chooseProjectFiles: 'Attach selected', searchProjectFiles: 'Filter project files...', noProjectFiles: 'No readable files found',
+    selectedProjectFiles: 'selected', projectFilesAttached: 'project files attached',
     filesLocal: 'Files and chats are stored locally in this browser', ask: 'Ask about code or attach a file...', noFiles: 'No files attached', untitled: 'New chat', deleteChat: 'Delete chat',
     settings: 'Settings', settingsCopy: 'Adjust the interface and learning experience', reset: 'Reset', save: 'Save',
     appearance: 'Appearance', learning: 'Learning', sounds: 'Sounds', ai: 'AI assistant', data: 'Data and PWA',
@@ -13,7 +16,7 @@
     accent: 'Accent color', interfaceFont: 'Interface font', density: 'Interface density', compact: 'Compact',
     comfortable: 'Comfortable', codeFont: 'Code font', reduceMotion: 'Reduce animations', background: 'Background',
     currentBackground: 'Custom background', noBackground: 'No custom background', upload: 'Upload', remove: 'Remove',
-    opacity: 'Background opacity', soundSettings: 'Click and custom sounds', aiSettings: 'Model and connection',
+    opacity: 'Background opacity', soundSettings: 'Interface and AI sounds', aiSettings: 'Model and connection',
     activeModel: 'Active model', manageModels: 'Manage API models', apiNote: 'API keys stay in this browser and are sent only to the selected provider.',
     storage: 'Local storage', storageCopy: 'Progress, settings, files and PWA cache are stored on this device.',
     used: 'Used', exportSettings: 'Export progress', importSettings: 'Import progress', pwa: 'Application mode',
@@ -22,13 +25,16 @@
     preview: 'Preview', localSummary: 'Local data', settingsSaved: 'Settings are already applied and saved locally.',
     cancel: 'Close without resetting', saveSettings: 'Save settings', noChats: 'No chats found',
     pageTopic: 'Current WebDevGym lesson', openHistory: 'Open chat list', close: 'Close',
-    soundPageCopy: 'Choose a built-in sound or upload your own short click.', appearancePageCopy: 'Theme, accent, fonts and background.',
+    soundPageCopy: 'Choose interface sounds and a separate notification for completed AI replies.', appearancePageCopy: 'Theme, accent, fonts and background.',
     learningPageCopy: 'Control interface density and focus-friendly behavior.', dataPageCopy: 'Manage local progress and app data.',
     accessibilityPageCopy: 'Reduce motion and use keyboard shortcuts.', aiPageCopy: 'Connect your own compatible model and explicitly enable its capabilities.', imageMode: 'Image', chatMode: 'Chat', imagePrompt: 'Describe the image you want to generate...', minimize: 'Minimize', maximize: 'Maximize', visionTitle: 'Image understanding', visionCopy: 'Only models with Vision support can inspect attached images. Other readable files are sent as text.', imageTitle: 'Image generation', imageCopy: 'Only models and providers with a dedicated image-generation endpoint can create images.'
   } : {
     assistant: 'ИИ-помощник', chats: 'Чаты', chatSearch: 'Поиск по чатам...', newChat: 'Новый чат',
     today: 'Сегодня', earlier: 'Ранее', connected: 'Подключено', history: 'История', clear: 'Очистить чат',
-    context: 'Контекст урока', currentTopic: 'Текущая тема', selectedFiles: 'Выбранные файлы',
+    context: 'Контекст', currentTopic: 'Текущая тема', selectedFiles: 'Прикреплённые файлы', projectContext: 'Контекст проекта',
+    noProjectContext: 'Открой проект в Desktop Center', currentProjectFile: 'Текущий файл', attachCurrentFile: 'Прикрепить текущий',
+    chooseProjectFiles: 'Прикрепить выбранные', searchProjectFiles: 'Фильтр файлов проекта...', noProjectFiles: 'Читаемые файлы не найдены',
+    selectedProjectFiles: 'выбрано', projectFilesAttached: 'файлов проекта прикреплено',
     filesLocal: 'Файлы и чаты хранятся локально в этом браузере', ask: 'Спроси о коде или прикрепи файл...', noFiles: 'Файлы не прикреплены', untitled: 'Новый чат', deleteChat: 'Удалить чат',
     settings: 'Настройки', settingsCopy: 'Настрой интерфейс и обучение под себя', reset: 'Сбросить', save: 'Сохранить',
     appearance: 'Внешний вид', learning: 'Обучение', sounds: 'Звуки', ai: 'ИИ-помощник', data: 'Данные и PWA',
@@ -36,7 +42,7 @@
     accent: 'Цветовой акцент', interfaceFont: 'Шрифт интерфейса', density: 'Плотность интерфейса', compact: 'Компактно',
     comfortable: 'Удобно', codeFont: 'Моношрифт кода', reduceMotion: 'Уменьшить анимации', background: 'Фон',
     currentBackground: 'Пользовательский фон', noBackground: 'Свой фон не выбран', upload: 'Загрузить', remove: 'Удалить',
-    opacity: 'Непрозрачность фона', soundSettings: 'Клики и свои звуки', aiSettings: 'Модель и подключение',
+    opacity: 'Непрозрачность фона', soundSettings: 'Интерфейс и ответы ИИ', aiSettings: 'Модель и подключение',
     activeModel: 'Активная модель', manageModels: 'Настроить API-модели', apiNote: 'API-ключи остаются в этом браузере и отправляются только выбранному провайдеру.',
     storage: 'Локальное хранилище', storageCopy: 'Прогресс, настройки, файлы и PWA-кэш хранятся на этом устройстве.',
     used: 'Занято', exportSettings: 'Экспортировать прогресс', importSettings: 'Импортировать прогресс', pwa: 'Режим приложения',
@@ -45,7 +51,7 @@
     preview: 'Предпросмотр', localSummary: 'Локальные данные', settingsSaved: 'Изменения применяются сразу и сохраняются локально.',
     cancel: 'Закрыть без сброса', saveSettings: 'Сохранить настройки', noChats: 'Чаты не найдены',
     pageTopic: 'Текущий урок WebDevGym', openHistory: 'Открыть список чатов', close: 'Закрыть',
-    soundPageCopy: 'Выбери встроенный звук или загрузи свой короткий клик.', appearancePageCopy: 'Тема, акцент, шрифты и пользовательский фон.',
+    soundPageCopy: 'Настрой звуки интерфейса и отдельное уведомление о готовом ответе ИИ.', appearancePageCopy: 'Тема, акцент, шрифты и пользовательский фон.',
     learningPageCopy: 'Настрой плотность интерфейса и спокойный режим работы.', dataPageCopy: 'Управляй локальным прогрессом и данными приложения.',
     accessibilityPageCopy: 'Уменьши движение и используй клавиатурную навигацию.', aiPageCopy: 'Подключи свою совместимую модель и явно укажи её возможности.', imageMode: 'Изображение', chatMode: 'Чат', imagePrompt: 'Опиши изображение, которое нужно создать...', minimize: 'Свернуть', maximize: 'Развернуть', visionTitle: 'Распознавание изображений', visionCopy: 'Прикреплённые изображения видят только модели с поддержкой Vision. Остальные читаемые файлы передаются как текст.', imageTitle: 'Генерация изображений', imageCopy: 'Создавать изображения умеют только специальные модели и провайдеры с отдельным endpoint генерации.'
   };
@@ -65,6 +71,8 @@
   let threadSyncTimer = 0;
   let switchingThread = false;
   let settingsCategory = 'appearance';
+  let projectContextSelection = new Set();
+  let projectContextQuery = '';
 
   function icon(name, size = 18) {
     return `<iconify-icon icon="${name}" width="${size}" height="${size}" aria-hidden="true"></iconify-icon>`;
@@ -246,6 +254,83 @@
     return heading?.textContent?.replace(/\s+/g, ' ').trim().slice(0, 80) || copy.pageTopic;
   }
 
+  function desktopProjectContext() {
+    const bridge = window.WebDevGymDesktopProjectContext;
+    return bridge && typeof bridge.snapshot === 'function' && typeof bridge.attach === 'function' ? bridge : null;
+  }
+
+  function projectContextSnapshot() {
+    const bridge = desktopProjectContext();
+    if (!bridge) return null;
+    try { return bridge.snapshot(); } catch (error) { return null; }
+  }
+
+  function renderProjectContextFiles(snapshot) {
+    const list = document.getElementById('wdgrAiProjectFiles');
+    const counter = document.getElementById('wdgrAiProjectSelection');
+    const attachButton = document.getElementById('wdgrAiAttachSelected');
+    if (!list || !counter || !attachButton) return;
+    const files = Array.isArray(snapshot?.files) ? snapshot.files : [];
+    const knownPaths = new Set(files.map(file => file.path));
+    projectContextSelection = new Set([...projectContextSelection].filter(filePath => knownPaths.has(filePath)));
+    const needle = projectContextQuery.trim().toLowerCase();
+    const visible = files
+      .filter(file => !needle || file.path.toLowerCase().includes(needle))
+      .slice(0, 80);
+    if (!visible.length) {
+      list.innerHTML = `<small>${copy.noProjectFiles}</small>`;
+    } else {
+      list.innerHTML = visible.map(file => {
+        const selected = projectContextSelection.has(file.path);
+        const limitReached = projectContextSelection.size >= (snapshot.maxFiles || 5);
+        return `<label class="wdgr-ai-project-file" title="${escapeHtml(file.path)}"><input type="checkbox" value="${escapeHtml(file.path)}" ${selected ? 'checked' : ''} ${limitReached && !selected ? 'disabled' : ''}><span>${icon('tabler:file-code', 14)}${escapeHtml(file.path)}</span></label>`;
+      }).join('');
+    }
+    counter.textContent = `${projectContextSelection.size}/${snapshot?.maxFiles || 5} ${copy.selectedProjectFiles}`;
+    attachButton.disabled = projectContextSelection.size === 0;
+  }
+
+  function updateProjectContext() {
+    const section = document.querySelector('[data-ai-project-context]');
+    if (!section) return;
+    const bridge = desktopProjectContext();
+    section.hidden = !bridge;
+    if (!bridge) return;
+    const snapshot = projectContextSnapshot();
+    const projectName = document.getElementById('wdgrAiProjectName');
+    const currentFile = document.getElementById('wdgrAiProjectCurrent');
+    const currentButton = document.getElementById('wdgrAiAttachCurrent');
+    if (!snapshot?.available) {
+      projectName.textContent = copy.noProjectContext;
+      currentFile.textContent = '';
+      currentButton.disabled = true;
+      renderProjectContextFiles({ files: [], maxFiles: 5 });
+      return;
+    }
+    projectName.textContent = snapshot.projectName;
+    currentFile.textContent = snapshot.currentFile
+      ? `${copy.currentProjectFile}: ${snapshot.currentFile}`
+      : copy.currentProjectFile;
+    currentButton.disabled = !snapshot.currentFile || !snapshot.files.some(file => file.path === snapshot.currentFile);
+    renderProjectContextFiles(snapshot);
+  }
+
+  async function attachProjectContextFiles(paths) {
+    const bridge = desktopProjectContext();
+    if (!bridge) return;
+    try {
+      const result = await bridge.attach(paths);
+      projectContextSelection.clear();
+      projectContextQuery = '';
+      const search = document.getElementById('wdgrAiProjectSearch');
+      if (search) search.value = '';
+      updateChatContext();
+      notify(`${result.attached.length} ${copy.projectFilesAttached}`);
+    } catch (error) {
+      notify(error.message || copy.noProjectContext);
+    }
+  }
+
   function updateChatContext() {
     const topic = currentTopic();
     const topicEl = document.getElementById('wdgrAiTopic');
@@ -259,6 +344,7 @@
         ? chips.map(name => `<span>${icon('tabler:file', 14)}${escapeHtml(name)}</span>`).join('')
         : `<small>${copy.noFiles}</small>`;
     }
+    updateProjectContext();
   }
 
   function buildChat() {
@@ -318,6 +404,15 @@
         <div class="wdgr-ai-context-head"><strong>${copy.context}</strong><button type="button" data-ai-context-close aria-label="${copy.close}">${icon('tabler:x', 17)}</button></div>
         <section><small>${copy.currentTopic}</small><strong id="wdgrAiTopic">${copy.pageTopic}</strong></section>
         <section><small>${copy.selectedFiles}</small><div class="wdgr-ai-context-files" id="wdgrAiContextFiles"><small>${copy.noFiles}</small></div></section>
+        <section class="wdgr-ai-project-context" data-ai-project-context hidden>
+          <small>${copy.projectContext}</small>
+          <strong id="wdgrAiProjectName">${copy.noProjectContext}</strong>
+          <span class="wdgr-ai-project-current" id="wdgrAiProjectCurrent"></span>
+          <div class="wdgr-ai-project-actions"><button type="button" id="wdgrAiAttachCurrent">${icon('tabler:file-spark', 15)}<span>${copy.attachCurrentFile}</span></button><button type="button" id="wdgrAiAttachSelected" disabled>${icon('tabler:paperclip', 15)}<span>${copy.chooseProjectFiles}</span></button></div>
+          <label class="wdgr-ai-project-search">${icon('tabler:search', 15)}<input id="wdgrAiProjectSearch" type="search" placeholder="${copy.searchProjectFiles}"></label>
+          <div class="wdgr-ai-project-files" id="wdgrAiProjectFiles"></div>
+          <small class="wdgr-ai-project-selection" id="wdgrAiProjectSelection">0/5 ${copy.selectedProjectFiles}</small>
+        </section>
         <section class="wdgr-ai-capability-note">${icon('tabler:eye', 18)}<div><strong>${copy.visionTitle}</strong><p>${copy.visionCopy}</p></div></section>
         <section class="wdgr-ai-capability-note">${icon('tabler:photo-spark', 18)}<div><strong>${copy.imageTitle}</strong><p>${copy.imageCopy}</p></div></section>
         <div class="wdgr-ai-native-context"></div>
@@ -354,15 +449,76 @@
     };
     setImageMode(false);
 
-    shell.querySelector('.wdgr-ai-attach').addEventListener('click', () => fileInput.click());
+    shell.querySelector('.wdgr-ai-attach').addEventListener('click', async () => {
+      const chooseChatFiles = window.webdevgymDesktop?.desktop?.chooseChatFiles;
+      if (typeof chooseChatFiles !== 'function') {
+        if (typeof fileInput.showPicker === 'function') fileInput.showPicker();
+        else fileInput.click();
+        return;
+      }
+
+      try {
+        const selected = await chooseChatFiles();
+        const files = (Array.isArray(selected) ? selected : []).map(file => {
+          const bytes = file.data instanceof Uint8Array
+            ? file.data
+            : new Uint8Array(file.data?.data || file.data || []);
+          return new File([bytes], file.name, {
+            type: file.type || 'application/octet-stream',
+            lastModified: file.lastModified || Date.now()
+          });
+        });
+        if (files.length && typeof window.aiHandleFiles === 'function') {
+          await window.aiHandleFiles(files);
+        }
+      } catch (error) {
+        notify(isEnglish
+          ? `Could not attach files: ${error.message}`
+          : `Не удалось прикрепить файлы: ${error.message}`);
+      }
+    });
     shell.querySelector('#wdgrAiImageMode').addEventListener('click', () => setImageMode(!window.wdgrAiImageMode));
     shell.querySelectorAll('[data-ai-close]').forEach(button => button.addEventListener('click', () => window.toggleAiChat?.()));
     shell.querySelector('[data-ai-history-close]').addEventListener('click', () => win.classList.remove('wdgr-history-open'));
     shell.querySelector('[data-ai-context-close]').addEventListener('click', () => win.classList.remove('wdgr-context-open'));
     shell.querySelector('.wdgr-ai-history-toggle').addEventListener('click', () => win.classList.toggle('wdgr-history-open'));
     shell.querySelector('#wdgrAiContextButton').addEventListener('click', () => { updateChatContext(); win.classList.toggle('wdgr-context-open'); });
-    shell.querySelector('#wdgrAiMinimize').addEventListener('click', () => { win.classList.toggle('wdgr-ai-minimized'); win.classList.remove('wdgr-ai-maximized'); });
-    shell.querySelector('#wdgrAiMaximize').addEventListener('click', () => { win.classList.toggle('wdgr-ai-maximized'); win.classList.remove('wdgr-ai-minimized'); });
+    shell.querySelector('#wdgrAiProjectSearch').addEventListener('input', event => {
+      projectContextQuery = event.target.value;
+      const snapshot = projectContextSnapshot();
+      if (snapshot) renderProjectContextFiles(snapshot);
+    });
+    shell.querySelector('#wdgrAiProjectFiles').addEventListener('change', event => {
+      const input = event.target.closest('input[type="checkbox"]');
+      if (!input) return;
+      if (input.checked) projectContextSelection.add(input.value);
+      else projectContextSelection.delete(input.value);
+      const snapshot = projectContextSnapshot();
+      if (snapshot) renderProjectContextFiles(snapshot);
+    });
+    shell.querySelector('#wdgrAiAttachCurrent').addEventListener('click', () => {
+      const currentFile = projectContextSnapshot()?.currentFile;
+      if (currentFile) void attachProjectContextFiles([currentFile]);
+    });
+    shell.querySelector('#wdgrAiAttachSelected').addEventListener('click', () => {
+      void attachProjectContextFiles([...projectContextSelection]);
+    });
+    let activeDragCleanup = null;
+    const restoreComposerFocus = () => window.requestAnimationFrame(() => input.focus());
+    shell.querySelector('#wdgrAiMinimize').addEventListener('click', () => {
+      activeDragCleanup?.();
+      const minimized = !win.classList.contains('wdgr-ai-minimized');
+      win.classList.toggle('wdgr-ai-minimized', minimized);
+      win.classList.remove('wdgr-ai-maximized', 'wdgr-history-open', 'wdgr-context-open');
+      if (!minimized) restoreComposerFocus();
+    });
+    shell.querySelector('#wdgrAiMaximize').addEventListener('click', () => {
+      activeDragCleanup?.();
+      const maximized = !win.classList.contains('wdgr-ai-maximized');
+      win.classList.toggle('wdgr-ai-maximized', maximized);
+      win.classList.remove('wdgr-ai-minimized');
+      restoreComposerFocus();
+    });
     shell.querySelector('#wdgrAiNewChat').addEventListener('click', newThread);
     shell.querySelector('#wdgrAiClear').addEventListener('click', () => { if (window.confirm(copy.clear + '?')) { setLegacyHistory([]); syncActiveThread(); } });
     shell.querySelector('#wdgrAiThreadSearch').addEventListener('input', event => renderThreadList(event.target.value));
@@ -391,6 +547,7 @@
     const dragHandle = shell.querySelector('[data-ai-drag-handle]');
     dragHandle.addEventListener('pointerdown', event => {
       if (window.innerWidth <= 900 || event.button !== 0 || event.target.closest('button,select,input,textarea,a')) return;
+      activeDragCleanup?.();
       const rect = win.getBoundingClientRect();
       const offsetX = event.clientX - rect.left;
       const offsetY = event.clientY - rect.top;
@@ -400,11 +557,20 @@
         win.style.left = Math.max(8, Math.min(moveEvent.clientX - offsetX, window.innerWidth - rect.width - 8)) + 'px';
         win.style.top = Math.max(62, Math.min(moveEvent.clientY - offsetY, window.innerHeight - 64)) + 'px';
       };
-      const stop = () => { dragHandle.removeEventListener('pointermove', move); dragHandle.removeEventListener('pointerup', stop); dragHandle.removeEventListener('pointercancel', stop); saveWindow(); };
+      const stop = () => {
+        dragHandle.removeEventListener('pointermove', move);
+        dragHandle.removeEventListener('pointerup', stop);
+        dragHandle.removeEventListener('pointercancel', stop);
+        if (dragHandle.hasPointerCapture?.(event.pointerId)) dragHandle.releasePointerCapture(event.pointerId);
+        activeDragCleanup = null;
+        saveWindow();
+      };
+      activeDragCleanup = stop;
       dragHandle.addEventListener('pointermove', move);
       dragHandle.addEventListener('pointerup', stop);
       dragHandle.addEventListener('pointercancel', stop);
     });
+    window.addEventListener('blur', () => activeDragCleanup?.());
     let resizeTimer = 0;
     new ResizeObserver(() => { clearTimeout(resizeTimer); resizeTimer = window.setTimeout(saveWindow, 140); }).observe(win);
 
@@ -416,6 +582,7 @@
     new MutationObserver(scheduleThreadSync).observe(messages, { childList: true, subtree: true, characterData: true });
     new MutationObserver(updateChatContext).observe(attachments, { childList: true, subtree: true });
     new MutationObserver(() => { if (win.classList.contains('open')) { updateChatContext(); renderThreadList(document.getElementById('wdgrAiThreadSearch')?.value || ''); } }).observe(win, { attributes: true, attributeFilter: ['class'] });
+    window.addEventListener('webdevgym:desktop-project-context-changed', updateChatContext);
   }
 
   function settingsCategoryButton(id, label, iconName) {

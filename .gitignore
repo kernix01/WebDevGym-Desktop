@@ -3,3 +3,5 @@ dist-electron*/
 .web-sync-temp/
 npm-debug.log*
 electron-debug.log*
+web/vendor/monaco/
+web/vendor/emmet-monaco.min.js

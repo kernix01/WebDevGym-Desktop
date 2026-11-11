@@ -1,4 +1,4 @@
-const CACHE_NAME = 'webdevgym-shell-2026-09-14-v136';
+const CACHE_NAME = 'webdevgym-shell-2026-11-07-v149';
 const APP_SHELL = [
   './index.html',
   './index-en.html',
@@ -40,13 +40,15 @@ const APP_SHELL = [
   './css/webdevgym-calendar-v5.css',
   './css/webdevgym-nexus-v3.css?v=20260911-2',
   './css/webdevgym-learning-workspace.css',
-  './css/webdevgym-playground-atlas.css?v=20260907-2',
+  './css/webdevgym-playground-atlas.css?v=20260930-2',
   './css/webdevgym-usability.css',
   './css/webdevgym-project-mode.css',
   './css/webdevgym-notebook.css',
   './css/webdevgym-mastery.css',
   './css/webdevgym-context-menu.css',
   './css/webdevgym-comfort.css?v=20260913-5',
+  './css/webdevgym-scrollbars.css?v=20260928-1',
+  './css/webdevgym-device-sync.css?v=20261001-2',
   './css/webdevgym-local-first.css?v=20260906-1',
   './data/curriculum-ru.js',
   './data/curriculum-en.js',
@@ -57,8 +59,8 @@ const APP_SHELL = [
   './data/curriculum-order-2026.js',
   './js/webdevgym-curriculum-renderer.js',
   './js/modern-language-bootstrap-v2.js',
-  './js/webdevgym-core-ru.js?v=20260913-5',
-  './js/webdevgym-core-en.js?v=20260913-5',
+  './js/webdevgym-core-ru.js?v=20261107-1',
+  './js/webdevgym-core-en.js?v=20261107-1',
   './js/modern-ui-bootstrap.js',
   './js/modern-ui.js?v=20260913-3',
   './js/modern-ui-v2.js',
@@ -77,8 +79,8 @@ const APP_SHELL = [
   './js/webdevgym-api-lab.js',
   './js/webdevgym-trainers-v2.js',
   './js/webdevgym-critical-boot.js?v=20260824-2',
-  './js/webdevgym-personalization.js?v=20260824-2',
-  './js/webdevgym-custom-sounds.js',
+  './js/webdevgym-personalization.js?v=20261107-1',
+  './js/webdevgym-custom-sounds.js?v=20261107-1',
   './js/webdevgym-forge.js',
   './js/webdevgym-forge-v2.js?v=20260906-1',
   './js/webdevgym-pwa.js?v=20260913-4',
@@ -97,7 +99,8 @@ const APP_SHELL = [
   './js/webdevgym-nexus-v3.js?v=20260911-2',
   './js/webdevgym-learning-workspace.js?v=20260913-3',
   './js/vendor/emmet-browser.min.js?v=2.4.11',
-  './js/webdevgym-playground-atlas.js?v=20260913-4',
+  './js/webdevgym-code-editor.js?v=20260914-2',
+  './js/webdevgym-playground-atlas.js?v=20260930-2',
   './js/webdevgym-usability.js',
   './js/webdevgym-project-mode.js',
   './js/webdevgym-notebook.js?v=20260911-2',
@@ -105,7 +108,8 @@ const APP_SHELL = [
   './js/webdevgym-context-menu.js',
   './js/webdevgym-optimizer.js?v=20260906-1',
   './js/webdevgym-transitions.js?v=20260913-5',
-  './js/webdevgym-local-first.js?v=20260906-1'
+  './js/webdevgym-local-first.js?v=20260906-1',
+  './js/webdevgym-device-sync.js?v=20261001-6'
 ];
 
 self.addEventListener('install', event => {

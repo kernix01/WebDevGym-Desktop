@@ -26,20 +26,50 @@ for (const file of files) {
   fs.copyFileSync(path.join(sourceRoot, file), path.join(stagingRoot, file));
 }
 
-fs.cpSync(path.join(overridesRoot, 'js'), path.join(stagingRoot, 'js'), {
-  recursive: true,
-  force: true
-});
+for (const directory of ['css', 'js']) {
+  fs.cpSync(path.join(overridesRoot, directory), path.join(stagingRoot, directory), {
+    recursive: true,
+    force: true
+  });
+}
 
 for (const page of ['index.html', 'index-en.html']) {
   const pagePath = path.join(stagingRoot, page);
-  const scriptTag = '<script src="js/webdevgym-electron-token.js?v=20260914-1"></script>';
-  const html = fs.readFileSync(pagePath, 'utf8');
-  if (!html.includes(scriptTag)) {
-    fs.writeFileSync(pagePath, html.replace('</body>', `${scriptTag}\n</body>`), 'utf8');
+  const stylesheetTags = [
+    '<link rel="stylesheet" href="css/webdevgym-desktop.css?v=20261003-4">',
+    '<link rel="stylesheet" href="css/webdevgym-completions.css?v=20261105-1">',
+    '<link rel="stylesheet" href="css/webdevgym-ai-edits.css?v=20260930-1">',
+    '<link rel="stylesheet" href="css/webdevgym-electron-titlebar.css?v=20260928-1">'
+  ];
+  const scriptTags = [
+    '<script src="js/webdevgym-electron-token.js?v=20260914-1"></script>',
+    '<script src="js/webdevgym-offline-docs-data.js?v=20260930-1"></script>',
+    '<script src="js/webdevgym-monaco.js?v=20261003-4"></script>',
+    '<script src="js/webdevgym-desktop.js?v=20261003-4"></script>',
+    '<script src="js/webdevgym-ai-edits.js?v=20260930-1"></script>',
+    '<script src="js/webdevgym-electron-titlebar.js?v=20260928-1"></script>'
+  ];
+  let html = fs.readFileSync(pagePath, 'utf8');
+  for (const stylesheetTag of stylesheetTags) {
+    const asset = stylesheetTag.match(/href="([^"?]+)/)?.[1];
+    if (asset) {
+      const escaped = asset.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      html = html.replace(new RegExp(`<link\\b[^>]*href=["'][^"']*${escaped}(?:\\?[^"']*)?["'][^>]*>\\s*`, 'gi'), '');
+    }
+    html = html.replace('</head>', `${stylesheetTag}\n</head>`);
   }
+  for (const scriptTag of scriptTags) {
+    const asset = scriptTag.match(/src="([^"?]+)/)?.[1];
+    if (asset) {
+      const escaped = asset.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      html = html.replace(new RegExp(`<script\\b[^>]*src=["'][^"']*${escaped}(?:\\?[^"']*)?["'][^>]*>\\s*</script>\\s*`, 'gi'), '');
+    }
+    html = html.replace('</body>', `${scriptTag}\n</body>`);
+  }
+  fs.writeFileSync(pagePath, html, 'utf8');
 }
 
 fs.rmSync(targetRoot, { recursive: true, force: true });
 fs.renameSync(stagingRoot, targetRoot);
+require('./prepare-editor-vendor.cjs').prepareEditorVendor();
 console.log(`Web files synchronized from ${sourceRoot}`);

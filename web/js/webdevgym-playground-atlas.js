@@ -63,6 +63,12 @@
     snapshotName: 'Snapshot name',
     filePath: 'File path, for example src/app.js',
     folderPath: 'Folder path, for example src/components',
+    createFile: 'Create file',
+    createFolder: 'Create folder',
+    create: 'Create',
+    cancel: 'Cancel',
+    pathRequired: 'Enter a file or folder path.',
+    pathExists: 'A file or folder with this path already exists.',
     rename: 'New name or path',
     confirmDelete: 'Delete this item?',
     projectPublished: 'Project added to the local profile.',
@@ -149,6 +155,12 @@
     snapshotName: 'Название снимка',
     filePath: 'Путь к файлу, например src/app.js',
     folderPath: 'Путь к папке, например src/components',
+    createFile: 'Создать файл',
+    createFolder: 'Создать папку',
+    create: 'Создать',
+    cancel: 'Отмена',
+    pathRequired: 'Укажи путь к файлу или папке.',
+    pathExists: 'Файл или папка с таким путём уже существует.',
     rename: 'Новое имя или путь',
     confirmDelete: 'Удалить этот элемент?',
     projectPublished: 'Проект добавлен в локальный профиль.',
@@ -809,6 +821,25 @@
           </div>
           <div class="wdga-dialog-body"><div class="wdga-history-list" data-wdga-history-list></div></div>
         </dialog>
+        <dialog class="wdga-dialog wdga-create-dialog" data-wdga-create-dialog>
+          <form data-wdga-create-form>
+            <div class="wdga-dialog-head">
+              <strong>${icon('tabler:file-plus', 17)} <span data-wdga-create-title>${ui.createFile}</span></strong>
+              <button class="wdga-icon-btn" type="button" data-wdga-close-dialog title="${isEnglish ? 'Close' : 'Закрыть'}">${icon('tabler:x', 16)}</button>
+            </div>
+            <div class="wdga-dialog-body">
+              <label class="wdga-create-field">
+                <span data-wdga-create-label>${ui.filePath}</span>
+                <input class="wdga-input" type="text" autocomplete="off" spellcheck="false" data-wdga-create-path>
+              </label>
+              <div class="wdga-create-error" data-wdga-create-error aria-live="polite"></div>
+            </div>
+            <div class="wdga-dialog-foot">
+              <button class="wdga-btn" type="button" data-wdga-close-dialog>${ui.cancel}</button>
+              <button class="wdga-btn primary" type="submit">${ui.create}</button>
+            </div>
+          </form>
+        </dialog>
         <dialog class="wdga-dialog wdga-import-dialog" data-wdga-import-dialog>
           <div class="wdga-dialog-head">
             <strong>${icon('tabler:upload', 17)} ${ui.importProject}</strong>
@@ -1108,30 +1139,85 @@
     renderConsole();
   }
 
-  function addFile() {
-    const raw = window.prompt(ui.filePath, 'src/app.js');
-    const path = normalizePath(raw);
-    if (!path || state.activeProject.files.some(file => file.name === path)) return;
+  function pathAlreadyExists(path) {
+    return state.activeProject.files.some(file => file.name === path || file.name.startsWith(path + '/')) ||
+      state.activeProject.emptyFolders.some(folder => folder === path || folder.startsWith(path + '/'));
+  }
+
+  function expandFolderPath(path) {
+    const parts = normalizePath(path).split('/').filter(Boolean);
+    parts.forEach((_, index) => {
+      const folder = parts.slice(0, index + 1).join('/');
+      if (!state.activeProject.expandedFolders.includes(folder)) state.activeProject.expandedFolders.push(folder);
+    });
+  }
+
+  function addFile(requestedPath) {
+    const path = normalizePath(requestedPath);
+    if (!path || pathAlreadyExists(path)) return false;
+    captureEditor();
     const type = fileType(path);
     const content = type === 'html' ? '<!DOCTYPE html>\n<html lang="ru">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>WebDevGym</title>\n</head>\n<body>\n\n</body>\n</html>' :
       type === 'css' ? ':root {\n  color-scheme: dark;\n}\n' :
         type === 'js' || type === 'ts' ? '"use strict";\n\n' : '';
     state.activeProject.files.push({ id: uid('file'), name: path, content, updatedAt: Date.now() });
-    state.activeProject.activeFile = path;
     const parent = path.split('/').slice(0, -1).join('/');
-    if (parent && !state.activeProject.expandedFolders.includes(parent)) state.activeProject.expandedFolders.push(parent);
+    if (parent) expandFolderPath(parent);
     syncCoreFiles();
-    setActiveFile(path);
+    setActiveFile(path, { silent: true });
+    scheduleSave();
     runPreview();
+    return true;
   }
 
-  function addFolder() {
-    const path = normalizePath(window.prompt(ui.folderPath, 'src/components'));
-    if (!path || state.activeProject.emptyFolders.includes(path)) return;
+  function addFolder(requestedPath) {
+    const path = normalizePath(requestedPath);
+    if (!path || pathAlreadyExists(path)) return false;
     state.activeProject.emptyFolders.push(path);
-    if (!state.activeProject.expandedFolders.includes(path)) state.activeProject.expandedFolders.push(path);
+    expandFolderPath(path);
     renderTree();
     scheduleSave();
+    return true;
+  }
+
+  function openCreateItemDialog(kind) {
+    const dialog = state.root.querySelector('[data-wdga-create-dialog]');
+    const input = dialog.querySelector('[data-wdga-create-path]');
+    const isFile = kind === 'file';
+
+    dialog.dataset.wdgaCreateKind = kind;
+    dialog.querySelector('[data-wdga-create-title]').textContent = isFile ? ui.createFile : ui.createFolder;
+    dialog.querySelector('[data-wdga-create-label]').textContent = isFile ? ui.filePath : ui.folderPath;
+    dialog.querySelector('[data-wdga-create-error]').textContent = '';
+    input.value = isFile ? 'src/app.js' : 'src/components';
+    dialog.showModal();
+    requestAnimationFrame(() => {
+      input.focus();
+      input.select();
+    });
+  }
+
+  function submitCreateItem() {
+    const dialog = state.root.querySelector('[data-wdga-create-dialog]');
+    const input = dialog.querySelector('[data-wdga-create-path]');
+    const error = dialog.querySelector('[data-wdga-create-error]');
+    const path = normalizePath(input.value);
+
+    if (!path) {
+      error.textContent = ui.pathRequired;
+      input.focus();
+      return;
+    }
+
+    const created = dialog.dataset.wdgaCreateKind === 'folder' ? addFolder(path) : addFile(path);
+    if (!created) {
+      error.textContent = ui.pathExists;
+      input.focus();
+      input.select();
+      return;
+    }
+
+    dialog.close();
   }
 
   function renameItem(kind, path) {
@@ -1447,6 +1533,36 @@
   function injectConsoleBridge(source) {
     const bridge = `<script>
       (function () {
+        function installPreviewStorage(name) {
+          try {
+            const storage = window[name];
+            const probe = '__wdga_storage_probe__';
+            storage.setItem(probe, '1');
+            storage.removeItem(probe);
+            return;
+          } catch (error) {}
+
+          const entries = new Map();
+          const storage = {
+            get length() { return entries.size; },
+            clear() { entries.clear(); },
+            getItem(key) {
+              const normalized = String(key);
+              return entries.has(normalized) ? entries.get(normalized) : null;
+            },
+            key(index) { return Array.from(entries.keys())[Number(index)] ?? null; },
+            removeItem(key) { entries.delete(String(key)); },
+            setItem(key, value) { entries.set(String(key), String(value)); }
+          };
+
+          try {
+            Object.defineProperty(window, name, { configurable: true, value: storage });
+          } catch (error) {}
+        }
+
+        installPreviewStorage('localStorage');
+        installPreviewStorage('sessionStorage');
+
         const send = (level, args) => {
           const values = Array.from(args).map(value => {
             if (typeof value === 'string') return value;
@@ -1462,7 +1578,8 @@
         window.addEventListener('unhandledrejection', event => send('error', ['Promise: ' + String(event.reason)]));
       })();
     <\/script>`;
-    return source.includes('</head>') ? source.replace('</head>', bridge + '</head>') : bridge + source;
+    const head = /<head(?:\s[^>]*)?>/i;
+    return head.test(source) ? source.replace(head, match => match + bridge) : bridge + source;
   }
 
   function relativeProjectPath(sourcePath, targetPath) {
@@ -2286,8 +2403,8 @@
         renderHistory();
         root.querySelector('[data-wdga-history-dialog]').showModal();
       } else if (target.closest('[data-wdga-download]')) downloadZip();
-      else if (target.closest('[data-wdga-add-file], [data-wdga-tab-add]')) addFile();
-      else if (target.closest('[data-wdga-add-folder]')) addFolder();
+      else if (target.closest('[data-wdga-add-file], [data-wdga-tab-add]')) openCreateItemDialog('file');
+      else if (target.closest('[data-wdga-add-folder]')) openCreateItemDialog('folder');
       else if (target.closest('[data-wdga-run], [data-wdga-refresh]')) runPreview();
       else if (target.closest('[data-wdga-format]')) formatCurrentFile();
       else if (target.closest('[data-wdga-console-clear]')) {
@@ -2325,6 +2442,10 @@
     root.addEventListener('change', updateOpenTool);
 
     root.querySelector('[data-wdga-project]').addEventListener('change', event => activateProject(event.target.value));
+    root.querySelector('[data-wdga-create-form]').addEventListener('submit', event => {
+      event.preventDefault();
+      submitCreateItem();
+    });
     root.querySelector('[data-wdga-import-files]').addEventListener('change', async event => {
       const files = event.target.files;
       if (files?.length) await importSelectedFiles(files, false);
@@ -2372,19 +2493,28 @@
         applyEmmetSuggestion(true);
         return;
       }
+      if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+        event.preventDefault();
+        runPreview();
+        return;
+      }
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
+        event.preventDefault();
+        createSnapshot();
+        return;
+      }
+      if (window.WebDevGymCodeEditor?.handleKeydown(editor, event, {
+        fileName: currentFile()?.name || '',
+        expandAbbreviation: () => applyEmmetSuggestion(false)
+      })) {
+        hideEmmetSuggestion();
+        return;
+      }
       if (event.key === 'Tab') {
         event.preventDefault();
         if (!event.shiftKey && editor.selectionStart === editor.selectionEnd && applyEmmetSuggestion(false)) return;
         indentEditorSelection(editor, event.shiftKey);
         return;
-      }
-      if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
-        event.preventDefault();
-        runPreview();
-      }
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
-        event.preventDefault();
-        createSnapshot();
       }
     });
     updateEmmetStatus();

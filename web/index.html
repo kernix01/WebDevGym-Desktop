@@ -31,20 +31,18 @@ try {
   <link rel="stylesheet" href="css/webdevgym-naming.css?v=20260906-1">
   <link rel="stylesheet" href="css/webdevgym-lab.css">
   <link rel="stylesheet" href="css/webdevgym-api-lab.css?v=20260813-1">
-  <link rel="stylesheet" href="css/webdevgym-trainers-v2.css?v=20260813-1">
+  <link rel="stylesheet" href="css/webdevgym-trainers-v2.css?v=20261002-1">
   <link rel="stylesheet" href="css/webdevgym-personalization.css">
-  <link rel="stylesheet" href="css/webdevgym-custom-sounds.css">
-  <link rel="stylesheet" href="css/webdevgym-forge.css">
-  <link rel="stylesheet" href="css/webdevgym-forge-v2.css?v=20260803-1">
+  <link rel="stylesheet" href="css/webdevgym-custom-sounds.css?v=20260928-1">
   <link rel="stylesheet" href="css/webdevgym-studio-suite.css">
   <link rel="stylesheet" href="css/webdevgym-project-path.css?v=20260803-1">
   <link rel="stylesheet" href="css/webdevgym-today.css">
   <link rel="stylesheet" href="css/webdevgym-today-v2.css">
-  <link rel="stylesheet" href="css/webdevgym-growth.css">
+  <link rel="stylesheet" href="css/webdevgym-growth.css?v=20261002-1">
   <link rel="stylesheet" href="css/webdevgym-routes-v2.css">
   <link rel="stylesheet" href="css/webdevgym-nexus.css">
 <link rel="stylesheet" href="css/webdevgym-mobile.css">
-<link rel="stylesheet" href="css/webdevgym-ai-settings.css">
+<link rel="stylesheet" href="css/webdevgym-ai-settings.css?v=20261016-1">
 <link rel="stylesheet" href="css/webdevgym-settings-v2.css?v=20260913-3">
 <link rel="stylesheet" href="css/webdevgym-splash.css">
 <link rel="stylesheet" href="css/webdevgym-github-token-vault.css">
@@ -55,14 +53,20 @@ try {
 <link rel="stylesheet" href="css/webdevgym-calendar-v5.css?v=20260809-2">
 <link rel="stylesheet" href="css/webdevgym-nexus-v3.css?v=20260911-2">
 <link rel="stylesheet" href="css/webdevgym-learning-workspace.css">
-<link rel="stylesheet" href="css/webdevgym-playground-atlas.css?v=20260907-2">
+<link rel="stylesheet" href="css/webdevgym-playground-atlas.css?v=20260930-2">
 <link rel="stylesheet" href="css/webdevgym-usability.css?v=20260824-1">
 <link rel="stylesheet" href="css/webdevgym-project-mode.css?v=20260812-1">
 <link rel="stylesheet" href="css/webdevgym-notebook.css?v=20260812-1">
 <link rel="stylesheet" href="css/webdevgym-mastery.css?v=20260813-1">
 <link rel="stylesheet" href="css/webdevgym-context-menu.css?v=20260819-2">
   <link rel="stylesheet" href="css/webdevgym-comfort.css?v=20260913-5">
+  <link rel="stylesheet" href="css/webdevgym-scrollbars.css?v=20260928-1">
+  <link rel="stylesheet" href="css/webdevgym-device-sync.css?v=20261001-2">
   <link rel="stylesheet" href="css/webdevgym-local-first.css?v=20260906-1">
+<link rel="stylesheet" href="css/webdevgym-desktop.css?v=20261003-4">
+<link rel="stylesheet" href="css/webdevgym-completions.css?v=20261105-1">
+<link rel="stylesheet" href="css/webdevgym-ai-edits.css?v=20260930-1">
+<link rel="stylesheet" href="css/webdevgym-electron-titlebar.css?v=20260928-1">
 </head>
 <body>
 <div id="customBgLayer"></div>
@@ -986,7 +990,7 @@ try {
     <div style="background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#1e293b 100%);border-radius:16px;padding:1.6rem 2rem;margin-bottom:1.5rem;color:#fff;position:relative;overflow:hidden;">
       <div style="position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:rgba(99,102,241,.12);"></div>
       <div style="font-size:22px;font-weight:700;margin-bottom:6px;"><iconify-icon icon="tabler:device-desktop-code" width="22" height="22" style="vertical-align:middle"></iconify-icon> Live Playground</div>
-      <div style="font-size:14px;opacity:.8;line-height:1.6;">Свободный редактор для экспериментов без критериев и оценок. Для пошаговых проектов с подсказками и проверкой используй Forge.</div>
+<div style="font-size:14px;opacity:.8;line-height:1.6;">Свободный редактор для экспериментов и самостоятельной практики.</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
         <span style="font-size:11px;background:rgba(255,255,255,.15);padding:3px 10px;border-radius:99px;font-weight:600;">Без сохранения на сервер</span>
         <span style="font-size:11px;background:rgba(255,255,255,.15);padding:3px 10px;border-radius:99px;font-weight:600;">Всё в браузере</span>
@@ -2767,7 +2771,7 @@ try {
 <script src="data/curriculum-corrections-2026.js?v=20260811-1"></script>
 <script src="data/curriculum-order-2026.js?v=20260810-1"></script>
 <script src="js/webdevgym-curriculum-renderer.js"></script>
-<script src="js/webdevgym-core-ru.js?v=20260913-5"></script>
+<script src="js/webdevgym-core-ru.js?v=20261107-1"></script>
 <script src="js/modern-ui-bootstrap.js"></script>
 <script src="js/modern-ui.js?v=20260913-3"></script>
 <script src="js/modern-ui-v2.js"></script>
@@ -2776,36 +2780,35 @@ try {
 <script src="js/modern-ui-v5.js"></script>
 <script src="js/modern-ui-v6.js"></script>
 <script src="js/webdevgym-shared-runtime.js"></script>
-  <script src="js/webdevgym-features.js?v=20260913-6"></script>
+<script src="js/webdevgym-features.js?v=20261002-1"></script>
 <script src="js/webdevgym-profile-redesign.js?v=20260812-2"></script>
-<script src="js/webdevgym-today.js"></script>
-<script src="js/webdevgym-today-v2.js?v=20260913-5"></script>
+<script src="js/webdevgym-today.js?v=20261002-1"></script>
+<script src="js/webdevgym-today-v2.js?v=20261002-1"></script>
 <script src="js/webdevgym-learning.js?v=20260913-7"></script>
-<script src="js/webdevgym-growth.js?v=20260914-8"></script>
+<script src="js/webdevgym-growth.js?v=20261002-1"></script>
 <script src="js/webdevgym-api-lab.js?v=20260813-1"></script>
 <script src="js/webdevgym-lab.js?v=20260813-1"></script>
-<script src="js/webdevgym-trainers-v2.js?v=20260813-1"></script>
-<script src="js/webdevgym-personalization.js?v=20260824-2"></script>
-<script src="js/webdevgym-custom-sounds.js"></script>
-<script src="js/webdevgym-forge.js"></script>
-<script src="js/webdevgym-forge-v2.js?v=20260906-1"></script>
+<script src="js/webdevgym-trainers-v2.js?v=20261002-1"></script>
+<script src="js/webdevgym-personalization.js?v=20261107-1"></script>
+<script src="js/webdevgym-custom-sounds.js?v=20261107-1"></script>
 <script src="js/webdevgym-pwa.js?v=20260913-4"></script>
 <script src="js/webdevgym-mobile.js"></script>
-<script src="js/webdevgym-ai-settings.js?v=20260824-4"></script>
+<script src="js/webdevgym-ai-settings.js?v=20260928-1"></script>
 <script src="js/webdevgym-settings-v2.js?v=20260803-1"></script>
 <script src="js/webdevgym-github-token-vault.js?v=20260809-1"></script>
 <script src="js/webdevgym-github-folder.js?v=20260906-2"></script>
-<script src="js/webdevgym-studio-suite.js"></script>
+<script src="js/webdevgym-studio-suite.js?v=20261002-1"></script>
 <script src="js/webdevgym-github-workspace.js?v=20260907-1"></script>
 <script src="js/webdevgym-mobile-performance.js"></script>
-<script src="js/webdevgym-next.js?v=20260913-8"></script>
+<script src="js/webdevgym-next.js?v=20261002-1"></script>
 <script src="js/webdevgym-naming-engine.js?v=20260906-1"></script>
 <script src="js/webdevgym-naming.js?v=20260906-1"></script>
 <script src="js/webdevgym-calendar-v5.js?v=20260809-1"></script>
 <script src="js/webdevgym-nexus-v3.js?v=20260911-2"></script>
-<script src="js/webdevgym-learning-workspace.js?v=20260913-3"></script>
+<script src="js/webdevgym-learning-workspace.js?v=20261002-1"></script>
 <script src="js/vendor/emmet-browser.min.js?v=2.4.11"></script>
-<script src="js/webdevgym-playground-atlas.js?v=20260913-4"></script>
+<script src="js/webdevgym-code-editor.js?v=20261105-1"></script>
+<script src="js/webdevgym-playground-atlas.js?v=20260930-2"></script>
 <script src="js/webdevgym-usability.js?v=20260824-6"></script>
 <script src="js/webdevgym-project-mode.js?v=20260812-1"></script>
 <script src="js/webdevgym-notebook.js?v=20260911-2"></script>
@@ -2814,6 +2817,12 @@ try {
 <script src="js/webdevgym-optimizer.js?v=20260906-1"></script>
 <script src="js/webdevgym-transitions.js?v=20260913-5"></script>
 <script src="js/webdevgym-local-first.js?v=20260906-1"></script>
+<script src="js/webdevgym-device-sync.js?v=20261001-6"></script>
 <script src="js/webdevgym-electron-token.js?v=20260914-1"></script>
+<script src="js/webdevgym-offline-docs-data.js?v=20260930-1"></script>
+<script src="js/webdevgym-monaco.js?v=20261003-4"></script>
+<script src="js/webdevgym-desktop.js?v=20261003-4"></script>
+<script src="js/webdevgym-ai-edits.js?v=20260930-1"></script>
+<script src="js/webdevgym-electron-titlebar.js?v=20260928-1"></script>
 </body>
 </html>

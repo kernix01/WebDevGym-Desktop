@@ -183,7 +183,7 @@
 
   function selectedSound() {
     const selected = read(keys.sound, 'soft');
-    return soundProfiles.some(([id]) => id === selected) ? selected : 'soft';
+    return selected.startsWith('custom:') || soundProfiles.some(([id]) => id === selected) ? selected : 'soft';
   }
 
   function soundVolume() {
@@ -247,9 +247,10 @@
   function syncSoundControls() {
     const enabled = soundEnabled();
     const profile = selectedSound();
+    const customSelected = profile.startsWith('custom:');
     const volume = soundVolume();
     document.querySelectorAll('[data-wdgp-sound]').forEach(button => {
-      const active = button.dataset.wdgpSound === profile;
+      const active = !customSelected && button.dataset.wdgpSound === profile;
       button.classList.toggle('active', active);
       button.setAttribute('aria-pressed', String(active));
     });
@@ -668,7 +669,8 @@
   function handleNestedControlClick(event) {
     const exactSelector = 'input[type="checkbox"], button, .item, .tab, .book-lang-btn, .font-lang-btn, .font-filter-btn';
     if (event.target.matches(exactSelector)) return;
-    if (event.target.closest('button, [role="button"], .item, .tab, .wdg-nav-btn, .wdg-library-item')) {
+    const clickable = event.target.closest('button, [role="button"], .item, .tab, .wdg-nav-btn, .wdg-library-item');
+    if (clickable && !clickable.closest('#wdgpSoundSection, #wdgcAiSoundPanel')) {
       playSound();
     }
   }
@@ -691,6 +693,7 @@
 
   window.toggleDark = toggleTheme;
   window.playClickSound = () => playSound();
+  window.WebDevGymSoundProfiles = Object.freeze({ play: () => playSound() });
   window.setCustomBg = setCustomBackground;
   window.clearCustomBg = clearCustomBackground;
   window.restoreCustomBg = restoreCustomBackground;

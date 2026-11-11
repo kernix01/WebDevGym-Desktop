@@ -6477,7 +6477,6 @@ function toggleClickSounds(row) {
   clickSoundsOn = !clickSoundsOn;
   localStorage.setItem('clickSounds', clickSoundsOn ? '1' : '0');
   document.getElementById('soundToggle').classList.toggle('on', clickSoundsOn);
-  if (clickSoundsOn) playClickSound();
 }
 
 // ===== SETTINGS PANEL =====
@@ -6805,7 +6804,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Click sound on all checkboxes and buttons (delegated)
   document.body.addEventListener('click', (e) => {
-    if (e.target.matches('input[type="checkbox"], button, .item, .tab, .book-lang-btn, .font-lang-btn, .font-filter-btn')) {
+    const clickable = e.target.matches('input[type="checkbox"], button, .item, .tab, .book-lang-btn, .font-lang-btn, .font-filter-btn') ? e.target : null;
+    if (clickable && !clickable.closest('#wdgpSoundSection, #wdgcAiSoundPanel')) {
       playClickSound();
     }
   });
@@ -8182,6 +8182,7 @@ const AI_ATTACH_TEXT_LIMIT = 12000;
 const AI_ATTACH_TOTAL_TEXT_LIMIT = 30000;
 const AI_ATTACH_VISION_MAX_BYTES = 4 * 1024 * 1024;
 const AI_ATTACH_MAX_FILES = 8;
+const AI_ATTACH_THUMBNAIL_MAX_CHARS = 60000;
 let aiAttachments = [];
 
 const AI_TEXT_EXTENSIONS = new Set([
@@ -8195,6 +8196,7 @@ function toggleAiChat() {
   aiChatOpen = !aiChatOpen;
   const win = document.getElementById('aiChatWin');
   if (aiChatOpen) {
+    win.classList.remove('wdgr-ai-minimized');
     win.classList.add('open');
     const badge = document.getElementById('aiFabBadge');
     if (badge) badge.style.display = 'none';
@@ -8230,6 +8232,22 @@ function aiOnModelChange() {
 }
 // aiOnModelChange called on first open
 
+function aiNormalizeDisplayAttachments(attachments) {
+  if (!Array.isArray(attachments)) return [];
+  return attachments.slice(0, AI_ATTACH_MAX_FILES).map((attachment, index) => {
+    const thumbnail = String(attachment?.thumbnail || '');
+    return {
+      name: String(attachment?.name || 'file').slice(0, 160),
+      type: String(attachment?.type || 'unknown').slice(0, 100),
+      size: Math.max(0, Number(attachment?.size) || 0),
+      isImage: Boolean(attachment?.isImage),
+      thumbnail: index < 2 && /^data:image\//i.test(thumbnail) && thumbnail.length <= AI_ATTACH_THUMBNAIL_MAX_CHARS
+        ? thumbnail
+        : ''
+    };
+  });
+}
+
 function aiNormalizeHistory(history) {
   if (!Array.isArray(history)) return [];
   return history
@@ -8238,7 +8256,8 @@ function aiNormalizeHistory(history) {
       role: msg.role,
       content: msg.content.slice(0, 8000),
       display: typeof msg.display === 'string' ? msg.display.slice(0, 8000) : undefined,
-      image: typeof msg.image === 'string' && !msg.image.startsWith('data:') ? msg.image : undefined
+      image: typeof msg.image === 'string' && !msg.image.startsWith('data:') ? msg.image : undefined,
+      attachments: aiNormalizeDisplayAttachments(msg.attachments)
     }))
     .slice(-AI_HISTORY_LIMIT);
 }
@@ -8247,7 +8266,15 @@ function aiSaveHistory() {
   try {
     aiHistory = aiNormalizeHistory(aiHistory);
     localStorage.setItem(AI_HISTORY_KEY, JSON.stringify(aiHistory));
-  } catch (e) {}
+  } catch (e) {
+    try {
+      aiHistory = aiHistory.map(message => ({
+        ...message,
+        attachments: aiNormalizeDisplayAttachments(message.attachments).map(attachment => ({ ...attachment, thumbnail: '' }))
+      }));
+      localStorage.setItem(AI_HISTORY_KEY, JSON.stringify(aiHistory));
+    } catch (storageError) {}
+  }
 }
 
 function aiLoadHistory() {
@@ -8286,7 +8313,7 @@ function aiRenderHistory() {
   }
   aiHistory.forEach(msg => {
     if (msg.image) aiAddImageMsg(msg.image, msg.content);
-    else aiAddMsg(msg.role === 'user' ? 'user' : 'bot', msg.display || msg.content);
+    else aiAddMsg(msg.role === 'user' ? 'user' : 'bot', msg.display || msg.content, msg.attachments);
   });
   const quick = document.getElementById('aiQuickRow');
   if (quick) quick.style.display = 'none';
@@ -8363,26 +8390,71 @@ async function aiPrepareVisionDataUrl(file) {
   }
 }
 
+async function aiCreateAttachmentThumbnail(file) {
+  try {
+    const bitmap = await createImageBitmap(file);
+    const maxSide = 220;
+    const ratio = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(bitmap.width * ratio));
+    canvas.height = Math.max(1, Math.round(bitmap.height * ratio));
+    const context = canvas.getContext('2d', { alpha: false });
+    context.fillStyle = '#111827';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    bitmap.close?.();
+    const thumbnail = canvas.toDataURL('image/jpeg', .68);
+    return thumbnail.length <= AI_ATTACH_THUMBNAIL_MAX_CHARS ? thumbnail : '';
+  } catch (error) {
+    return '';
+  }
+}
+
 async function aiHandleFiles(fileList) {
   const files = Array.from(fileList || []);
-  if (!files.length) return;
+  if (!files.length) return 0;
 
-  const slots = Math.max(0, AI_ATTACH_MAX_FILES - aiAttachments.length);
-  const selected = files.slice(0, slots);
-  if (files.length > selected.length && typeof showToast === 'function') {
+  const keyForFile = file => file.webdevgymPath
+    ? `${file.webdevgymProjectRoot || ''}\u0000${file.webdevgymPath}`
+    : '';
+  const keyForAttachment = attachment => attachment.projectPath
+    ? `${attachment.projectRoot || ''}\u0000${attachment.projectPath}`
+    : '';
+  const seen = new Set();
+  const uniqueFiles = files.filter(file => {
+    const key = keyForFile(file);
+    if (!key) return true;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  let slots = Math.max(0, AI_ATTACH_MAX_FILES - aiAttachments.length);
+  const selected = uniqueFiles.filter(file => {
+    const key = keyForFile(file);
+    const replacesExisting = key && aiAttachments.some(attachment => keyForAttachment(attachment) === key);
+    if (replacesExisting) return true;
+    if (slots <= 0) return false;
+    slots -= 1;
+    return true;
+  });
+  if (uniqueFiles.length > selected.length && typeof showToast === 'function') {
     showToast('Можно onкрепить up to ' + AI_ATTACH_MAX_FILES + ' files за раз');
   }
 
   for (const file of selected) {
     const isImage = String(file.type || '').startsWith('image/');
+    const displayName = file.webdevgymPath || file.name || 'file';
     const att = {
       id: 'att_' + Date.now() + '_' + Math.random().toString(36).slice(2),
-      name: file.name || 'file',
+      name: displayName,
+      projectPath: file.webdevgymPath || '',
+      projectRoot: file.webdevgymProjectRoot || '',
       type: file.type || 'unknown',
       size: file.size || 0,
-      ext: aiFileExt(file.name),
+      ext: aiFileExt(displayName),
       isImage,
       previewUrl: isImage ? URL.createObjectURL(file) : '',
+      thumbnail: isImage ? await aiCreateAttachmentThumbnail(file) : '',
       dataUrl: '',
       text: '',
       textTruncated: false
@@ -8400,9 +8472,46 @@ async function aiHandleFiles(fileList) {
       att.textTruncated = file.size > AI_ATTACH_TEXT_LIMIT;
     }
 
-    aiAttachments.push(att);
+    const projectKey = keyForAttachment(att);
+    const existingIndex = projectKey
+      ? aiAttachments.findIndex(attachment => keyForAttachment(attachment) === projectKey)
+      : -1;
+    if (existingIndex >= 0) {
+      const previous = aiAttachments[existingIndex];
+      if (previous.previewUrl) URL.revokeObjectURL(previous.previewUrl);
+      aiAttachments.splice(existingIndex, 1, att);
+    } else {
+      aiAttachments.push(att);
+    }
   }
 
+  aiRenderAttachments();
+  return selected.length;
+}
+
+async function aiRefreshProjectAttachments() {
+  const projectAttachments = aiAttachments.filter(attachment => attachment.projectPath);
+  const context = window.WebDevGymDesktopProjectContext;
+  if (!projectAttachments.length || typeof context?.read !== 'function') return;
+  const roots = [...new Set(projectAttachments.map(attachment => attachment.projectRoot).filter(Boolean))];
+  if (roots.length > 1) throw new Error('The attached files belong to different projects. Remove the old files and attach them again.');
+  const result = await context.read(projectAttachments.map(attachment => attachment.projectPath), roots[0] || '');
+  const freshFiles = new Map((result.files || []).map(file => [file.path, file]));
+  if (freshFiles.size !== projectAttachments.length) throw new Error('The attached project files could not be refreshed.');
+  aiAttachments = aiAttachments.map(attachment => {
+    if (!attachment.projectPath) return attachment;
+    const fresh = freshFiles.get(attachment.projectPath);
+    if (!fresh) return attachment;
+    return {
+      ...attachment,
+      projectRoot: result.projectRoot || attachment.projectRoot,
+      name: fresh.path,
+      type: fresh.type || attachment.type,
+      size: fresh.size,
+      text: fresh.text,
+      textTruncated: fresh.size > AI_ATTACH_TEXT_LIMIT
+    };
+  });
   aiRenderAttachments();
 }
 
@@ -8475,10 +8584,7 @@ function aiBuildAttachmentContext(attachments) {
 }
 
 function aiBuildVisibleUserText(text, attachments) {
-  if (!attachments.length) return text;
-  const names = attachments.map(att => att.name).join(', ');
-  const base = text || 'Проанализируй onкреплённые files.';
-  return base + '\n\n📎 Прикреплено: ' + names;
+  return text || (attachments.length ? 'Analyze the attached files.' : '');
 }
 
 function aiBuildCurrentUserContent(text, attachments) {
@@ -8702,19 +8808,21 @@ function aiNormalizeOpenAiBaseUrl(baseUrl) {
   return clean;
 }
 
-function aiCreateProviderError(response, payload) {
+function aiCreateProviderError(response, payload, endpoint = '', model = '') {
   const error = payload?.error;
   const message = typeof error === 'string' ? error
     : error?.message || payload?.message || payload?.detail || ('HTTP ' + response.status);
   const result = new Error(Array.isArray(message) ? JSON.stringify(message) : String(message));
   result.status = response.status;
+  result.endpoint = endpoint;
+  result.model = model;
   return result;
 }
 
 function aiProviderErrorMessage(error, customCfg) {
   const status = Number(error?.status || 0);
-  const endpoint = aiNormalizeOpenAiBaseUrl(customCfg?.baseUrl) + '/chat/completions';
-  const model = customCfg?.model || 'unknown';
+  const endpoint = error?.endpoint || (aiNormalizeOpenAiBaseUrl(customCfg?.baseUrl) + '/chat/completions');
+  const model = error?.model || customCfg?.model || 'unknown';
   const lower = String(error?.message || '').toLowerCase();
   let advice = '';
   if (status === 401 || status === 403 || lower.includes('api key') || lower.includes('credentials')) {
@@ -8734,6 +8842,15 @@ function aiProviderErrorMessage(error, customCfg) {
   }
   const diagnostic = (status ? `HTTP ${status}\n` : '') + `Endpoint: ${endpoint}\nModel: ${model}`;
   return 'Error: ' + (error?.message || 'unknown error') + '\n\n' + diagnostic + (advice ? '\n\n' + advice : '');
+}
+
+function aiGeneratedImageSource(payload) {
+  const item = payload?.data?.[0] || payload?.output?.[0] || payload?.result || {};
+  const directUrl = item?.url || item?.image_url?.url || item?.image_url || payload?.url || '';
+  if (typeof directUrl === 'string' && directUrl) return directUrl;
+  const encoded = item?.b64_json || item?.base64 || item?.image_base64 || payload?.b64_json || '';
+  if (typeof encoded !== 'string' || !encoded) return '';
+  return encoded.startsWith('data:') ? encoded : 'data:image/png;base64,' + encoded;
 }
 
 // ---- Send message ----
@@ -8762,7 +8879,17 @@ async function aiSend() {
     return;
   }
 
+  if (!imageMode) {
+    try {
+      await aiRefreshProjectAttachments();
+    } catch (error) {
+      aiAddMsg('bot', error.message || 'The attached project files could not be refreshed.');
+      return;
+    }
+  }
+
   const sentAttachments = aiAttachments.slice();
+  const displayAttachments = aiNormalizeDisplayAttachments(sentAttachments);
   const visibleText = aiBuildVisibleUserText(text, sentAttachments);
   const userContent = aiBuildCurrentUserContent(text, sentAttachments);
   inp.value = '';
@@ -8770,10 +8897,9 @@ async function aiSend() {
   const quickRow = document.getElementById('aiQuickRow');
   if (quickRow) quickRow.style.display = 'none';
 
-  aiAddMsg('user', visibleText);
-  aiHistory.push({ role: 'user', content: userContent, display: visibleText });
+  aiAddMsg('user', visibleText, sentAttachments);
+  aiHistory.push({ role: 'user', content: userContent, display: visibleText, attachments: displayAttachments });
   aiSaveHistory();
-  aiClearAttachments();
 
   const typingId = 'aiTyping_' + Date.now();
   const typEl = document.createElement('div');
@@ -8789,23 +8915,40 @@ async function aiSend() {
   const baseUrl = aiNormalizeOpenAiBaseUrl(customCfg.baseUrl);
   try {
     if (imageMode) {
-      const response = await fetch(baseUrl + '/images/generations', {
+      const endpoint = baseUrl + '/images/generations';
+      const headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + customCfg.apiKey };
+      const request = {
+        model: customCfg.imageModel || customCfg.model,
+        prompt: text,
+        size: '1024x1024',
+        response_format: 'b64_json'
+      };
+      let response = await fetch(endpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + customCfg.apiKey },
-        body: JSON.stringify({ model: customCfg.imageModel || customCfg.model, prompt: text, size: '1024x1024', n: 1 })
+        headers,
+        body: JSON.stringify(request)
       });
-      const data = await response.json();
-      if (!response.ok || data.error) throw new Error(data.error?.message || 'HTTP ' + response.status);
-      const item = data.data?.[0];
-      const imageSource = item?.url || (item?.b64_json ? 'data:image/png;base64,' + item.b64_json : '');
+      let data = await response.json();
+      if ((!response.ok || data.error) && [400, 422].includes(response.status)) {
+        response = await fetch(endpoint, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ model: request.model, prompt: request.prompt })
+        });
+        data = await response.json();
+      }
+      if (!response.ok || data.error) throw aiCreateProviderError(response, data, endpoint, request.model);
+      const imageSource = aiGeneratedImageSource(data);
       if (!imageSource) throw new Error("The provider did not return an image.");
       document.getElementById(typingId)?.remove();
       aiHistory.push({ role: 'assistant', content: "Generated image", image: imageSource });
       aiSaveHistory();
       aiAddImageMsg(imageSource, "Generated image");
+      void window.WebDevGymAiNotifications?.complete?.({ title: 'WebDevGym: AI replied', body: 'Your image is ready' });
     } else {
       const endpoint = baseUrl + '/chat/completions';
-      const messages = aiBuildMessagesForApi("You are the Frontend Mentor inside WebDevGym. Be concise, clear, and practical. Explain the mechanics first and give small hints. Do not provide a complete solution when the user is learning through practice.", userContent, sentAttachments, Boolean(customCfg.vision));
+      const editPrompt = window.WebDevGymAiEdits?.systemPrompt?.(sentAttachments) || '';
+      const messages = aiBuildMessagesForApi("You are the Frontend Mentor inside WebDevGym. Be concise, clear, and practical. Explain the mechanics first and give small hints. Do not provide a complete solution when the user is learning through practice." + editPrompt, userContent, sentAttachments, Boolean(customCfg.vision));
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + customCfg.apiKey,
@@ -8817,7 +8960,7 @@ async function aiSend() {
         body: JSON.stringify({
           model: customCfg.model,
           messages,
-          max_tokens: 1024,
+          max_tokens: editPrompt ? 8192 : 1024,
           ...(aiIsClaudeHub(baseUrl) ? {} : { temperature: 0.7 })
         })
       });
@@ -8838,6 +8981,7 @@ async function aiSend() {
       aiHistory.push({ role: 'assistant', content: reply });
       aiSaveHistory();
       aiAddMsg('bot', reply);
+      void window.WebDevGymAiNotifications?.complete?.({ title: 'WebDevGym: AI replied', body: reply });
       if (!toolReply) setTimeout(aiAddInsertButtons, 50);
     }
   } catch (err) {
@@ -8859,26 +9003,214 @@ function aiEscapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
-function aiAddMsg(role, text) {
+function aiRenderMessageAttachments(bubble, attachments) {
+  if (!bubble || !Array.isArray(attachments) || !attachments.length) return;
+  const list = document.createElement('div');
+  list.className = 'ai-msg-attachments';
+  attachments.slice(0, AI_ATTACH_MAX_FILES).forEach(attachment => {
+    const item = document.createElement('div');
+    item.className = `ai-msg-attachment${attachment.isImage ? ' is-image' : ''}`;
+    const source = String(attachment.thumbnail || attachment.dataUrl || attachment.previewUrl || '');
+    if (attachment.isImage && /^(?:blob:|data:image\/)/i.test(source)) {
+      const image = document.createElement('img');
+      image.src = source;
+      image.alt = attachment.name || 'Attached image';
+      image.loading = 'lazy';
+      item.appendChild(image);
+    } else {
+      const icon = document.createElement('span');
+      icon.className = 'ai-msg-attachment-icon';
+      icon.textContent = attachment.isImage ? 'IMG' : (aiFileExt(attachment.name).toUpperCase() || 'FILE');
+      item.appendChild(icon);
+    }
+    const meta = document.createElement('span');
+    meta.className = 'ai-msg-attachment-meta';
+    const name = document.createElement('strong');
+    name.textContent = attachment.name || 'file';
+    const size = document.createElement('small');
+    size.textContent = aiFormatBytes(attachment.size);
+    meta.append(name, size);
+    item.appendChild(meta);
+    list.appendChild(item);
+  });
+  bubble.appendChild(list);
+}
+
+function aiInlineMarkdown(value) {
+  const code = [];
+  let safe = aiEscapeHtml(String(value || ''));
+  safe = safe.replace(/`([^`\n]+)`/g, (_, content) => {
+    const token = `\u0000INLINE${code.length}\u0000`;
+    code.push(`<code>${content}</code>`);
+    return token;
+  });
+  safe = safe
+    .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/__([^_\n]+)__/g, '<strong>$1</strong>')
+    .replace(/(^|\s)\*([^*\n]+)\*(?=\s|$|[.,!?;:])/g, '$1<em>$2</em>');
+  return safe.replace(/\u0000INLINE(\d+)\u0000/g, (_, index) => code[Number(index)] || '');
+}
+
+function aiRenderMarkdown(value) {
+  const blocks = [];
+  const source = String(value || '').replace(/\r\n?/g, '\n').replace(/```([^\n`]*)\n?([\s\S]*?)```/g, (_, language, code) => {
+    const token = `\u0000BLOCK${blocks.length}\u0000`;
+    blocks.push({ language: String(language || '').trim(), code: String(code || '').replace(/\n$/, '') });
+    return token;
+  });
+  const output = [];
+  let paragraph = [];
+  let listType = '';
+  const closeParagraph = () => {
+    if (!paragraph.length) return;
+    output.push(`<p>${paragraph.map(aiInlineMarkdown).join('<br>')}</p>`);
+    paragraph = [];
+  };
+  const closeList = () => {
+    if (!listType) return;
+    output.push(`</${listType}>`);
+    listType = '';
+  };
+  const openList = type => {
+    closeParagraph();
+    if (listType === type) return;
+    closeList();
+    listType = type;
+    output.push(`<${type}>`);
+  };
+
+  source.split('\n').forEach(line => {
+    const blockMatch = line.match(/^\u0000BLOCK(\d+)\u0000$/);
+    if (blockMatch) {
+      closeParagraph();
+      closeList();
+      const block = blocks[Number(blockMatch[1])] || { language: '', code: '' };
+      const language = block.language.replace(/[^\w-]/g, '');
+      output.push(`<pre><code${language ? ` data-language="${language}"` : ''}>${aiEscapeHtml(block.code)}</code></pre>`);
+      return;
+    }
+    if (!line.trim()) {
+      closeParagraph();
+      closeList();
+      return;
+    }
+    const heading = line.match(/^\s*(#{1,6})\s*(.+)$/);
+    if (heading) {
+      closeParagraph();
+      closeList();
+      const level = Math.min(5, heading[1].length + 2);
+      output.push(`<h${level}>${aiInlineMarkdown(heading[2])}</h${level}>`);
+      return;
+    }
+    const unordered = line.match(/^\s*[-*+]\s+(.+)$/);
+    if (unordered) {
+      openList('ul');
+      output.push(`<li>${aiInlineMarkdown(unordered[1])}</li>`);
+      return;
+    }
+    const ordered = line.match(/^\s*\d+[.)]\s+(.+)$/);
+    if (ordered) {
+      openList('ol');
+      output.push(`<li>${aiInlineMarkdown(ordered[1])}</li>`);
+      return;
+    }
+    const quote = line.match(/^\s*>\s?(.*)$/);
+    if (quote) {
+      closeParagraph();
+      closeList();
+      output.push(`<blockquote>${aiInlineMarkdown(quote[1])}</blockquote>`);
+      return;
+    }
+    closeList();
+    paragraph.push(line);
+  });
+  closeParagraph();
+  closeList();
+  return output.join('');
+}
+
+function aiAddMsg(role, text, attachments = []) {
   const container = document.getElementById('aiMsgs');
   const el = document.createElement('div');
   el.className = `ai-msg ${role}`;
 
-  // Formatирование: code, bold, переносы
-  const safeText = aiEscapeHtml(text);
-  const fmt = safeText
-    .replace(/```([\w]*)?\n?([\s\S]*?)```/g, (_, lang, code) =>
-      `<pre><code>${code.trim()}</code></pre>`)
-    .replace(/`([^`\n]+)`/g, '<code>$1</code>')
-    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-    .replace(/\n/g, '<br>');
+  const displayText = role === 'user' ? text : (window.WebDevGymAiEdits?.displayText?.(text) ?? text);
+  const fmt = aiRenderMarkdown(displayText);
 
-  el.innerHTML = `
-    <div class="ai-msg-av">${role === 'user' ? '👤' : '✨'}</div>
-    <div class="ai-msg-bbl">${fmt}</div>
-  `;
+  el.innerHTML = `<div class="ai-msg-av">${role === 'user' ? '👤' : '✨'}</div>`;
+  const bubble = document.createElement('div');
+  bubble.className = 'ai-msg-bbl';
+  const messageText = document.createElement('div');
+  messageText.className = 'ai-msg-text';
+  messageText.innerHTML = fmt;
+  bubble.appendChild(messageText);
+  aiRenderMessageAttachments(bubble, attachments);
+  el.appendChild(bubble);
   container.appendChild(el);
+  if (role !== 'user') window.WebDevGymAiEdits?.enhanceMessage?.({ element: el, bubble, text });
   aiScrollBottom();
+}
+
+function aiGeneratedImageFilename(type) {
+  const extensions = {
+    'image/jpeg': 'jpg',
+    'image/webp': 'webp',
+    'image/gif': 'gif',
+    'image/avif': 'avif'
+  };
+  const extension = extensions[String(type || '').toLowerCase()] || 'png';
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+  return `webdevgym-ai-${stamp}.${extension}`;
+}
+
+function aiSaveGeneratedImageBlob(blob) {
+  const objectUrl = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = objectUrl;
+  link.download = aiGeneratedImageFilename(blob.type);
+  link.hidden = true;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+}
+
+async function aiDownloadGeneratedImage(source, button) {
+  const safeSource = String(source || '');
+  if (!/^https:\/\//i.test(safeSource) && !/^data:image\//i.test(safeSource)) return;
+  if (button) {
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+  }
+  try {
+    const response = await fetch(safeSource, {
+      cache: 'no-store',
+      credentials: 'omit',
+      referrerPolicy: 'no-referrer'
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const blob = await response.blob();
+    if (!String(blob.type || '').startsWith('image/')) throw new Error('The response is not an image');
+    aiSaveGeneratedImageBlob(blob);
+    showToast('Image downloaded');
+  } catch (error) {
+    if (/^https:\/\//i.test(safeSource)) {
+      const fallback = document.createElement('a');
+      fallback.href = safeSource;
+      fallback.download = aiGeneratedImageFilename('image/png');
+      fallback.target = '_blank';
+      fallback.rel = 'noopener noreferrer';
+      fallback.click();
+      showToast('Image opened for saving');
+    } else {
+      showToast(`Could not download image: ${error.message}`);
+    }
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.removeAttribute('aria-busy');
+    }
+  }
 }
 
 function aiAddImageMsg(source, caption) {
@@ -8897,9 +9229,20 @@ function aiAddImageMsg(source, caption) {
   image.src = safeSource;
   image.alt = caption || "Generated image";
   image.loading = 'lazy';
+  const actions = document.createElement('div');
+  actions.className = 'ai-image-actions';
   const label = document.createElement('span');
+  label.className = 'ai-image-caption';
   label.textContent = caption || "Generated image";
-  bubble.append(image, label);
+  const downloadButton = document.createElement('button');
+  downloadButton.type = 'button';
+  downloadButton.className = 'ai-image-download';
+  downloadButton.title = 'Download image';
+  downloadButton.setAttribute('aria-label', 'Download image');
+  downloadButton.innerHTML = '<iconify-icon icon="lucide:download" width="15" height="15"></iconify-icon><span>Download</span>';
+  downloadButton.addEventListener('click', () => void aiDownloadGeneratedImage(safeSource, downloadButton));
+  actions.append(label, downloadButton);
+  bubble.append(image, actions);
   el.append(avatar, bubble);
   container.appendChild(el);
   aiScrollBottom();
@@ -8909,6 +9252,17 @@ function aiScrollBottom() {
   const c = document.getElementById('aiMsgs');
   if (c) c.scrollTop = c.scrollHeight;
 }
+
+window.WebDevGymAiAttachments = Object.freeze({
+  refresh: aiRefreshProjectAttachments,
+  snapshot: () => aiAttachments.map(attachment => ({
+    name: attachment.name,
+    projectPath: attachment.projectPath,
+    projectRoot: attachment.projectRoot,
+    size: attachment.size,
+    text: attachment.text
+  }))
+});
 
 aiLoadHistory();
 

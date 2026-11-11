@@ -338,7 +338,6 @@
       return '<div class="wdgf-course-row"><span>' + labels[id] + '</span><div class="wdgf-course-track"><div class="wdgf-course-fill" style="width:' + p.pct + '%"></div></div><output>' + p.pct + '%</output></div>';
     }).join('');
     const quick = [
-      ['forge','tabler:hammer','Forge',isEnglish ? 'Guided projects with criteria, hints and checks' : 'Проекты с критериями, подсказками и проверкой'],
       ['debug','tabler:bug',t.debug,isEnglish ? 'Find real mistakes in code' : 'Ищи реальные ошибки в коде'],
       ['review','tabler:brain',t.review,isEnglish ? 'Repeat what is due today' : 'Повтори то, что пора вспомнить'],
       ['skills','tabler:route',t.skills,isEnglish ? 'See your next technical step' : 'Увидь следующий технический шаг'],
@@ -650,6 +649,21 @@
     return true;
   }
 
+  function refreshFeature(id) {
+    const renderers = { dashboard:dashboardPage, debug:() => debugPage(0), review:reviewPage, skills:skillsPage, profile:profilePage, diary:diaryPage, weak:weakPage };
+    const renderer = extensionFeatures.get(id)?.renderer || renderers[id];
+    const page = pages.get(id);
+    if (!page || typeof renderer !== 'function') return false;
+    const wasOpen = page.classList.contains('open');
+    const scrollTop = page.scrollTop;
+    renderer();
+    if (wasOpen) {
+      page.classList.add('open');
+      page.scrollTop = scrollTop;
+    }
+    return true;
+  }
+
   function addNavigationLabels() {
     document.querySelectorAll('.wdg-nav-btn').forEach(button => {
       const label = button.querySelector('span:last-child')?.textContent?.trim();
@@ -855,7 +869,7 @@
         if (typeof window.toggleBmFilter === 'function') window.toggleBmFilter();
       },t.action]
     ];
-    const catalogCommandIds = new Set(['today', 'routes', 'lab', 'forge', 'settings']);
+    const catalogCommandIds = new Set(['today', 'routes', 'lab', 'settings']);
     (window.WebDevGymNext?.catalog?.() || []).forEach(item => {
       if (!catalogCommandIds.has(item.id)) return;
       entries.push([
@@ -1085,6 +1099,7 @@
       close:closePage,
       register:registerFeature,
       invalidate:invalidateFeature,
+      refresh:refreshFeature,
       pageShell,
       openCommandPalette,
       logActivity,

@@ -5,6 +5,7 @@
   const L = (en, ru) => isEnglish ? en : ru;
   const STORE_KEY = isEnglish ? 'wdg_mastery_en_v1' : 'wdg_mastery_ru_v1';
   const PATH_KEY = isEnglish ? 'wdg_active_path_en_v1' : 'wdg_active_path_ru_v1';
+  const PERSONAL_PATHS_KEY = 'wdg_personal_learning_paths_v1';
   const CHECKPOINT_KEY = isEnglish ? 'wdg_checkpoints_en_v1' : 'wdg_checkpoints_ru_v1';
   const COURSE_SECTIONS = ['html','css','js','git','vite','ts','react','electron','node','sql','pg','linux','devops','python','csharp'];
   const LEVELS = [
@@ -30,7 +31,7 @@
     checkpoint:L('Section checkpoint','Практический рубеж'),
     checkpointText:L('Build the task without copying the lesson example. Mark it only after you can explain every important line.','Собери задачу без копирования примера из урока. Отмечай только когда можешь объяснить каждую важную строку.'),
     done:L('Completed independently','Сделано самостоятельно'),
-    openForge:L('Practice in Forge','Практика в Forge'),
+    openForge:L('Open trainers','Открыть тренажёры'),
     criteria:L('Ready when','Готово, когда'),
     noTopic:L('The closest section will open. Choose the matching topic inside it.','Откроется ближайший раздел. Выбери подходящую тему внутри него.'),
     stats:L('Mastered independently','Самостоятельно освоено')
@@ -295,7 +296,7 @@
     return { percent:Math.round(total / Math.max(1,path.steps.length * 4) * 100), independent:values.filter(value => value === 4).length };
   }
 
-  function renderPaths() {
+  function renderPathsLegacy() {
     const routeCopy = {
       title:L('Learning routes','Маршруты обучения'),
       subtitle:L('See the whole path, choose the next skill and move at your own pace.','Весь путь перед глазами: выбирай следующий навык и двигайся в своём темпе.'),
@@ -310,7 +311,7 @@
       prerequisites:L('Prerequisites','Перед началом'),
       nextSteps:L('Next in route','Дальше по маршруту'),
       continue:L('Continue learning','Продолжить обучение'),
-      practice:L('Practice in Forge','Практика в Forge'),
+      practice:L('Open trainers','Открыть тренажёры'),
       mastered:L('Mastered','Освоено'),
       studying:L('In progress','Изучается'),
       available:L('Available','Доступно'),
@@ -426,7 +427,7 @@
       const index = Number(button.dataset.routeOpen) || 0;
       openTopic(findTopic(path.steps[index]));
     }));
-    page.querySelector('[data-route-forge]')?.addEventListener('click', () => api.open('forge'));
+    page.querySelector('[data-route-forge]')?.addEventListener('click', () => window.WebDevGymTrainers?.open?.());
     page.querySelectorAll('[data-route-zoom]').forEach(button => button.addEventListener('click', () => {
       routeZoom = Math.max(.7,Math.min(1.45,routeZoom + Number(button.dataset.routeZoom)));
       applyTransform();
@@ -457,6 +458,97 @@
     return page;
   }
 
+  function personalPaths() {
+    const value = readJson(PERSONAL_PATHS_KEY, []);
+    return Array.isArray(value) ? value.filter(route => route && typeof route.id === 'string' && Array.isArray(route.steps)) : [];
+  }
+
+  function savePersonalPaths(value) {
+    localStorage.setItem(PERSONAL_PATHS_KEY, JSON.stringify(value));
+  }
+
+  function renderPaths() {
+    const routes = personalPaths();
+    let activeId = localStorage.getItem(PATH_KEY) || routes[0]?.id || '';
+    if (!routes.some(route => route.id === activeId)) activeId = routes[0]?.id || '';
+    const route = routes.find(item => item.id === activeId);
+    const sections = [
+      ['html','HTML'],['css','CSS'],['js','JavaScript'],['git','Git'],['vite','Vite'],['ts','TypeScript'],
+      ['react','React'],['electron','Electron'],['node','Node.js'],['sql','SQL'],['pg','PostgreSQL'],
+      ['linux','Linux'],['devops',L('DevOps','DevOps')],['python','Python'],['csharp','C#']
+    ];
+    const routeList = routes.map(item => '<button type="button" class="wdg-personal-route-tab ' + (item.id === activeId ? 'active' : '') + '" data-personal-route="' + escapeHtml(item.id) + '"><strong>' + escapeHtml(item.title) + '</strong><span>' + item.steps.filter(step => step.done).length + '/' + item.steps.length + '</span></button>').join('');
+    const doneCount = route?.steps.filter(item => item.done).length || 0;
+    const sectionOptions = sections.map(([id,label]) => '<option value="' + id + '">' + label + '</option>').join('');
+    const page = api.pageShell('paths', copy.title, L('Build and manage your own learning plans.','Создавай и веди собственные планы обучения.'),
+      '<section class="wdg-personal-routes">' +
+      '<header class="wdg-personal-routes-head"><div><span>' + L('PERSONAL LEARNING','ЛИЧНОЕ ОБУЧЕНИЕ') + '</span><h2>' + (route ? escapeHtml(route.title) : L('Your routes','Твои маршруты')) + '</h2><p>' + (route ? escapeHtml(route.description || '') : L('Create a route, then add the topics you want to learn.','Создай маршрут, а затем добавь темы, которые хочешь изучить.')) + '</p></div><button class="wdgf-btn primary" type="button" data-toggle-route-form>' + icon('tabler:plus',16) + ' ' + L('New route','Новый маршрут') + '</button></header>' +
+      (routes.length ? '<nav class="wdg-personal-route-list" aria-label="' + L('Your routes','Твои маршруты') + '">' + routeList + '</nav>' : '') +
+      '<form class="wdg-personal-route-create" data-route-create hidden><label>' + L('Route name','Название маршрута') + '<input name="title" maxlength="72" required placeholder="' + L('For example: JavaScript for my first project','Например: JavaScript для первого проекта') + '"></label><label>' + L('Goal','Цель') + '<input name="description" maxlength="180" placeholder="' + L('What do you want to be able to build?','Что ты хочешь научиться создавать?') + '"></label><button class="wdgf-btn primary" type="submit">' + L('Create route','Создать маршрут') + '</button></form>' +
+      (route ? '<section class="wdg-personal-route-progress"><div><span>' + L('Progress','Прогресс') + '</span><strong>' + doneCount + ' / ' + route.steps.length + '</strong></div><i><b style="width:' + (route.steps.length ? Math.round(doneCount / route.steps.length * 100) : 0) + '%"></b></i></section>' +
+      '<form class="wdg-personal-step-create" data-step-create><label>' + L('Next topic or task','Тема или задача') + '<input name="title" maxlength="100" required placeholder="' + L('What do you want to learn next?','Чему хочешь научиться дальше?') + '"></label><label>' + L('Related section','Раздел') + '<select name="section">' + sectionOptions + '</select></label><button class="wdgf-btn primary" type="submit">' + icon('tabler:plus',16) + ' ' + L('Add step','Добавить этап') + '</button></form>' +
+      (route.steps.length ? '<ol class="wdg-personal-route-steps">' + route.steps.map((item,index) => '<li class="' + (item.done ? 'is-done' : '') + '"><label><input type="checkbox" data-step-done="' + escapeHtml(item.id) + '" ' + (item.done ? 'checked' : '') + '><span class="wdg-personal-step-index">' + String(index + 1).padStart(2,'0') + '</span><span class="wdg-personal-step-copy"><strong>' + escapeHtml(item.title) + '</strong><small>' + escapeHtml(sections.find(section => section[0] === item.section)?.[1] || item.section) + '</small></span></label><button type="button" class="wdg-personal-step-open" data-step-open="' + escapeHtml(item.section) + '" title="' + L('Open section','Открыть раздел') + '">' + icon('tabler:arrow-up-right',16) + '</button><button type="button" class="wdg-personal-step-remove" data-step-remove="' + escapeHtml(item.id) + '" title="' + L('Remove step','Удалить этап') + '">' + icon('tabler:trash',16) + '</button></li>').join('') + '</ol>' : '<p class="wdg-personal-route-empty">' + L('This route is empty. Add the first topic above.','Маршрут пока пуст. Добавь первую тему выше.') + '</p>') +
+      '<footer><button type="button" class="wdgf-btn danger" data-route-delete>' + icon('tabler:trash',16) + ' ' + L('Delete route','Удалить маршрут') + '</button></footer></section>' : '<div class="wdg-personal-route-empty-state">' + icon('tabler:route',28) + '<strong>' + L('No personal routes yet','Личных маршрутов пока нет') + '</strong><span>' + L('Start with a goal, then add steps in any order.','Начни с цели и добавляй этапы в любом порядке.') + '</span></div>') + '</section>');
+
+    page.querySelector('[data-toggle-route-form]')?.addEventListener('click', () => {
+      const form = page.querySelector('[data-route-create]');
+      form.hidden = !form.hidden;
+      if (!form.hidden) form.querySelector('[name="title"]')?.focus();
+    });
+    page.querySelector('[data-route-create]')?.addEventListener('submit', event => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const title = String(new FormData(form).get('title') || '').trim();
+      if (!title) return;
+      const next = personalPaths();
+      const id = globalThis.crypto?.randomUUID?.() || 'route-' + Date.now().toString(36);
+      next.unshift({id,title,description:String(new FormData(form).get('description') || '').trim(),createdAt:Date.now(),steps:[]});
+      savePersonalPaths(next);
+      localStorage.setItem(PATH_KEY,id);
+      renderPaths();
+    });
+    page.querySelectorAll('[data-personal-route]').forEach(button => button.addEventListener('click', () => {
+      localStorage.setItem(PATH_KEY,button.dataset.personalRoute);
+      renderPaths();
+    }));
+    page.querySelector('[data-step-create]')?.addEventListener('submit', event => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const data = new FormData(form);
+      const title = String(data.get('title') || '').trim();
+      if (!title || !route) return;
+      const next = personalPaths();
+      const current = next.find(item => item.id === route.id);
+      current.steps.push({id:globalThis.crypto?.randomUUID?.() || 'step-' + Date.now().toString(36),title,section:String(data.get('section') || 'js'),done:false});
+      savePersonalPaths(next);
+      renderPaths();
+    });
+    page.querySelectorAll('[data-step-done]').forEach(input => input.addEventListener('change', () => {
+      const next = personalPaths();
+      const current = next.find(item => item.id === route?.id);
+      const item = current?.steps.find(step => step.id === input.dataset.stepDone);
+      if (item) { item.done = input.checked; savePersonalPaths(next); renderPaths(); }
+    }));
+    page.querySelectorAll('[data-step-remove]').forEach(button => button.addEventListener('click', () => {
+      const next = personalPaths();
+      const current = next.find(item => item.id === route?.id);
+      if (current) { current.steps = current.steps.filter(step => step.id !== button.dataset.stepRemove); savePersonalPaths(next); renderPaths(); }
+    }));
+    page.querySelector('[data-route-delete]')?.addEventListener('click', () => {
+      if (!window.confirm(L('Delete this route and its steps?','Удалить этот маршрут и все его этапы?'))) return;
+      const next = personalPaths().filter(item => item.id !== route?.id);
+      savePersonalPaths(next);
+      localStorage.setItem(PATH_KEY,next[0]?.id || '');
+      renderPaths();
+    });
+    page.querySelectorAll('[data-step-open]').forEach(button => button.addEventListener('click', () => {
+      try { localStorage.setItem('wdg_last_learning_section_v1',button.dataset.stepOpen); } catch {}
+      api.close?.();
+      window.switchTabByName?.(button.dataset.stepOpen);
+    }));
+    return page;
+  }
+
   function refreshOpenPaths() {
     if (document.querySelector('.wdgf-feature-page[data-feature-page="paths"].open')) renderPaths();
     else api?.invalidate?.('paths');
@@ -478,7 +570,7 @@
       const panel = document.createElement('section');
       panel.className = 'wdg-growth-checkpoint ' + (completed[sectionId] ? 'done' : '');
       panel.innerHTML = '<header><span>' + icon('tabler:flag-3',18) + '</span><div><small>' + copy.checkpoint + '</small><h2>' + sectionId.toUpperCase() + '</h2></div></header><p>' + escapeHtml(data[0]) + '</p><div class="wdg-growth-criteria"><strong>' + copy.criteria + '</strong><span>' + escapeHtml(data[1]) + '</span></div><footer><button class="wdgf-btn" type="button" data-checkpoint-forge>' + icon('tabler:hammer',15) + ' ' + copy.openForge + '</button><label><input type="checkbox" data-checkpoint-done ' + (completed[sectionId] ? 'checked' : '') + '><span>' + copy.done + '</span></label></footer>';
-      panel.querySelector('[data-checkpoint-forge]').addEventListener('click', () => api?.open?.('forge'));
+      panel.querySelector('[data-checkpoint-forge]').addEventListener('click', () => window.WebDevGymTrainers?.open?.());
       panel.querySelector('[data-checkpoint-done]').addEventListener('change', event => {
         const values = readJson(CHECKPOINT_KEY, {});
         values[sectionId] = event.target.checked;
@@ -496,10 +588,12 @@
   }
 
   function chooseLearn() {
-    const active = paths.find(item => item.id === activePathId) || paths[0];
-    for (const routeStep of active.steps) {
-      const topic = findTopic(routeStep);
-      if (topic && mastery(topic.id).level < 2) return topic;
+    for (const route of personalPaths()) {
+      for (const routeStep of route.steps) {
+        if (routeStep.done) continue;
+        const topic = findTopic({section:routeStep.section,index:-1,match:new RegExp(routeStep.title.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i')});
+        if (topic && mastery(topic.id).level < 2) return topic;
+      }
     }
     return topics().find(topic => mastery(topic.id).level < 2) || null;
   }

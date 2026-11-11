@@ -1192,6 +1192,14 @@
     });
   }
 
+  window.addEventListener('webdevgym:sync-applied', event => {
+    const keys = event.detail?.keys || [];
+    if (!keys.some(key => key === PROFILE_KEY || key === PORTFOLIO_KEY)) return;
+    if (!window.WebDevGymFeatures?.refresh?.('profile')) {
+      window.WebDevGymFeatures?.invalidate?.('profile');
+    }
+  });
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => setTimeout(init, 90));
   } else {

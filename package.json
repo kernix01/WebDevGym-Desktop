@@ -1,6 +1,6 @@
 {
   "name": "webdevgym-electron",
-  "version": "0.1.2",
+  "version": "0.17.11",
   "description": "Desktop edition of the WebDevGym learning workspace",
   "author": "kernix01",
   "main": "electron/main.cjs",
@@ -11,14 +11,15 @@
     "url": "https://github.com/kernix01/WebDevGym-Desktop.git"
   },
   "scripts": {
-    "desktop": "electron .",
-    "desktop:dev": "electron . --dev",
-    "desktop:pack": "npm run test:desktop && electron-builder --dir",
-    "desktop:build": "npm run test:desktop && electron-builder --win nsis portable",
+    "prepare:editor": "node tools/prepare-editor-vendor.cjs",
+    "desktop": "npm run prepare:editor && electron .",
+    "desktop:dev": "npm run prepare:editor && electron . --dev",
+    "desktop:pack": "npm run prepare:editor && npm run test:desktop && node tools/build-desktop.cjs --dir",
+    "desktop:build": "npm run prepare:editor && npm run test:desktop && node tools/build-desktop.cjs",
     "sync:web": "node tools/sync-web.cjs",
     "test": "npm run test:desktop",
-    "test:desktop": "node tools/test-electron-shell.cjs",
-    "test:smoke": "node tools/smoke-electron.cjs"
+    "test:desktop": "node tools/test-code-editor.cjs && node tools/test-diagnostics.cjs && node tools/test-device-sync.cjs && node tools/test-electron-shell.cjs && node tools/test-desktop-services.cjs && node tools/test-vsix-extensions.cjs",
+    "test:smoke": "npm run prepare:editor && node tools/smoke-electron.cjs"
   },
   "devDependencies": {
     "electron": "44.3.0",
@@ -42,21 +43,38 @@
       "target": [
         {
           "target": "nsis",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         },
         {
           "target": "portable",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ]
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
+      "include": "installer/context-menu.nsh",
       "artifactName": "${productName}-Setup-${version}-${arch}.${ext}"
     },
     "portable": {
       "artifactName": "${productName}-Portable-${version}-${arch}.${ext}"
     }
+  },
+  "dependencies": {
+    "emmet-monaco-es": "^5.7.0",
+    "eslint": "^10.11.0",
+    "html-validate": "^11.16.1",
+    "jsonc-parser": "^3.3.1",
+    "monaco-editor": "^0.57.0",
+    "stylelint": "^17.15.0",
+    "stylelint-config-standard": "^40.0.0",
+    "typescript": "5.9.3",
+    "ws": "^8.22.0",
+    "yauzl": "^3.4.0"
   }
 }

@@ -8,7 +8,7 @@
     rest:'3 rest days', restHint:'Next rest', streak:'Current streak', days:'days', focus:'Start focus',
     learn:'Learn', apply:'Apply', repeat:'Repeat', minutes:'25 min', project:'Project', tasks:'2 tasks',
     learnHint:'Understand the idea, then explain it in your own words.', continue:'Continue',
-    forge:'Open Forge', queue:'Open queue', done:'Done', completed:'Completed', empty:'Choose a topic',
+    forge:'Open trainers', queue:'Open queue', done:'Done', completed:'Completed', empty:'Choose a topic',
     forgeTitle:'Counter without negative values', todayBudget:'Today budget', of:'of', min:'min',
     cycle:'Cycle progress', cycleDay:'Day 1 of 4', nextRest:'Next rest day', inDays:'In 3 days',
     activity:'Activity for 7 days', dayProgress:'Day finished at', finish:'Finish day', finished:'Day finished',
@@ -19,7 +19,7 @@
     rest:'3 дня отдыха', restHint:'Следующий отдых', streak:'Текущая серия', days:'дней', focus:'Начать фокус',
     learn:'Изучить', apply:'Применить', repeat:'Повторить', minutes:'25 мин', project:'Проект', tasks:'2 задания',
     learnHint:'Пойми идею, а затем объясни её своими словами.', continue:'Продолжить',
-    forge:'Открыть Forge', queue:'Открыть очередь', done:'Готово', completed:'Выполнено', empty:'Выбрать тему',
+    forge:'Открыть тренажёры', queue:'Открыть очередь', done:'Готово', completed:'Выполнено', empty:'Выбрать тему',
     forgeTitle:'Счётчик без отрицательных значений', todayBudget:'Бюджет на сегодня', of:'из', min:'мин',
     cycle:'Прогресс цикла', cycleDay:'День 1 из 4', nextRest:'Следующий день отдыха', inDays:'Через 3 дня',
     activity:'Активность за 7 дней', dayProgress:'День завершён на', finish:'Завершить день', finished:'День завершён',
@@ -251,7 +251,7 @@
       button.addEventListener('click', function () {
         if (button.dataset.todayOpen === 'learn') openTopic(plan.learnId);
         if (button.dataset.todayOpen === 'repeat') openTopic(plan.repeatId);
-        if (button.dataset.todayOpen === 'build') api.open('forge');
+        if (button.dataset.todayOpen === 'build') window.WebDevGymTrainers?.open?.();
       });
     });
     page.querySelectorAll('[data-today-topic]').forEach(function (button) {

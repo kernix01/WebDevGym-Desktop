@@ -10,7 +10,7 @@
     build:'Build', buildText:'Finish one Forge criterion without opening a complete solution.',
     open:'Open', done:'Done', completed:'Completed', empty:'No unfinished topic was found. Pick any section and deepen it.',
     reflection:'Session wrap-up', understood:'What did I understand?', uncertain:'What is still unclear?', next:'What will I repeat next time?',
-    save:'Save notes', saved:'Saved locally', progress:'Session progress', forge:'Open Forge', fallback:'Choose a topic'
+    save:'Save notes', saved:'Saved locally', progress:'Session progress', forge:'Open trainers', fallback:'Choose a topic'
   } : {
     title:'Сегодня', subtitle:'Короткий маршрут на одно сосредоточенное занятие', nav:'Сегодня',
     repeat:'Повторить', repeatText:'Освежи одну тему, которая уже была сложной или подошла к повторению.',
@@ -18,7 +18,7 @@
     build:'Собрать', buildText:'Закрой один критерий Forge, не открывая готовое решение.',
     open:'Открыть', done:'Готово', completed:'Выполнено', empty:'Незавершённая тема не найдена. Выбери любой раздел и углуби его.',
     reflection:'Итог занятия', understood:'Что я понял?', uncertain:'Что пока неясно?', next:'Что повторю в следующий раз?',
-    save:'Сохранить заметки', saved:'Сохранено локально', progress:'Прогресс занятия', forge:'Открыть Forge', fallback:'Выбрать тему'
+    save:'Сохранить заметки', saved:'Сохранено локально', progress:'Прогресс занятия', forge:'Открыть тренажёры', fallback:'Выбрать тему'
   };
 
   let api = null;
@@ -163,7 +163,7 @@
     page.querySelectorAll('[data-today-open]').forEach(button => button.addEventListener('click', () => {
       if (button.dataset.todayOpen === 'repeat') openTopic(plan.repeatId);
       if (button.dataset.todayOpen === 'learn') openTopic(plan.learnId);
-      if (button.dataset.todayOpen === 'build') api.open('forge');
+      if (button.dataset.todayOpen === 'build') window.WebDevGymTrainers?.open?.();
     }));
     page.querySelectorAll('[data-today-done]').forEach(input => input.addEventListener('change', () => {
       plan.done[input.dataset.todayDone] = input.checked;

@@ -3,20 +3,21 @@
 
   const isEnglish = document.documentElement.lang === 'en';
   const copy = isEnglish ? {
-    overview:'Overview', today:'Today', routes:'Routes', learning:'Learn', sections:'Catalog', trainers:'Trainers', forge:'Forge', playground:'Playground', nexus:'Nexus', calendar:'Calendar', profile:'Profile', settings:'Settings',
+    overview:'Overview', today:'Today', routes:'Routes', learning:'Learn', sections:'Catalog', trainers:'Trainers', playground:'Playground', nexus:'Nexus', calendar:'Calendar', profile:'Profile', settings:'Settings',
     system:'Workspace', growth:'Catalog', tools:'Tools', account:'Account', search:'Search or run a command...', import:'Import', export:'Export', route:'Your route', routeSub:'Continue where you left off', current:'Current route', learned:'completed',
     todayTitle:'Today', todaySub:'Priority actions', work:'In progress', workSub:'Current project and code', review:'Review', reviewSub:'Review queue', continue:'Continue', start:'Start', open:'Open', lesson:'Next', practice:'Practice', mini:'Micro task',
-    lessonFallback:'Continue the active lesson', practiceFallback:'Complete one focused practice', miniFallback:'Fix a small interface bug', inspector:'Inspector', streak:'day streak', focus:'Focus', activity:'Recent activity', nextReview:'Next review', noProject:'Start your first project in Forge', loader:'Assembling your workspace',
+    lessonFallback:'Continue the active lesson', practiceFallback:'Complete one focused practice', miniFallback:'Fix a small interface bug', inspector:'Inspector', streak:'day streak', focus:'Focus', activity:'Recent activity', nextReview:'Next review', noProject:'Start a project in Playground', loader:'Assembling your workspace',
     sectionsTitle:'Everything in WebDevGym', sectionsSub:'Learning paths, practice, projects and supporting tools in one searchable catalog.', frontendDesc:'Interfaces, browser logic, React and optional desktop apps.', backendDesc:'Server logic, databases, Linux and deployment.', shared:'Shared foundation', sharedDesc:'Git is useful in both routes.', languages:'Other languages', languagesDesc:'Optional backend directions that do not change your main route.', topics:'topics', choosePriority:'Make primary', priorityActive:'Primary route', openSection:'Open topic', catalogAll:'All features', catalogRoutes:'Learning paths', catalogTools:'Tools', toolsTitle:'Developer tools', toolsSub:'References, generators and supporting materials that complement the main workspaces.', aiAssistant:'AI assistant'
   } : {
-    overview:'Обзор', today:'Сегодня', routes:'Маршруты', learning:'Обучение', sections:'Каталог', trainers:'Тренажёры', forge:'Forge', playground:'Playground', nexus:'Nexus', calendar:'Календарь', profile:'Профиль', settings:'Настройки',
+    overview:'Обзор', today:'Сегодня', routes:'Маршруты', learning:'Обучение', sections:'Каталог', trainers:'Тренажёры', playground:'Playground', nexus:'Nexus', calendar:'Календарь', profile:'Профиль', settings:'Настройки',
     system:'Рабочее пространство', growth:'Каталог', tools:'Инструменты', account:'Профиль', search:'Поиск или команда...', import:'Импорт', export:'Экспорт', route:'Твой маршрут', routeSub:'Продолжай с того места, где остановился', current:'Текущий маршрут', learned:'изучено',
     todayTitle:'Сегодня', todaySub:'Приоритетные задачи', work:'В работе', workSub:'Текущий проект и код', review:'Повторение', reviewSub:'Очередь повторения', continue:'Продолжить', start:'Начать', open:'Открыть', lesson:'Дальше', practice:'Практика', mini:'Микро-задача',
-    lessonFallback:'Продолжить активный урок', practiceFallback:'Пройти одну точечную практику', miniFallback:'Исправить небольшую ошибку интерфейса', inspector:'Инспектор', streak:'дней серия', focus:'Фокус', activity:'Недавняя активность', nextReview:'Следующее повторение', noProject:'Начни первый проект в Forge', loader:'Собираем твоё рабочее пространство',
+    lessonFallback:'Продолжить активный урок', practiceFallback:'Пройти одну точечную практику', miniFallback:'Исправить небольшую ошибку интерфейса', inspector:'Инспектор', streak:'дней серия', focus:'Фокус', activity:'Недавняя активность', nextReview:'Следующее повторение', noProject:'Начни проект в Playground', loader:'Собираем твоё рабочее пространство',
     sectionsTitle:'Всё, что есть в WebDevGym', sectionsSub:'Обучение, практика, проекты и вспомогательные инструменты в одном каталоге с поиском.', frontendDesc:'Интерфейсы, логика браузера, React и необязательные desktop-приложения.', backendDesc:'Серверная логика, базы данных, Linux и развёртывание.', shared:'Общая основа', sharedDesc:'Git пригодится в обоих направлениях.', languages:'Другие языки', languagesDesc:'Необязательные backend-направления, которые не меняют основной маршрут.', topics:'тем', choosePriority:'Сделать основным', priorityActive:'Основной маршрут', openSection:'Открыть тему', catalogAll:'Все возможности', catalogRoutes:'Обучение', catalogTools:'Инструменты', toolsTitle:'Инструменты разработчика', toolsSub:'Справочники, генераторы и материалы, которые дополняют основные рабочие пространства.', aiAssistant:'ИИ-помощник'
   };
 
   const PRIORITY_KEY = 'wdgn_learning_priority_v1';
+  const LEARNING_SECTION_IDS = new Set(['html','css','js','git','vite','ts','react','electron','node','sql','pg','linux','devops','python','csharp']);
   const legacySectionSets = {
     frontend: [
       { id:'html', label:'HTML', short:'HTML' },
@@ -124,7 +125,6 @@
     ['learning','tabler:book-2',copy.learning,true],
     ['sections','tabler:layout-grid',copy.sections,true],
     ['lab','tabler:flask-2',copy.trainers,false],
-    ['forge','tabler:hammer',copy.forge,false],
     ['playground','tabler:code',copy.playground,true],
     ['nexus','tabler:binary-tree-2',copy.nexus,false],
     ['calendar','tabler:calendar',copy.calendar,false],
@@ -164,7 +164,6 @@
     ['learning','tabler:book-2','Learning','Open the next incomplete topic in your active route.','workspace'],
     ['calendar','tabler:calendar','Calendar','Plan sessions, projects, recovery and review days.','workspace'],
     ['lab','tabler:flask-2','Trainers','Short exercises, debugging and knowledge checks.','creation'],
-    ['forge','tabler:hammer','Forge','Build projects from a brief and track their progress.','creation'],
     ['playground','tabler:code','Playground','Edit, import and preview HTML, CSS and JavaScript projects.','creation'],
     ['nexus','tabler:binary-tree-2','Nexus','Connect your own notes into a visual knowledge graph.','creation'],
     ['notebook','tabler:notebook','Notebook','Local notes with tabs, search and automatic saving.','creation'],
@@ -183,7 +182,6 @@
     ['learning','tabler:book-2','Обучение','Переход к следующей незавершённой теме активного маршрута.','workspace'],
     ['calendar','tabler:calendar','Календарь','План занятий, проектов, восстановления и повторений.','workspace'],
     ['lab','tabler:flask-2','Тренажёры','Короткие задачи, отладка и проверка знаний.','creation'],
-    ['forge','tabler:hammer','Forge','Создание проектов по заданию и отслеживание их прогресса.','creation'],
     ['playground','tabler:code','Playground','Редактор, импорт и предпросмотр HTML, CSS и JavaScript-проектов.','creation'],
     ['nexus','tabler:binary-tree-2','Nexus','Связь собственных заметок в наглядный граф знаний.','creation'],
     ['notebook','tabler:notebook','Блокнот','Локальные заметки с вкладками, поиском и автосохранением.','creation'],
@@ -197,7 +195,7 @@
     ['settings','tabler:settings','Настройки','Внешний вид, поведение, данные и локальная оптимизация.','progress']
   ];
   const toolCatalog = utilityCatalog;
-  const mobileCatalogIds = new Set(['today', 'routes', 'lab', 'forge', 'nexus', 'calendar', 'notebook', 'profile']);
+  const mobileCatalogIds = new Set(['today', 'routes', 'lab', 'nexus', 'calendar', 'notebook', 'profile']);
   const mobileCatalog = appCatalog.filter(item => mobileCatalogIds.has(item[0]));
   const catalogCopy = isEnglish ? {
     search:'Find any feature, section or tool',
@@ -360,10 +358,14 @@ function continueLearning() {
     closeLegacyPages();
     if (id === 'today') window.WebDevGymToday?.open?.();
     else if (id === 'routes') window.WebDevGymGrowth?.open?.();
-    else if (id === 'learning') return showNativeTab(activeSection().id);
+    else if (id === 'learning') {
+      const saved = localStorage.getItem('wdg_last_learning_section_v1');
+      const sectionId = LEARNING_SECTION_IDS.has(saved) ? saved : activeSection().id;
+      return showNativeTab(sectionId);
+    }
     else if (id === 'sections') return showSections();
     else if (id === 'lab') window.WebDevGymLab?.open?.();
-    else if (id === 'forge') window.WebDevGymForge?.open?.();
+    else if (id === 'forge') window.WebDevGymTrainers?.open?.();
     else if (id === 'profile' || id === 'naming') window.WebDevGymFeatures?.open?.(id);
     else showNativeTab(id);
     setActive(id);
@@ -389,9 +391,9 @@ function continueLearning() {
         <div class="wdgn-nav-group">${copy.growth}</div>
         ${navButton(navItems[4])}
         <div class="wdgn-nav-group">${copy.tools}</div>
-        ${navItems.slice(5, 10).map(navButton).join('')}
+        ${navItems.slice(5, 9).map(navButton).join('')}
         <div class="wdgn-nav-group">${copy.account}</div>
-        ${navItems.slice(10).map(navButton).join('')}
+        ${navItems.slice(9).map(navButton).join('')}
       </nav>
       <div class="wdgn-side-foot"><div class="wdgn-side-progress">
         <div><span>${copy.current}</span><strong>${total.pct}%</strong></div>
@@ -671,7 +673,7 @@ function continueLearning() {
   function handleAction(action, sectionId) {
     if (action === 'continue') showNativeTab(sectionId);
     else if (action === 'practice' || action === 'mini') window.WebDevGymLab?.open?.(action === 'mini' ? 'debug' : 'exam');
-    else if (action === 'project') window.WebDevGymForge?.open?.();
+    else if (action === 'project') window.WebDevGymTrainers?.open?.();
     else if (action === 'review') window.WebDevGymFeatures?.open?.('review');
   }
 

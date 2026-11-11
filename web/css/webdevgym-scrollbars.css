@@ -1,0 +1,96 @@
+:root {
+  --wdgs-track: #090e15;
+  --wdgs-track-edge: #1c2634;
+  --wdgs-thumb: #3d4b60;
+  --wdgs-thumb-hover: #7650a2;
+  --wdgs-thumb-active: #a855f7;
+}
+
+html,
+body,
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--wdgs-thumb) var(--wdgs-track);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  border-left: 1px solid var(--wdgs-track-edge);
+  background: var(--wdgs-track);
+}
+
+*::-webkit-scrollbar-thumb {
+  min-width: 36px;
+  min-height: 36px;
+  border: 2px solid var(--wdgs-track);
+  border-radius: 8px;
+  background: var(--wdgs-thumb);
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--wdgs-thumb-hover);
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background: var(--wdgs-thumb-active);
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-button,
+*::-webkit-scrollbar-button:single-button {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+*::-webkit-scrollbar-corner {
+  background: var(--wdgs-track);
+}
+
+:is(
+  .wdg-sidebar,
+  .wdgn-inspector,
+  .wdgd-tree,
+  .wdgd-terminal,
+  .wdgd-git-output,
+  .ai-msgs,
+  .nexus-panel,
+  .pg-tabs-scroll
+)::-webkit-scrollbar-track {
+  border-color: transparent;
+  background: transparent;
+}
+
+:is(
+  .wdg-sidebar,
+  .wdgn-inspector,
+  .wdgd-tree,
+  .wdgd-terminal,
+  .wdgd-git-output,
+  .ai-msgs,
+  .nexus-panel
+)::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+html:has(body.wdg-modern:not(.dark)),
+html:has(body.wdgn-ready:not(.dark)),
+body.wdg-modern:not(.dark),
+body.wdgn-ready:not(.dark) {
+  --wdgs-track: #edf1f6;
+  --wdgs-track-edge: #d7dee8;
+  --wdgs-thumb: #aab5c5;
+  --wdgs-thumb-hover: #9370b5;
+  --wdgs-thumb-active: #7e22ce;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; }
+}

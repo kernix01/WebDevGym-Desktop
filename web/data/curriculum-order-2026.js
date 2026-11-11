@@ -292,6 +292,10 @@
       'block-algo-string',
       'block-algo-data-structures',
       'block-algo-recursion',
+      'block-algo-binary-search-2026',
+      'block-algo-two-pointers-window-2026',
+      'block-algo-graph-traversal-2026',
+      'block-algo-problem-solving-2026',
       'block-algo-advanced-concepts'
     ],
     'sec-mistakes': [

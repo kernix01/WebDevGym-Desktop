@@ -537,6 +537,129 @@
     }
   ]);
 
+  add('sec-algo', [
+    {
+      id: 'block-algo-binary-search-2026',
+      title: L('Binary search and boundary conditions', 'Бинарный поиск и граничные случаи'),
+      badge: L('PRACTICE', 'ПРАКТИКА'),
+      tip: L(
+        'Binary search is a reusable way to find a value in sorted data. It is not valid on an arbitrary unsorted array.',
+        'Бинарный поиск — повторно используемый способ найти значение в отсортированных данных. На произвольном неотсортированном массиве он не работает.'
+      ),
+      code: L(
+        'function binarySearch(sortedValues, target) {\n  let left = 0;\n  let right = sortedValues.length - 1;\n\n  while (left <= right) {\n    const middle = Math.floor((left + right) / 2);\n\n    if (sortedValues[middle] === target) return middle;\n    if (sortedValues[middle] < target) {\n      left = middle + 1;\n    } else {\n      right = middle - 1;\n    }\n  }\n\n  return -1;\n}',
+        'function binarySearch(sortedValues, target) {\n  let left = 0;\n  let right = sortedValues.length - 1;\n\n  while (left <= right) {\n    const middle = Math.floor((left + right) / 2);\n\n    if (sortedValues[middle] === target) return middle;\n    if (sortedValues[middle] < target) {\n      left = middle + 1;\n    } else {\n      right = middle - 1;\n    }\n  }\n\n  return -1;\n}'
+      ),
+      explain: L(
+        '<p>Each iteration discards half of the remaining range, so the time complexity is <code>O(log n)</code>; extra space is <code>O(1)</code>. The interval here is inclusive: <code>left</code> and <code>right</code> are both candidates, so the loop continues while <code>left &lt;= right</code>.</p><p>After checking the middle value, move past it with <code>middle + 1</code> or <code>middle - 1</code>. Otherwise the range may stop shrinking. Return <code>-1</code> when the value is absent.</p>',
+        '<p>На каждом шаге отбрасывается половина диапазона, поэтому время работы — <code>O(log n)</code>, а дополнительная память — <code>O(1)</code>. Здесь границы включительные: <code>left</code> и <code>right</code> остаются кандидатами, поэтому цикл продолжается, пока <code>left &lt;= right</code>.</p><p>После проверки середины сдвигай границу за неё: <code>middle + 1</code> или <code>middle - 1</code>. Иначе диапазон может перестать уменьшаться. Если значения нет, функция возвращает <code>-1</code>.</p>'
+      ),
+      practice: L(
+        'Trace the search for 19 and 20 in [3, 8, 12, 19, 27, 34]. Then test an empty array, one element, the first and last values, and a missing value.',
+        'Проследи поиск 19 и 20 в массиве [3, 8, 12, 19, 27, 34]. Затем проверь пустой массив, один элемент, первое и последнее значения и отсутствующее значение.'
+      ),
+      checklist: [
+        L('I check that input data is sorted before using binary search', 'Перед бинарным поиском проверяю, что данные отсортированы'),
+        L('I can explain why both boundaries move past the middle', 'Могу объяснить, почему границы сдвигаются за середину'),
+        L('I test empty, one-item, edge and not-found cases', 'Проверяю пустой массив, один элемент, границы и отсутствие значения')
+      ],
+      docs: [
+        { label: 'OpenDSA — Binary Search', url: 'https://opendsa-server.cs.vt.edu/ODSA/Books/Everything/html/BinarySearch.html' },
+        { label: 'MDN — Array.prototype.sort()', url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort' }
+      ]
+    },
+    {
+      id: 'block-algo-two-pointers-window-2026',
+      title: L('Two pointers and sliding window', 'Два указателя и скользящее окно'),
+      badge: L('PRACTICE', 'ПРАКТИКА'),
+      tip: L(
+        'These patterns avoid repeatedly scanning the same data. Two pointers move through a sequence; a sliding window updates a summary as its bounds move.',
+        'Эти приёмы помогают не сканировать одни и те же данные снова и снова. Два указателя движутся по последовательности, а скользящее окно обновляет результат при сдвиге границ.'
+      ),
+      code: L(
+        'function hasPairWithSum(sortedValues, target) {\n  let left = 0;\n  let right = sortedValues.length - 1;\n\n  while (left < right) {\n    const sum = sortedValues[left] + sortedValues[right];\n    if (sum === target) return true;\n    if (sum < target) left += 1;\n    else right -= 1;\n  }\n\n  return false;\n}\n\nfunction maxWindowSum(values, size) {\n  if (size <= 0 || size > values.length) return null;\n\n  let sum = 0;\n  for (let i = 0; i < size; i++) sum += values[i];\n  let best = sum;\n\n  for (let right = size; right < values.length; right++) {\n    sum += values[right] - values[right - size];\n    best = Math.max(best, sum);\n  }\n  return best;\n}',
+        'function hasPairWithSum(sortedValues, target) {\n  let left = 0;\n  let right = sortedValues.length - 1;\n\n  while (left < right) {\n    const sum = sortedValues[left] + sortedValues[right];\n    if (sum === target) return true;\n    if (sum < target) left += 1;\n    else right -= 1;\n  }\n\n  return false;\n}\n\nfunction maxWindowSum(values, size) {\n  if (size <= 0 || size > values.length) return null;\n\n  let sum = 0;\n  for (let i = 0; i < size; i++) sum += values[i];\n  let best = sum;\n\n  for (let right = size; right < values.length; right++) {\n    sum += values[right] - values[right - size];\n    best = Math.max(best, sum);\n  }\n  return best;\n}'
+      ),
+      explain: L(
+        '<p>For a sorted array, the sum of the two boundary values tells us which pointer to move. Each pointer only moves inward, so the pair search is <code>O(n)</code>. Sorting first would add its own cost.</p><p>The fixed-size window adds the incoming value and removes the outgoing one. After the initial window, each shift takes constant work, making the full scan <code>O(n)</code> instead of recalculating every window in <code>O(n × size)</code>.</p>',
+        '<p>В отсортированном массиве сумма крайних значений подсказывает, какой указатель сдвинуть. Каждый указатель движется только внутрь, поэтому поиск пары занимает <code>O(n)</code>. Если сначала сортировать массив, учитывай и стоимость сортировки.</p><p>Окно фиксированного размера добавляет входящее значение и вычитает выходящее. После расчёта первого окна каждый сдвиг требует постоянное число действий: весь проход занимает <code>O(n)</code>, а не <code>O(n × size)</code> при пересчёте каждой суммы.</p>'
+      ),
+      practice: L(
+        'Use [1, 3, 4, 6, 8, 11] to search for a pair summing to 14. Then find the largest sum of three consecutive values in [2, 1, 5, 1, 3, 2].',
+        'На массиве [1, 3, 4, 6, 8, 11] найди пару с суммой 14. Затем найди наибольшую сумму трёх соседних значений в массиве [2, 1, 5, 1, 3, 2].'
+      ),
+      checklist: [
+        L('I know when two pointers require sorted input', 'Знаю, когда для двух указателей нужен отсортированный массив'),
+        L('I update a sliding window instead of recalculating it', 'Обновляю скользящее окно, а не пересчитываю его целиком'),
+        L('I compare the pattern with a simple nested-loop solution', 'Сравниваю этот приём с простым решением через вложенные циклы')
+      ],
+      docs: [
+        { label: 'USFCA — Algorithm Visualizations', url: 'https://www.cs.usfca.edu/~galles/visualization/Algorithms.html' },
+        { label: 'MDN — Array', url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array' }
+      ]
+    },
+    {
+      id: 'block-algo-graph-traversal-2026',
+      title: L('Graph traversal: BFS and DFS', 'Обход графа: BFS и DFS'),
+      badge: L('PRACTICE', 'ПРАКТИКА'),
+      tip: L(
+        'A graph can contain cycles and multiple routes. Track visited nodes so a traversal terminates and processes each reachable node once.',
+        'В графе могут быть циклы и несколько путей. Храни посещённые узлы, чтобы обход завершался и обрабатывал каждый достижимый узел один раз.'
+      ),
+      code: L(
+        'const graph = new Map([\n  ["home", ["docs", "shop"]],\n  ["docs", ["api"]],\n  ["shop", ["api"]],\n  ["api", ["home"]]\n]);\n\nfunction breadthFirst(graph, start) {\n  const queue = [start];\n  const visited = new Set([start]);\n  const order = [];\n\n  for (let head = 0; head < queue.length; head++) {\n    const node = queue[head];\n    order.push(node);\n    for (const next of graph.get(node) ?? []) {\n      if (!visited.has(next)) {\n        visited.add(next);\n        queue.push(next);\n      }\n    }\n  }\n  return order;\n}\n\n// DFS uses a stack instead of a queue.',
+        'const graph = new Map([\n  ["home", ["docs", "shop"]],\n  ["docs", ["api"]],\n  ["shop", ["api"]],\n  ["api", ["home"]]\n]);\n\nfunction breadthFirst(graph, start) {\n  const queue = [start];\n  const visited = new Set([start]);\n  const order = [];\n\n  for (let head = 0; head < queue.length; head++) {\n    const node = queue[head];\n    order.push(node);\n    for (const next of graph.get(node) ?? []) {\n      if (!visited.has(next)) {\n        visited.add(next);\n        queue.push(next);\n      }\n    }\n  }\n  return order;\n}\n\n// DFS uses a stack instead of a queue.'
+      ),
+      explain: L(
+        '<p><strong>BFS</strong> visits neighbors in layers and uses a queue; in an unweighted graph it can find the path with the fewest edges. <strong>DFS</strong> follows one route deeply before backtracking and uses a stack or recursion.</p><p>With an adjacency list and a visited set, both traversals take <code>O(V + E)</code> time and <code>O(V)</code> extra space for the visited nodes and worklist. The shown queue uses a moving index rather than <code>shift()</code>, which would move the remaining array elements repeatedly.</p>',
+        '<p><strong>BFS</strong> сначала посещает соседей по слоям и использует очередь; в невзвешенном графе он может найти путь с минимальным числом рёбер. <strong>DFS</strong> углубляется по одному пути и возвращается назад; для него используют стек или рекурсию.</p><p>С adjacency list и множеством посещённых узлов оба обхода работают за <code>O(V + E)</code>, дополнительная память — <code>O(V)</code>. В очереди выше используется индекс, а не <code>shift()</code>, который каждый раз сдвигал бы оставшиеся элементы массива.</p>'
+      ),
+      practice: L(
+        'Trace BFS from home and write the visit order. Then implement iterative DFS with a stack. Keep the cycle from api to home and confirm neither traversal loops forever.',
+        'Проследи BFS от home и запиши порядок посещения. Затем реализуй итеративный DFS через стек. Оставь цикл api → home и проверь, что обходы не зацикливаются.'
+      ),
+      checklist: [
+        L('I choose BFS for layer-by-layer traversal and shortest unweighted paths', 'Выбираю BFS для обхода по слоям и кратчайшего пути без весов'),
+        L('I choose DFS to explore a branch deeply', 'Выбираю DFS, когда нужно углубиться по ветке'),
+        L('I mark nodes visited to handle cycles safely', 'Отмечаю посещённые узлы, чтобы безопасно обработать циклы')
+      ],
+      docs: [
+        { label: 'CP-Algorithms — Breadth First Search', url: 'https://cp-algorithms.com/graph/breadth-first-search.html' },
+        { label: 'CP-Algorithms — Depth First Search', url: 'https://cp-algorithms.com/graph/depth-first-search.html' }
+      ]
+    },
+    {
+      id: 'block-algo-problem-solving-2026',
+      title: L('A repeatable way to solve coding problems', 'Порядок решения алгоритмической задачи'),
+      badge: L('WORKFLOW', 'МЕТОД'),
+      tip: L(
+        'The goal is not to guess the intended trick. Make the problem precise, build a correct baseline, then improve it while preserving behavior.',
+        'Цель — не угадать «нужный трюк». Сначала точно сформулируй задачу и получи корректное простое решение, затем улучшай его, сохраняя поведение.'
+      ),
+      code: L(
+        '1. Restate the task and write input/output examples.\n2. List constraints and edge cases.\n3. Write the simplest correct approach.\n4. State an invariant: what stays true each iteration?\n5. Estimate time and extra space.\n6. Optimize only after identifying the repeated work.\n7. Re-run the same cases against the improved version.\n\nCases to consider:\nempty input · one item · duplicates ·\nmissing answer · minimum/maximum values',
+        '1. Перескажи задачу и запиши примеры входа и результата.\n2. Выпиши ограничения и граничные случаи.\n3. Напиши самое простое корректное решение.\n4. Сформулируй инвариант: что остаётся верным на каждом шаге?\n5. Оцени время и дополнительную память.\n6. Оптимизируй, только когда нашёл повторную работу.\n7. Повтори те же проверки для улучшенного решения.\n\nЧто проверить:\nпустой ввод · один элемент · повторы ·\nответа нет · минимальные и максимальные значения'
+      ),
+      explain: L(
+        '<p>An invariant is a fact that remains true while a loop or algorithm runs. It helps explain why the solution is correct, not just why it passed one example. For example, in the Two Sum scan, the map contains only values from positions already visited.</p><p>Do not optimize by intuition alone. First name the repeated work and its cost, then choose a structure or pattern that removes it. Keep the original test cases so you can confirm the faster solution still returns the same results.</p>',
+        '<p>Инвариант — утверждение, которое остаётся верным во время работы цикла или алгоритма. Он помогает объяснить корректность решения, а не только то, почему прошёл один пример. Например, при проходе Two Sum в Map лежат значения только из уже просмотренных позиций.</p><p>Не оптимизируй только по ощущению. Сначала назови повторную работу и её стоимость, затем выбери структуру или приём, который её убирает. Сохрани исходные тесты, чтобы проверить, что ускоренная версия возвращает те же результаты.</p>'
+      ),
+      practice: L(
+        'Revisit Two Sum. Write a few test cases and explain the nested-loop cost. Then trace how Map removes repeated scanning and compare the outputs on every case.',
+        'Вернись к Two Sum. Запиши несколько тестов и объясни стоимость вложенных циклов. Затем проследи, как Map убирает повторный поиск, и сравни результаты на каждом тесте.'
+      ),
+      checklist: [
+        L('I clarify input, output and constraints before coding', 'До кода уточняю вход, результат и ограничения'),
+        L('I test boundary cases, not only the happy path', 'Проверяю граничные случаи, а не только обычный сценарий'),
+        L('I can justify correctness and complexity in plain language', 'Могу простыми словами объяснить корректность и сложность решения')
+      ],
+      docs: [
+        { label: 'USFCA — Algorithm Visualizations', url: 'https://www.cs.usfca.edu/~galles/visualization/Algorithms.html' },
+        { label: 'MDN — JavaScript data structures', url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_objects' }
+      ]
+    }
+  ]);
+
   add('sec-career', [{
     id: 'block-career-interview-evidence-2026',
     title: L('Interview answers backed by project evidence', 'Ответы на собеседовании с доказательствами из проекта'),
